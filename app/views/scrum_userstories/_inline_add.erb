@@ -1,0 +1,41 @@
+<div id='inline_new_issue_errors'></div>
+<% remote_form_for :issue, :url => {:controller => :scrum_userstories, :action => :inline_add} do |f|%>
+
+<%= f.hidden_field :project_id, :value => @project.id %>
+<%= f.hidden_field :priority_id, :value => IssuePriority.default.id %>
+
+<div >
+	<div class='scrum_issue_inline_fields'>
+		<div class='scrum_issue_inline_field'>
+			<%= f.select :tracker_id, @project.trackers.collect {|t| [t.name, t.id]} %>
+		</div>
+		
+		<div class='scrum_issue_inline_field'>
+			<div class='scrum_issue_inline_label'>Name :</div>
+			<div class='scrum_issue_inline_control'> 
+				<%= f.text_field :subject, :size => 20 %>
+			</div>
+		</div>
+		
+		<div class='scrum_issue_inline_field'>
+			<div class='scrum_issue_inline_label'>Size :</div>
+			<div class='scrum_issue_inline_control'> 
+				<%= create_story_sizes_combo f %>
+			</div>
+		</div>
+		
+		<div class='scrum_issue_inline_field'>
+			<div class='scrum_issue_inline_label'>Description :</div>
+			<div class='scrum_issue_inline_control'> 
+				<%= f.text_area :description, :rows => 3, :cols => 50 %>
+			</div>
+		</div>
+	</div>
+	
+	<div class='scrum_issue_inline_submit'>	
+		<%= f.submit%>
+	</div>
+
+
+</div>
+<%end%>

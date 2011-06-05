@@ -1,0 +1,2 @@
+module ScrumChartsHelper
+end

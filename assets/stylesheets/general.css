@@ -1,0 +1,30 @@
+/********* Add INLINE-ISSUE **********/
+.scrum_issue_inline_fields{
+	width: 100%;
+	height: 60px;
+}
+
+.scrum_issue_inline_field{
+	margin-left: 15px;
+	float: left;
+}
+
+.scrum_issue_inline_label{
+	padding-top: 4px;
+	float: left;
+}
+
+.scrum_issue_inline_control{
+	float: left;
+	margin-left: 3px;
+}
+
+.scrum_issue_inline_submit{
+	width: 100%;
+	float: none;
+}
+
+.scrum_issue_inline_submit input{
+	float: right;
+}
+

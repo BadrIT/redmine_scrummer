@@ -1,0 +1,2 @@
+module ScrumReleasesPlanningHelper
+end

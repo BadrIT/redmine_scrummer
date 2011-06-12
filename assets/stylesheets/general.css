@@ -28,3 +28,54 @@
 	float: right;
 }
 
+.name_size_container{
+	width: 235px;
+	float: left;
+}
+
+.name_size_container .scrum_issue_inline_field{
+	width: 100%;
+}
+
+.name_size_container .scrum_issue_inline_label{
+	width: 50px;
+}
+
+.name_size_container input { 
+	width: 95% !important; 
+}
+
+.parent_issue_subject{
+	display: none;
+}
+
+/********* Add INLINE-CHILD **********/
+#add_inline_child_template{
+	visibility: hidden;
+}
+
+.add_inline_child{
+	display:none;
+}
+
+/********* ISSUE-LIST **********/
+
+table.list tbody tr.group td { padding: 2px; font-weight: normal; border-bottom: none; }
+
+tr.idnt-1 td.subject {padding-left: 2em !important;}
+tr.idnt-2 td.subject {padding-left: 4em !important;}
+tr.idnt-3 td.subject {padding-left: 6em !important;}
+tr.idnt-4 td.subject {padding-left: 8em !important;}
+tr.idnt-5 td.subject {padding-left: 10em !important;}
+tr.idnt-6 td.subject {padding-left: 12em !important;}
+tr.idnt-7 td.subject {padding-left: 14em !important;}
+tr.idnt-8 td.subject {padding-left: 16em !important;}
+tr.idnt-9 td.subject {padding-left: 18em !important;}
+
+tr.issue.idnt td.subject a {background: none; padding-left: 0px;}
+
+tr span.expander {background-size: 13px 13px; background-image: url('../images/row_collapsed_icon.png');}
+tr span.expander.hover { background-image: url('../images/row_collapsed_icon_over.png'); }
+
+tr.open span.expander { background-image: url('../images/row_expanded_icon.png'); }
+tr.open span.expander.hover { background-image: url('../images/row_expanded_icon_over.png'); }

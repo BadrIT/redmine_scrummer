@@ -1,5 +1,8 @@
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
 <% end %>
 
 <div class="contextual">

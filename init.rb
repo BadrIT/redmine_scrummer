@@ -1,4 +1,18 @@
 require 'redmine'
+require 'dispatcher'
+
+Dispatcher.to_prepare :redmine_scrummer do
+	require_dependency 'issue'
+	require_dependency 'query'
+	
+	unless Issue.included_modules.include? RedmineScrummer::IssuePatch
+		Issue.send :include, RedmineScrummer::IssuePatch
+	end
+	
+	unless Query.included_modules.include? RedmineScrummer::QueryPatch
+		Query.send :include, RedmineScrummer::QueryPatch
+	end 
+end
 
 Redmine::Plugin.register :redmine_scrummer do
   name 'Redmine Scrummer plugin'
@@ -7,6 +21,8 @@ Redmine::Plugin.register :redmine_scrummer do
   version '0.0.1'
   url 'http://example.com/path/to/plugin'
   author_url 'http://www.badrit.com'
+  
+  requires_redmine :version_or_higher => '1.2.0' 
   
   project_module :scrummer do
   	permission :scrum_index, {:scrum => [:index]}, :public => false

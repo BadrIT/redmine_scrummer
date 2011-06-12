@@ -56,7 +56,7 @@ class ScrumUserstoriesController < IssuesController
  	rescue ActiveRecord::RecordNotFound
     render_404 
   end
-      
+        
   protected
   
   	def find_query

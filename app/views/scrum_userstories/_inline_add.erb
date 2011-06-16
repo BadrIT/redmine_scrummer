@@ -1,6 +1,8 @@
-<div id='new_issue_inline_div'>
+
+<div id='new_issue_inline_div' class='inline-issue-add'>
 	<div id='inline_new_issue_errors'></div>
-	<% remote_form_for :issue, :url => {:controller => :scrum_userstories, :action => :inline_add} do |f|%>
+	<% remote_form_for :issue, :url => {:controller => :scrum_userstories, :action => :inline_add},
+														 :html => {:id => 'issue-form'} do |f|%>
 	
 	<%= f.hidden_field :project_id, :value => @project.id %>
 	<%= f.hidden_field :priority_id, :value => IssuePriority.default.id %>
@@ -9,6 +11,9 @@
 	<div class='scrum_issue_inline_fields'>
 		<div class='scrum_issue_inline_field'>
 			<%= f.select :tracker_id, @project.trackers.collect {|t| [t.name, t.id]} %>
+			<%= observe_field :issue_tracker_id, :url => { :action => :refresh_inline_add_form, :project_id => @project, :id => @issue },
+			                                     :update => :inline_add_container,
+			                                     :with => "Form.serialize('issue-form')" %>
 		</div>
 		
 		<div class='name_size_container'>
@@ -21,12 +26,24 @@
 			
 			<br/>
 			
+		<% if @issue.tracker.is_scrum_task? %>
 			<div class='scrum_issue_inline_field'>
-				<div class='scrum_issue_inline_label'>Size :</div>
+				<div class='scrum_issue_inline_label'>Est. 	(hrs):</div>
 				<div class='scrum_issue_inline_control'> 
-					<%= create_story_sizes_combo f %>
-				</div>
+					<%= f.text_field :estimated_hours, :class => 'inline_issue_field_float_type' %>
+				</div> 
 			</div>
+			
+			<br/>
+		<% end %>
+			
+			
+		<% @issue.custom_field_values.each do |value| %>
+			<div class='scrum_issue_inline_field'>
+				<p><%= custom_field_tag_with_label :issue, value %></p>
+			</div>
+		<% end -%>			
+			
 		</div>
 		
 		<div class='scrum_issue_inline_field'>

@@ -1,4 +1,13 @@
+/********* ISSUES LIST ID **********/
+.issues-list-issue-id{
+	color: #BBBBBB;
+}
+
 /********* Add INLINE-ISSUE **********/
+.inline-issue-add{
+	font-size: 11px;
+}
+
 .scrum_issue_inline_fields{
 	width: 100%;
 	height: 60px;
@@ -41,14 +50,14 @@
 	width: 50px;
 }
 
-.name_size_container input { 
-	width: 95% !important; 
-}
-
 .parent_issue_subject{
 	display: none;
 }
 
+.inline_issue_field_float_type,
+.inline-issue-add .custom_field_float_type{
+	width: 40px;
+}
 /********* Add INLINE-CHILD **********/
 #add_inline_child_template{
 	visibility: hidden;

@@ -5,7 +5,6 @@ class SeedScrumTrackers < ActiveRecord::Migration
 		Tracker.create(:is_scrum => true, :name => 'Scrum-UserStory', :is_in_roadmap => true, :is_in_chlog => true, :position => 1)
 		Tracker.create(:is_scrum => true, :name => 'Scrum-Task', :is_in_roadmap => true, :is_in_chlog => true, :position => 2)
 		Tracker.create(:is_scrum => true, :name => 'Scrum-Epic', :is_in_roadmap => true, :is_in_chlog => true, :position => 3)
-		Tracker.create(:is_scrum => true, :name => 'Scrum-Feature', :is_in_roadmap => true, :is_in_chlog => true, :position => 4)
 		Tracker.create(:is_scrum => true, :name => 'Scrum-Theme', :is_in_roadmap => true, :is_in_chlog => true, :position => 5)
 		
 	end

@@ -11,7 +11,12 @@ Dispatcher.to_prepare :redmine_scrummer do
 	
 	unless Query.included_modules.include? RedmineScrummer::QueryPatch
 		Query.send :include, RedmineScrummer::QueryPatch
+	end
+	
+	unless Tracker.included_modules.include? RedmineScrummer::TrackerPatch
+		Tracker.send :include, RedmineScrummer::TrackerPatch
 	end 
+ 
 end
 
 Redmine::Plugin.register :redmine_scrummer do
@@ -29,6 +34,7 @@ Redmine::Plugin.register :redmine_scrummer do
   	
   	permission :scrum_user_stories, {:scrum_userstories => [:index]}, :public => false
   	permission :scrum_user_stories_add_inline, {:scrum_userstories => [:inline_add]}, :public => false
+  	permission :scrum_user_stories_refresh_inline_add_form, {:scrum_userstories => [:refresh_inline_add_form]}, :public => false
   	
   	permission :scrum_sprint_planing, {:scrum_sprints_planning => [:index]}, :public => false
   	

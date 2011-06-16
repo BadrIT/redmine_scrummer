@@ -7,11 +7,11 @@ class ScrumUserstoriesController < IssuesController
 	prepend_before_filter :check_for_default_issue_status, :only => [:index]
 	prepend_before_filter :check_for_default_issue_priority, :only => [:index]
 	
-	prepend_before_filter :find_query, :only => [:index, :inline_add]						# must be called after find_scrum_project
-	prepend_before_filter :find_scrum_project, :only => [:index, :inline_add]	
+	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add]						# must be called after find_scrum_project
+	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add]	
 	
 	
-	before_filter :build_new_issue_from_params, :only => [:inline_add]
+	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add]
 
   def index
   	initialize_sort
@@ -33,6 +33,12 @@ class ScrumUserstoriesController < IssuesController
   rescue ActiveRecord::RecordNotFound
     render_404    
   end
+
+	def refresh_inline_add_form
+		respond_to do |format|
+			format.js {render :partial => 'inline_add'}
+		end
+	end
 
   def inline_add
   	initialize_sort  	  	

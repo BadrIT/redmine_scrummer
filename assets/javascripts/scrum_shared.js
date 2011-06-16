@@ -1,6 +1,3 @@
-$j(function(){
-	alert.hi();
-});
 
 function addInLineChild(elem){
 	row = $j(elem).closest('tr')[0];
@@ -12,8 +9,13 @@ function addInLineChild(elem){
 		return;
 	
 	// clone template
+	container = document.createElement('div')
+	container.id = 'inline_add_container-issue-' + issueId;
+	
 	template = $('new_issue_inline_div');
 	inlineForm = template.cloneNode();
+	container.appendChild(inlineForm);
+	
 	inlineForm.id = 'new_issue_inline_add_child_for_elem_' + row.id;
 	inlineForm.innerHTML = template.innerHTML;
 	
@@ -23,7 +25,7 @@ function addInLineChild(elem){
 	// add it next to the current row
 	nextRow = row.next();
 	
-	newRow = createTableRowWithContent(nextRow, inlineForm);
+	newRow = createTableRowWithContent(nextRow, container);
 	tableBody = $j(nextRow).closest('tbody')[0];
 	
 	tableBody.insertBefore(newRow, nextRow);		
@@ -31,7 +33,32 @@ function addInLineChild(elem){
 	$j(inlineForm).slideDown('slow');
 	
 	// set the row id
-	$j(inlineForm).find('#issue_parent_issue_id').attr('value', issueId)
+	$j(inlineForm).find('#issue_parent_issue_id').attr('value', issueId);
+	
+	// observe changes of tracker field
+	observeTrackerField( container, inlineForm, issueId );
+}
+
+function observeTrackerField(container, form, issueId){
+	containerId = container.id;
+	form = $j(form).find('form')[0];
+	field = $j(form).find('[name="issue[tracker_id]"]')[0];
+	
+	observeFor(field, form, containerId);
+}
+
+function observeFor(field, form, containerId){
+	new Form.Element.EventObserver(field,
+																function(element, value) {
+																	new Ajax.Updater(containerId, 
+																					 tracker_id_observer_url, 
+																					 {
+																						 asynchronous: true, 
+																						 evalScripts: true, 
+																						 parameters: form.serialize()																									 
+																					 }
+																	)
+																});
 }
 
 function createTableRowWithContent(sampleTr, content){

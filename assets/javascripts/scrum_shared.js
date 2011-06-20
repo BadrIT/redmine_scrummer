@@ -1,4 +1,4 @@
-
+  
 function addInLineChild(elem){
 	row = $j(elem).closest('tr')[0];
 	

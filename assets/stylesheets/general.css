@@ -88,3 +88,13 @@ tr span.expander.hover { background-image: url('../images/row_collapsed_icon_ove
 
 tr.open span.expander { background-image: url('../images/row_expanded_icon.png'); }
 tr.open span.expander.hover { background-image: url('../images/row_expanded_icon_over.png'); }
+
+.edit{ float: left; width: 100%;}
+.edit.float input{ width: 50px; }
+.accumelated-result{ font-weight: bolder; float: left; width: 100%;}
+
+.edit-placeholder{display:none; color: #BBBBBB; width:100%;}
+tr:hover .edit-placeholder{display:block; color: #BBBBBB; }
+
+td.cf_5 {width: 85px;}
+td.estimated_hours {width: 85px;}

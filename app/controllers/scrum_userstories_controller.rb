@@ -1,17 +1,46 @@
 class ScrumUserstoriesController < IssuesController
   unloadable
 
+	include ScrumUserstoriesHelper
+	
 	prepend_before_filter :check_for_default_scrum_issue_status_for_inline, :only => [:inline_add]
 	prepend_before_filter :check_for_default_scrum_issue_priority_for_inline, :only => [:inline_add]
 	
 	prepend_before_filter :check_for_default_issue_status, :only => [:index]
 	prepend_before_filter :check_for_default_issue_priority, :only => [:index]
 	
-	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add]						# must be called after find_scrum_project
-	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add]	
-	
+	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field]						# must be called after find_scrum_project
+	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field]
 	
 	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add]
+	
+	
+	
+	def update_single_field
+		new_value = params[:value]
+
+		if params[:id] and params[:id] =~ /custom/
+			matched_groups = params[:id].match(/issue-(\d+)-custom-field-(.+)/)
+			issue_id = matched_groups[1]
+			column_name = matched_groups[2].to_sym
+			
+			query_column = @query.column_with_name column_name
+			custom_field = query_column.custom_field			
+			
+			@issue = Issue.find(issue_id)
+			@issue.custom_field_values = {custom_field.id => new_value}
+	
+			if(@issue.save)
+				render :text => params[:value]
+			else
+				render :text => 'Errors in saving'
+			end
+		else
+			render :text => 'Not supported'
+		end
+	rescue Exception => e
+		render :text => 'Exception Occured'
+	end
 
   def index
   	initialize_sort

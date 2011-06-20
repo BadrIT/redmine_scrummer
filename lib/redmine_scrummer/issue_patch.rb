@@ -13,7 +13,7 @@ module RedmineScrummer
 		
 		module InstanceMethods
 			
-			def is_scrum_issue
+			def scrum_issue?
 				tracker.is_scrum
 			end
 			

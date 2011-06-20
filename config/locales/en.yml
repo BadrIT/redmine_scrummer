@@ -7,4 +7,4 @@ en:
   error_no_default_scrum_issue_priority: "System has no default issue priority, you must add it from Admin interface"
   error_no_default_scrum_issue_status: "System has no default issue status, you must add it from Admin interface"
   
-  field_story_size: "Story Size"
+  field_spent_hours: "Actual"

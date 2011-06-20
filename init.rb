@@ -30,17 +30,15 @@ Redmine::Plugin.register :redmine_scrummer do
   requires_redmine :version_or_higher => '1.2.0' 
   
   project_module :scrummer do
-  	permission :scrum_index, {:scrum => [:index]}, :public => false
+  	permission :scrum_user_stories, 										{ :scrum_userstories => [:index] }
+  	permission :scrum_user_stories_add_inline, 					{ :scrum_userstories => [:inline_add] }
+  	permission :scrum_user_stories_manipulate_inline, 	{ :scrum_userstories => [:refresh_inline_add_form, :update_single_field] }
   	
-  	permission :scrum_user_stories, {:scrum_userstories => [:index]}, :public => false
-  	permission :scrum_user_stories_add_inline, {:scrum_userstories => [:inline_add]}, :public => false
-  	permission :scrum_user_stories_refresh_inline_add_form, {:scrum_userstories => [:refresh_inline_add_form]}, :public => false
+  	permission :scrum_sprint_planing, 									{ :scrum_sprints_planning  => [:index]}
   	
-  	permission :scrum_sprint_planing, {:scrum_sprints_planning => [:index]}, :public => false
+  	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index]}
   	
-  	permission :scrum_release_planing, {:scrum_releases_planning => [:index]}, :public => false
-  	
-  	permission :scrum_charts, {:scrum_charts => [:index]}, :public => false
+  	permission :scrum_charts, 													{ :scrum_charts => [:index]}
   end
   
   menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :caption => 'User Stories', :after => :activity, :param => :project_id

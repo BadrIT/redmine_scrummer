@@ -85,7 +85,8 @@ class ScrumUserstoriesController < IssuesController
 	def refresh_inline_add_form
 		parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
 		parent_issue_id = params[:issue][:parent_issue_id] if params[:issue][:parent_issue_id]
-		@parent_issue = parent_issue_id ? Issue.find(parent_issue_id) : nil 		
+		
+		@parent_issue = parent_issue_id and !parent_issue_id.empty? ? Issue.find(parent_issue_id) : nil 		
 		
 		respond_to do |format|
 			format.js {render :partial => 'inline_add'}

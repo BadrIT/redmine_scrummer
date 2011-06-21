@@ -15,7 +15,7 @@
 		<div class='scrum_issue_inline_field'>
 			
 			
-			<%= select_tag "issue[tracker_id]", options_from_collection_for_select(@project.trackers, 'id', 'name'), :id => tracker_field_id %>
+			<%= select_tag "issue[tracker_id]", options_from_collection_for_select(@project.trackers, 'id', 'name', @issue.tracker.id), :id => tracker_field_id %>
 			<%= observe_field tracker_field_id, :url => { :action => :refresh_inline_add_form, :project_id => @project, :id => @issue },
 			                                     :update => inline_issue_div_id,
 			                                     :with => "Form.serialize('#{inline_form_id}')" %>

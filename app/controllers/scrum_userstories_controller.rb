@@ -9,11 +9,10 @@ class ScrumUserstoriesController < IssuesController
 	prepend_before_filter :check_for_default_issue_status, :only => [:index]
 	prepend_before_filter :check_for_default_issue_priority, :only => [:index]
 	
-	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field]						# must be called after find_scrum_project
-	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field]
+	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form]						# must be called after find_scrum_project
+	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form]
 	
-	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add]
-	
+	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
 	
 	
 	def update_single_field
@@ -31,15 +30,35 @@ class ScrumUserstoriesController < IssuesController
 			@issue.custom_field_values = {custom_field.id => new_value}
 	
 			if(@issue.save)
-				render :text => params[:value]
+				render :text => new_value
 			else
 				render :text => 'Errors in saving'
 			end
 		else
-			render :text => 'Not supported'
+			matched_groups = params[:id].match(/issue-(\d+)-field-(.+)/)
+			issue_id = matched_groups[1]
+			column_name = matched_groups[2].to_sym
+			
+			@issue = Issue.find(issue_id)
+			@issue.update_attributes(column_name => new_value)
+	
+			if(@issue.save)
+				render :text => new_value
+			else
+				render :text => 'Errors in saving'
+			end
 		end
 	rescue Exception => e
 		render :text => 'Exception Occured'
+	end
+	
+	def get_inline_issue_form
+		parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
+		@parent_issue = parent_issue_id ? Issue.find(parent_issue_id) : nil 
+		
+		respond_to do |format|
+			format.js { render :partial => 'inline_add' }
+		end
 	end
 
   def index
@@ -64,6 +83,10 @@ class ScrumUserstoriesController < IssuesController
   end
 
 	def refresh_inline_add_form
+		parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
+		parent_issue_id = params[:issue][:parent_issue_id] if params[:issue][:parent_issue_id]
+		@parent_issue = parent_issue_id ? Issue.find(parent_issue_id) : nil 		
+		
 		respond_to do |format|
 			format.js {render :partial => 'inline_add'}
 		end

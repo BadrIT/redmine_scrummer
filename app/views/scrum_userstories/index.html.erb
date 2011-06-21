@@ -25,7 +25,7 @@
 	</div>
 </fieldset>
 
-<% form_tag({:controller => 'scrum_userstories', :action => 'index'}, :method => :get, :id => 'query_form') do %>
+<% form_tag({:controller => 'scrum_userstories', :action => 'index'}, :method => :get, :id => 'query_form') do |f|%>
     <%= hidden_field_tag 'set_filter', '1' %>
 		<div id="query_form_content" class="hide-when-print">
 			
@@ -58,31 +58,31 @@
     <%= link_to_function l(:button_apply), 'submit_query_form("query_form")', :class => 'icon icon-checked' %>
     <%= link_to l(:button_clear), { :set_filter => 1, :project_id => @project }, :class => 'icon icon-reload'  %>
     <% if @query.new_record? && User.current.allowed_to?(:save_queries, @project, :global => true) %>
-    <%= link_to_function l(:button_save), "$('query_form').action='#{ url_for :controller => 'queries', :action => 'new', :project_id => @project }'; submit_query_form('query_form')", :class => 'icon icon-save' %>
+	    <%= link_to_function l(:button_save), "$('query_form').action='#{ url_for :controller => 'queries', :action => 'new', :project_id => @project }'; submit_query_form('query_form')", :class => 'icon icon-save' %>
     <% end %>
     </p>
 <% end %>
 
 <%= error_messages_for 'query' %>
 <% if @query.valid? %>
-<% if @issues.empty? %>
-<div id='issues_list'>
-	<p class="nodata"><%= l(:label_no_data) %></p>
-</div>
-<% else %>
-
-<div id='issues_list'>
-	<%= render :partial => 'list', :locals => {:issues => @issues, :query => @query} %>
-</div>
-
-<p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
-<% end %>
-
-<% other_formats_links do |f| %>
-	<%= f.link_to 'Atom', :url => params.merge(:key => User.current.rss_key) %>
-	<%= f.link_to 'CSV', :url => params %>
-	<%= f.link_to 'PDF', :url => params %>
-<% end %>
+	<% if @issues.empty? %>
+		<div id='issues_list'>
+			<p class="nodata"><%= l(:label_no_data) %></p>
+		</div>
+	<% else %>
+	
+		<div id='issues_list'>
+			<%= render :partial => 'list', :locals => {:issues => @issues, :query => @query} %>
+		</div>
+		
+		<p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
+	<% end %>
+	
+	<% other_formats_links do |f| %>
+		<%= f.link_to 'Atom', :url => params.merge(:key => User.current.rss_key) %>
+		<%= f.link_to 'CSV', :url => params %>
+		<%= f.link_to 'PDF', :url => params %>
+	<% end %>
 
 <% end %>
 

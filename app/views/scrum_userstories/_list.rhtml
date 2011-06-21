@@ -6,13 +6,14 @@
 												 	placeholder: '<span class="edit-placeholder">Click to Edit</span>',
 												 	submitdata : {
 												 									authenticity_token : '<%= form_authenticity_token %>'
-												 							 } 
+												 							 },
+												 	indicator  : '<%= image_tag 'loading.gif'%>' 
 												 });
 		
 	});
 </script>
 
-<% form_tag({}) do -%>	
+<% #TODO, this form is form supporting right_click #form_tag({}) do -%>
 <%= hidden_field_tag 'back_url', url_for(params) %>
 <div class="autoscroll">
 <table class="list issues">
@@ -59,10 +60,21 @@
 	    	</td>
 	    <% end %>    
 	    
-	    <td><%= link_to "Add Child", 'javascript:void(0)', :id => "add_inline_child_for_issue-#{issue.id}", :onclick => 'addInLineChild(this)' %></td>
+	    <td>
+	    	<%= link_to_remote "Add", :url => {:action => 'get_inline_issue_form'},
+	    										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",
+	    										 :update => "issue-#{issue.id}-inline-child" %>
+	    	|
+	    	<%= link_to_remote "Edit", 'javascript:void(0)', :id => "edit_inline_child_for_issue-#{issue.id}", :onclick => 'addInLineChild(this)' %>
+	    </td>
 		</tr>
+		<tr>
+			<td colspan="9">
+				<div id="issue-<%= issue.id%>-inline-child"></div>
+			</td>	
+		<tr>
 	<% end -%>
 	</tbody>
 </table>
 </div>
-<% end -%>
+<% #TODO, this form is form supporting right_click #end -%>

@@ -89,7 +89,7 @@ module ScrumUserstoriesHelper
 			content = '' 
 			if ["int", "float"].include? field_format 
 				value = issue_accumelated_custom_values(issue, column.custom_field)
-				if issue.children.length > 0
+				if issue.children.length > 0 or !issue.is_scrum_task?
 					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 				else
 					content = value > 0 ? value : ''
@@ -99,13 +99,13 @@ module ScrumUserstoriesHelper
 				content = column_content(column, issue)
 			end					
   	elsif column.name == :estimated_hours  		
-  		if issue.children.length > 0
+  		if issue.children.length > 0 or !issue.is_scrum_task?
 				content = value and value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 			else
 				value = 0 unless value;
 				
 				content = value > 0 ? value : ''
-				"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
+				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
 			end			  	
   	else
   		column_content(column, issue)

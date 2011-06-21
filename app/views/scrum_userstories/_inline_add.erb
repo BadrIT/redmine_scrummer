@@ -1,19 +1,24 @@
+<% inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : "new_issue_inline_div" %>
+<% tracker_field_id    = @parent_issue ? "issue_tracker_id_child_for_#{@parent_issue.id}" : "issue_tracker_id" %>
+<% inline_form_id      = @parent_issue ? "inline_child_form_for_#{@parent_issue.id}" : "issue-form" %>
 
-<div id='new_issue_inline_div' class='inline-issue-add'>
+<div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id='inline_new_issue_errors'></div>
 	<% remote_form_for :issue, :url => {:controller => :scrum_userstories, :action => :inline_add},
-														 :html => {:id => 'issue-form'} do |f|%>
+														 :html => {:id => inline_form_id} do |f|%>
 	
 	<%= f.hidden_field :project_id, :value => @project.id %>
 	<%= f.hidden_field :priority_id, :value => IssuePriority.default.id %>
-	<%= f.hidden_field :parent_issue_id, :value => nil %>
+	<%= f.hidden_field :parent_issue_id, :value => ( @parent_issue ? @parent_issue.id : nil ) %>
 		
 	<div class='scrum_issue_inline_fields'>
 		<div class='scrum_issue_inline_field'>
-			<%= f.select :tracker_id, @project.trackers.collect {|t| [t.name, t.id]} %>
-			<%= observe_field :issue_tracker_id, :url => { :action => :refresh_inline_add_form, :project_id => @project, :id => @issue },
-			                                     :update => :inline_add_container,
-			                                     :with => "Form.serialize('issue-form')" %>
+			
+			
+			<%= select_tag "issue[tracker_id]", options_from_collection_for_select(@project.trackers, 'id', 'name'), :id => tracker_field_id %>
+			<%= observe_field tracker_field_id, :url => { :action => :refresh_inline_add_form, :project_id => @project, :id => @issue },
+			                                     :update => inline_issue_div_id,
+			                                     :with => "Form.serialize('#{inline_form_id}')" %>
 		</div>
 		
 		<div class='name_size_container'>

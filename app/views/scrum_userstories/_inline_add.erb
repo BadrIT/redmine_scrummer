@@ -1,6 +1,12 @@
-<% inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : "new_issue_inline_div" %>
-<% tracker_field_id    = @parent_issue ? "issue_tracker_id_child_for_#{@parent_issue.id}" : "issue_tracker_id" %>
-<% inline_form_id      = @parent_issue ? "inline_child_form_for_#{@parent_issue.id}" : "issue-form" %>
+<% inline_issue_div_id = @issue.new_record? ? "inline_edit_for_#{@issue.id}" : "new_issue_inline_div" %>
+<% inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : inline_issue_div_id %>
+
+<% tracker_field_id    = @issue.new_record? ? "issue_tracker_id" : "issue_tracker_id_for_#{@issue.id}" %>
+<% tracker_field_id    = @parent_issue ? "issue_tracker_id_child_for_#{@parent_issue.id}" : tracker_field_id %>
+
+<% inline_form_id      = @issue.new_record? ? "issue-form" : "inline_edit_form_for_#{@issue.id}" %>
+<% inline_form_id      = @parent_issue ? "add_inline_child_form_for_#{@parent_issue.id}" : inline_form_id %>
+
 <% issue_id      			 = @issue ? @issue.id : nil %>
 <% hide_cancel 				||= false %>
 

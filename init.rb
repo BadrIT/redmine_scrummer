@@ -30,7 +30,7 @@ Redmine::Plugin.register :redmine_scrummer do
   requires_redmine :version_or_higher => '1.2.0' 
   
   project_module :scrummer do
-  	permission :scrum_user_stories, 										{ :scrum_userstories => [:index] }
+  	permission :scrum_user_stories, 										{ :scrum_userstories => [:index, :issues_list] }
   	permission :scrum_user_stories_add_inline, 					{ :scrum_userstories => [:inline_add, :get_inline_issue_form] }
   	permission :scrum_user_stories_manipulate_inline, 	{ :scrum_userstories => [:refresh_inline_add_form, :update_single_field] }
   	

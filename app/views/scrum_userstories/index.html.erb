@@ -1,10 +1,11 @@
+<%= context_menu issues_context_menu_path %>
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
     <%= javascript_tag "var task_tracker_id = #{Tracker.scrum_task_tracker.id}"%>    
     <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.jeditable.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
-    <%= javascript_tag "var tracker_id_observer_url = '" + url_for( :action => :refresh_inline_add_form, :project_id => @project, :id => @issue ) + "'"%>
+    <%= javascript_include_tag 'context_menu.js'%>
     <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
 <% end %>
 
@@ -21,7 +22,7 @@
 <fieldset id="inline-add" class="collapsible">
 	<legend onclick="toggleFieldset(this);"><%= l(:label_scrum_stories_inline_add) %></legend>
 	<div id='inline_add_container'>
-		<%= render :partial => 'inline_add' %>
+		<%= render :partial => 'inline_add', :locals => {:hide_cancel => true} %>
 	</div>
 </fieldset>
 
@@ -89,5 +90,3 @@
 <% content_for :sidebar do %>
     <%= render :partial => 'issues/sidebar' %>
 <% end %>
-
-<%= context_menu issues_context_menu_path %>

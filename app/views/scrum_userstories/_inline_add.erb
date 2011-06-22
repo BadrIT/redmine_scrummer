@@ -1,12 +1,15 @@
 <% inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : "new_issue_inline_div" %>
 <% tracker_field_id    = @parent_issue ? "issue_tracker_id_child_for_#{@parent_issue.id}" : "issue_tracker_id" %>
 <% inline_form_id      = @parent_issue ? "inline_child_form_for_#{@parent_issue.id}" : "issue-form" %>
+<% issue_id      			 = @issue ? @issue.id : nil %>
+<% hide_cancel 				||= false %>
 
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id='inline_new_issue_errors'></div>
 	<% remote_form_for :issue, :url => {:controller => :scrum_userstories, :action => :inline_add},
 														 :html => {:id => inline_form_id} do |f|%>
 	
+	<%= hidden_field_tag :id, @issue.id unless @issue.new_record? %>
 	<%= f.hidden_field :project_id, :value => @project.id %>
 	<%= f.hidden_field :priority_id, :value => IssuePriority.default.id %>
 	<%= f.hidden_field :parent_issue_id, :value => ( @parent_issue ? @parent_issue.id : nil ) %>
@@ -61,6 +64,9 @@
 		
 		<div class='scrum_issue_inline_submit'>	
 			<%= f.submit %>
+			<% unless hide_cancel %>
+				<%= submit_tag "Cancel", :type => 'button', :onclick => 'cancelInlineChild(this)' %>
+			<% end %>
 		</div>
 	</div>
 	

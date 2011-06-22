@@ -1,3 +1,5 @@
+<% query  ||= @query %>
+<% issues ||= @issues %>
 <script type='text/javascript'>
 	$j(function() {
 		$j('.edit').editable('<%= url_for :action => :update_single_field, :params => {:project_id => @project.id}%>',
@@ -13,15 +15,17 @@
 	});
 </script>
 
-<% #TODO, this form is form supporting right_click #form_tag({}) do -%>
-<%= hidden_field_tag 'back_url', url_for(params) %>
+<% form_tag('', {:id => 'context_menu_form'}) do -%>
+	<%= hidden_field_tag 'back_url', url_for(params) %>
+<% end %>
+<%= link_to_function("#{l(:button_collapse_all)}/#{l(:button_expand_all)}", "toggleAllRowGroups(this)", :class => 'toggle-all') %>
 <div class="autoscroll">
-<table class="list issues">
+<table id='issue-table' class="list issues">
     <thead>
     	<tr>    		
         <th class="checkbox hide-when-print"><%= link_to image_tag('toggle_check.png'), {}, :onclick => 'toggleIssuesSelection(Element.up(this, "form")); return false;',
                                                            :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}" %>
-        </th>			
+        </th>
         <% query.columns.each do |column| %>
           <%= column_header(column) %>
         <% end %>
@@ -31,17 +35,6 @@
 	<% previous_group = false %>
 	<tbody>
 	<% scrum_issues_list(issues) do |issue, level| -%>
-	  <% if @query.grouped? && (group = @query.group_by_column.value(issue)) != previous_group %>
-	    <% reset_cycle %>
-	    <tr class="group open">
-	    	<td colspan="<%= query.columns.size + 2 %>">
-	    		<span class="expander" onclick="toggleRowGroup(this); return false;">&nbsp;</span>
-	      	<%= group.blank? ? 'None' : column_content(@query.group_by_column, issue) %> <span class="count">(<%= @issue_count_by_group[group] %>)</span>
-	        <%= link_to_function("#{l(:button_collapse_all)}/#{l(:button_expand_all)}", "toggleAllRowGroups(this)", :class => 'toggle-all') %>
-	    	</td>
-			</tr>
-			<% previous_group = group %>
-	  <% end %>
 		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.children.length > 0 ? "group open" : nil%>">			
 			
 		  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
@@ -61,20 +54,30 @@
 	    <% end %>    
 	    
 	    <td>
-	    	<%= link_to_remote "Add", :url => {:action => 'get_inline_issue_form'},
+	    	<%= link_to_remote image_tag( scrummer_image_path('add_issue.gif') ), 
+	    										 :url => {:action => 'get_inline_issue_form'},
 	    										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",
 	    										 :update => "issue-#{issue.id}-inline-child" %>
-	    	|
-	    	<%= link_to_remote "Edit", 'javascript:void(0)', :id => "edit_inline_child_for_issue-#{issue.id}", :onclick => 'addInLineChild(this)' %>
-	    </td>
+	    	<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
+	    										 :url => {:action => 'get_inline_issue_form'},
+	    										 :with => "'issue_id=#{issue.id}&project_id=#{@project.id}'",
+	    										 :update => "issue-#{issue.id}-inline-child" %>
+	    	<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list) %>
+	    	<%= link_to_remote image_tag( scrummer_image_path('remove_issue.gif') ), 
+	    										 :url => (issue_path issue.id),
+	    										 :method => :delete,
+	    										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ query.id }&project_id=#{@project.identifier}')",
+	    										 :update => "issues_list" %>
+	    </td>	    
 		</tr>
-		<tr>
+		<!-- The following Tr is sued as a place holder for inline-add-child -->
+		<tr level="<%= (level + 1).to_s %>">
 			<td colspan="9">
-				<div id="issue-<%= issue.id%>-inline-child"></div>
+				<div id="issue-<%= issue.id%>-inline-child" class='inline_child_container'></div>
 			</td>	
-		<tr>
+		</tr>
+		
 	<% end -%>
 	</tbody>
 </table>
 </div>
-<% #TODO, this form is form supporting right_click #end -%>

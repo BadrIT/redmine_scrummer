@@ -9,11 +9,11 @@ class ScrumUserstoriesController < IssuesController
 	prepend_before_filter :check_for_default_issue_status, :only => [:index]
 	prepend_before_filter :check_for_default_issue_priority, :only => [:index]
 	
-	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form]						# must be called after find_scrum_project
-	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form]
+	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list]						# must be called after find_scrum_project
+	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list]
 	
 	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
-	
+	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form]	
 	
 	def update_single_field
 		new_value = params[:value]
@@ -53,8 +53,8 @@ class ScrumUserstoriesController < IssuesController
 	end
 	
 	def get_inline_issue_form
-		parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
-		@parent_issue = parent_issue_id ? Issue.find(parent_issue_id) : nil 
+		issue_id = params[:issue_id] if params[:issue_id]
+		@issue = Issue.find(issue_id) if issue_id
 		
 		respond_to do |format|
 			format.js { render :partial => 'inline_add' }
@@ -81,13 +81,16 @@ class ScrumUserstoriesController < IssuesController
   rescue ActiveRecord::RecordNotFound
     render_404    
   end
+  
+  def issues_list
+  	initialize_sort
+  	
+    load_issues_for_query
+    
+  	render :partial => 'list'
+  end
 
-	def refresh_inline_add_form
-		parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
-		parent_issue_id = params[:issue][:parent_issue_id] if params[:issue][:parent_issue_id]
-		
-		@parent_issue = parent_issue_id and !parent_issue_id.empty? ? Issue.find(parent_issue_id) : nil 		
-		
+	def refresh_inline_add_form		
 		respond_to do |format|
 			format.js {render :partial => 'inline_add'}
 		end
@@ -117,6 +120,13 @@ class ScrumUserstoriesController < IssuesController
   end
         
   protected
+		
+		def find_parent_issue 
+			parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
+			parent_issue_id ||= params[:issue][:parent_issue_id] if params[:issue] and params[:issue][:parent_issue_id]
+			
+			@parent_issue = (parent_issue_id and !parent_issue_id.empty?) ? Issue.find(parent_issue_id) : nil 
+		end
   
   	def find_query
   		retrieve_query
@@ -150,10 +160,9 @@ class ScrumUserstoriesController < IssuesController
 	    sort_update(@query.sortable_columns)
   	end
   	 
-  	def find_scrum_project  	 
+  	def find_scrum_project
 	    project_id = (params[:issue] && params[:issue][:project_id]) || params[:project_id]
 	    @project = Project.find(project_id)
-	    logger.info 'project.id : ' + @project.id.to_s		   
 	  rescue ActiveRecord::RecordNotFound
 	    render_404
 	  end

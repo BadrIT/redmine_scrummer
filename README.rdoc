@@ -9,6 +9,7 @@ More details can be found at in the doc directory or on the official website htt
 rake db:create
 rake db:migrate
 rake redmine:load_default_data
+rake db:migrate_plugins
 rake redmine_scrummer:load_default_data
 
 Include scrummer module in the your redmine projects

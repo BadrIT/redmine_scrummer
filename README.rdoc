@@ -1,3 +1,14 @@
-= scrummer
+= Redmine
 
-Description goes here
+Redmine is a flexible project management web application written using Ruby on Rails framework.
+
+More details can be found at in the doc directory or on the official website http://www.redmine.org
+
+= Installation
+
+rake db:create
+rake db:migrate
+rake redmine:load_default_data
+rake redmine_scrummer:load_default_data
+
+Include scrummer module in the your redmine projects

@@ -35,7 +35,7 @@
 	<% previous_group = false %>
 	<tbody>
 	<% scrum_issues_list(issues) do |issue, level| -%>
-		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.children.length > 0 ? "group open" : nil%>">			
+		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:short_name).downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.children.length > 0 ? "group open" : nil%>">			
 			
 		  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
 	       

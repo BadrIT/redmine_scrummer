@@ -99,3 +99,5 @@ tr:hover .edit-placeholder{display:block; color: #BBBBBB; }
 td.cf_5 {width: 85px;}
 td.estimated_hours {width: 85px;}
 
+tr.us-issue{background-color:#EEEEEE}
+tr.task-issue{background-color:#FFFFFF}

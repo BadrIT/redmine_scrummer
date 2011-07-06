@@ -89,4 +89,5 @@
 
 <% content_for :sidebar do %>
     <%= render :partial => 'issues/sidebar' %>
+    <%= render :partial => 'statistics', :locals => {:issues => @all_issues, :query => @query} %>
 <% end %>

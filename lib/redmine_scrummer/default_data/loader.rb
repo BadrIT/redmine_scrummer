@@ -12,7 +12,7 @@ module RedmineScrummer
           
           filters = {"status_id"=>{:values=>["1"], :operator=>"o"}}
           columns =  [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2] 
-          Query.find_or_create_by_scrummer_caption(:scrummer_caption => "User-Stories", :name => l(:label_scrum_user_stories), :filters => filters, :is_public => true, :column_names => columns)
+          Query.find_or_create_by_scrummer_caption(:scrummer_caption => "User-Stories", :name => l(:label_scrum_user_stories), :filters => filters, :is_public => true, :column_names => columns, :sort_criteria => [:id])
         
           Tracker.find_or_create_by_name(:is_scrum => true, :name => 'Scrum-UserStory', :is_in_roadmap => true, :is_in_chlog => true, :position => 1)
           Tracker.find_or_create_by_name(:is_scrum => true, :name => 'Scrum-Task', :is_in_roadmap => true, :is_in_chlog => true, :position => 2)
@@ -211,7 +211,6 @@ module RedmineScrummer
     
     
           # add story size custom field
-          require "scrummer_constants"
           story_size_custom_field = IssueCustomField.find_or_create_by_name(:name => Scrummer::Constants::CustomStorySizeFieldName,
                                                             :field_format => 'list',
                                                             :possible_values => Scrummer::Constants::StorySizes.map{|size| size.to_s},

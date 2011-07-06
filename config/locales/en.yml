@@ -13,3 +13,9 @@ en:
   label_scrum_sprint_planing: "Sprint Planning"
   label_scrum_release_planing: "Release Planning"
   label_scrum_charts: "index Charts"
+  
+  label_statistics: "Statistics"
+  label_total_points: "Total Points:"
+  label_total_estimation: "Total Est Hrs:"
+  label_total_remaining: "Total Remaining Hrs:"
+  label_total_actual: "Total Actual Hrs:"

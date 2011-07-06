@@ -1,5 +1,3 @@
-require 'scrummer_constants'
-
 module ScrumUserstoriesHelper
 			
 	#unloadable # prevent it from being unloaded in development mode
@@ -144,6 +142,28 @@ module ScrumUserstoriesHelper
     level
   end
 
+  def calculate_statistics(issues, query)
+    result = {:total_story_size => 0.0,
+              :total_estimate => 0.0,
+              :total_actual => 0.0,
+              :total_remaining => 0.0}
+    
+    story_column = query.columns.find{|c| c.caption == Scrummer::Constants::CustomStorySizeFieldName}
+    to_do_column = query.columns.find{|c| c.caption == Scrummer::Constants::RemainingHoursCustomFieldName}
+    
+    scrum_issues_list(issues) do |issue, level|
+      if issue.parent.nil? || issues.exclude?(issue.parent)
+        result[:total_estimate] += issue.estimated_hours.to_f
+        result[:total_actual]   += issue.spent_hours.to_f
+      end
+      
+      result[:total_story_size] += story_column.value(issue).to_f 
+      result[:total_remaining]  += to_do_column.value(issue).to_f 
+    end 
+    
+    result
+  end
+  
 	def scrummer_image_path path
 		'../plugin_assets/redmine_scrummer/images/' + path
 	end

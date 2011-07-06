@@ -101,3 +101,13 @@ td.estimated_hours {width: 85px;}
 
 tr.us-issue{background-color:#EEEEEE}
 tr.task-issue{background-color:#FFFFFF}
+
+#statistics .label {
+    width: 150px;
+    display: inline;
+    float: left;
+}
+
+#statistics .value {
+    float: left;
+}

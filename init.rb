@@ -1,5 +1,6 @@
 require 'redmine'
 require 'dispatcher'
+require "scrummer_constants"
 
 Dispatcher.to_prepare :redmine_scrummer do
 	require_dependency 'issue'

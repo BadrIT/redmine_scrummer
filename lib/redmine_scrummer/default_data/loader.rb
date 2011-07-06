@@ -12,7 +12,7 @@ module RedmineScrummer
           
           filters = {"status_id"=>{:values=>["1"], :operator=>"o"}}
           columns =  [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2] 
-          Query.find_or_create_by_name(:name => l(:label_scrum_user_stories), :filters => filters, :is_public => true, :column_names => columns)
+          Query.find_or_create_by_scrummer_caption(:scrummer_caption => "User-Stories", :name => l(:label_scrum_user_stories), :filters => filters, :is_public => true, :column_names => columns)
         
           Tracker.find_or_create_by_name(:is_scrum => true, :name => 'Scrum-UserStory', :is_in_roadmap => true, :is_in_chlog => true, :position => 1)
           Tracker.find_or_create_by_name(:is_scrum => true, :name => 'Scrum-Task', :is_in_roadmap => true, :is_in_chlog => true, :position => 2)
@@ -32,10 +32,11 @@ module RedmineScrummer
             Role.find_all_by_is_scrum(true).each do |role|
               IssueStatus.find_all_by_is_scrum(true).each do |old_status|
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
-                  Workflow.create(:role_id => role.id, 
+                  conditions = {:role_id => role.id, 
                                   :tracker_id => tracker.id, 
                                   :old_status_id => old_status.id, 
-                                  :new_status_id => new_status.id)
+                                  :new_status_id => new_status.id}
+                  Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
                 end
               end
             end
@@ -211,8 +212,7 @@ module RedmineScrummer
     
           # add story size custom field
           require "scrummer_constants"
-          story_size_custom_field = IssueCustomField.find_by_name(Scrummer::Constants::CustomStorySizeFieldName)
-          story_size_custom_field ||= IssueCustomField.create(:name => Scrummer::Constants::CustomStorySizeFieldName,
+          story_size_custom_field = IssueCustomField.find_or_create_by_name(:name => Scrummer::Constants::CustomStorySizeFieldName,
                                                             :field_format => 'list',
                                                             :possible_values => Scrummer::Constants::StorySizes.map{|size| size.to_s},
                                                             :is_required => true,
@@ -232,8 +232,7 @@ module RedmineScrummer
     
           
           # add remaining time custom field
-          remaining_hours_custom_field = IssueCustomField.find_by_name(Scrummer::Constants::RemainingHoursCustomFieldName)                                                      
-          remaining_hours_custom_field ||= IssueCustomField.create(:name => Scrummer::Constants::RemainingHoursCustomFieldName,
+          remaining_hours_custom_field = IssueCustomField.find_or_create_by_name(:name => Scrummer::Constants::RemainingHoursCustomFieldName,
                                                             :field_format => 'float',
                                                             :default_value => "0")
           remaining_hours_custom_field.save!

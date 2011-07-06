@@ -44,7 +44,7 @@ Redmine::Plugin.register :redmine_scrummer do
   # to solve the issue when try to run migrations before 
   # Queries table is existing, it was throwing an exception
   begin
-    query_id = Query.find_by_name("User-Stories").try(:id)
+    query_id = Query.find_by_scrummer_caption("User-Stories").try(:id)
   rescue
   end
 

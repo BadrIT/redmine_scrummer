@@ -18,7 +18,9 @@
 <% form_tag('', {:id => 'context_menu_form'}) do -%>
 	<%= hidden_field_tag 'back_url', url_for(params) %>
 <% end %>
-<%= link_to_function("#{l(:button_collapse_all)}/#{l(:button_expand_all)}", "toggleAllRowGroups(this)", :class => 'toggle-all') %>
+<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
+<%= " / " %>
+<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
 <div class="autoscroll">
 <table id='issue-table' class="list issues">
     <thead>

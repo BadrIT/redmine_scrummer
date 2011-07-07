@@ -18,20 +18,32 @@ module RedmineScrummer
 		module InstanceMethods
 			
 			def is_user_story?
-				name == Scrummer::Constants::ScrumUserStoryTrackerName
+			  :scrummer_caption == :userstory
 			end
 			
 			def is_epic?
-				name == Scrummer::Constants::ScrumEpicTrackerName
+			  :scrummer_caption == :epic
 			end
 			
 			def is_theme?
-				name == Scrummer::Constants::ScrumThemeTrackerName
+				:scrummer_caption == :theme
 			end
 			
 			def is_scrum_task?
-				name == Scrummer::Constants::ScrumTaskTrackerName
+				:scrummer_caption == :task
 			end
+			
+			def defect?
+			  :scrummer_caption == :defect			 
+			end
+			
+			def defectsuite?
+        :scrummer_caption == :defectsuite       
+      end
+      
+      def refactor?
+        :scrummer_caption == :refactor       
+      end
 		end
 	end
 end

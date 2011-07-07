@@ -18,7 +18,8 @@ class ScrumUserstoriesController < IssuesController
 	def update_single_field
 		new_value = params[:value]
 
-		if params[:id] and params[:id] =~ /custom/
+    # custom field for todo
+		if params[:id] =~ /custom/
 			matched_groups = params[:id].match(/issue-(\d+)-custom-field-(.+)/)
 			issue_id = matched_groups[1]
 			column_name = matched_groups[2].to_sym
@@ -28,26 +29,47 @@ class ScrumUserstoriesController < IssuesController
 			
 			@issue = Issue.find(issue_id)
 			@issue.custom_field_values = {custom_field.id => new_value}
-	
-			if(@issue.save)
-				render :text => new_value
-			else
-				render :text => 'Errors in saving'
-			end
-		else
+	  
+	    if @issue.save
+        render :text => new_value
+      else
+        render :text => 'Errors in saving'
+      end
+      
+	  elsif params[:id] =~ /spent_hours/ && params[:value] =~ /^\+(.*)/
+	    # virtual fields like actual 
+      matched_groups = params[:id].match(/issue-(\d+)-spent_hours/)
+      issue_id = matched_groups[1]
+      value = params[:value].match(/^\+(.*)/)[1]
+      
+      @issue = Issue.find(issue_id)
+      @time_entry ||= TimeEntry.new(:project => @issue.project, :issue => @issue, :user => User.current, :spent_on => User.current.today)
+      @time_entry.hours = value
+      
+      if @time_entry.hours > 0 && @time_entry.save
+        render :text => @issue.spent_hours.to_s
+      else
+        render :text => 'Errors in saving'
+      end
+      
+		elsif params[:id] =~ /-field-/
+		  # fields like estimated hours
 			matched_groups = params[:id].match(/issue-(\d+)-field-(.+)/)
 			issue_id = matched_groups[1]
 			column_name = matched_groups[2].to_sym
 			
 			@issue = Issue.find(issue_id)
 			@issue.update_attributes(column_name => new_value)
-	
-			if(@issue.save)
-				render :text => new_value
-			else
-				render :text => 'Errors in saving'
-			end
+			
+			if @issue.save
+        render :text => new_value
+      else
+        render :text => 'Errors in saving'
+      end
+    else
+      render :text => 'Errors in saving'
 		end
+		
 	rescue Exception => e
 		render :text => 'Exception Occured'
 	end
@@ -148,6 +170,8 @@ class ScrumUserstoriesController < IssuesController
       @issue_count = @query.issue_count
       @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
       @offset ||= @issue_pages.current.offset
+      @all_issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
+                              :order => sort_clause)
       @issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
                               :order => sort_clause,
                               :offset => @offset,

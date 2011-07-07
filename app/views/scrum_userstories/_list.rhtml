@@ -5,20 +5,29 @@
 		$j('.edit').editable('<%= url_for :action => :update_single_field, :params => {:project_id => @project.id}%>',
 												 {
 												 	onblur 		 : 'submit',
-												 	placeholder: '<span class="edit-placeholder">Click to Edit</span>',
+												 	placeholder: '<span class="edit-placeholder">Edit</span>',
 												 	submitdata : {
 												 									authenticity_token : '<%= form_authenticity_token %>'
 												 							 },
-												 	indicator  : '<%= image_tag 'loading.gif'%>' 
+												 	indicator  : '<%= image_tag 'loading.gif'%>' ,
+												 	data: function(value, settings) {
+												 	  return $j(this).hasClass("addition") ? "+0" : value;
+												 	}
 												 });
-		
+												 
+    $j('.subject-contents').tipsy();
+    	
+    default_issue_description = "<%= "As a <role> I want to <goal> so that <reason>\\nVerification Points:\\n<Point1>\\n<Point2>" %>";
+    clear_form_elements($j(".inline-issue-add"));	
 	});
 </script>
 
 <% form_tag('', {:id => 'context_menu_form'}) do -%>
 	<%= hidden_field_tag 'back_url', url_for(params) %>
 <% end %>
-<%= link_to_function("#{l(:button_collapse_all)}/#{l(:button_expand_all)}", "toggleAllRowGroups(this)", :class => 'toggle-all') %>
+<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
+<%= " / " %>
+<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
 <div class="autoscroll">
 <table id='issue-table' class="list issues">
     <thead>
@@ -27,7 +36,7 @@
                                                            :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}" %>
         </th>
         <% query.columns.each do |column| %>
-          <%= column_header(column) %>
+          <%= column_short_header(column) %>
         <% end %>
         <th>Actions</th>
 			</tr>
@@ -35,20 +44,13 @@
 	<% previous_group = false %>
 	<tbody>
 	<% scrum_issues_list(issues) do |issue, level| -%>
-		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.children.length > 0 ? "group open" : nil%>">			
+		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:short_name).downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.children.length > 0 ? "group open" : nil%>">			
 			
 		  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
 	       
 	    <% query.columns.each do |column| %>
 	    	
 	    	<td class='<%= column.css_classes%>'>
-	    		<% if column.name == :subject -%>
-	    			<% if issue.children.length > 0 -%>
-		    			<span class="expander" onclick="toggleScrumRowGroup(this); return false;" onmouseover="$j(this).addClass('hover')" onmouseout="$j(this).removeClass('hover')">&nbsp;&nbsp;</span>
-		    		<% else %>
-		    			<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		    		<% end %>		    	
-		    	<% end -%>
 	    		<%= scrum_column_content(column, issue) %>
 	    	</td>
 	    <% end %>    

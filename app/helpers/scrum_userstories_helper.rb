@@ -1,5 +1,3 @@
-require 'scrummer_constants'
-
 module ScrumUserstoriesHelper
 			
 	#unloadable # prevent it from being unloaded in development mode
@@ -8,7 +6,23 @@ module ScrumUserstoriesHelper
 	
 	include CustomFieldsHelper unless included_modules.include? CustomFieldsHelper
 	
-	
+	def column_short_header(column)
+	  todo_column_caption       = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
+	  story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
+	  
+	  caption = column.caption
+	  
+	  short_headers = {todo_column_caption        => "TODO",
+	                   story_size_column_caption  => "Size",
+	                   l("field_estimated_hours") => "Estimate"}
+	                   
+    caption = short_headers[caption] || caption
+	  
+    column.sortable ? sort_header_tag(column.name.to_s, :caption => caption,
+                                                        :default_order => column.default_order) : 
+                      content_tag('th', caption)
+  end
+  
 	def custom_field_tag_with_add_class_to_float_inputs(name, custom_value)	
 	  custom_field = IssueCustomField.find(custom_value.custom_field_id)
     field_name = "#{name}[custom_field_values][#{custom_field.id}]"
@@ -74,15 +88,30 @@ module ScrumUserstoriesHelper
   	if value.class == IssueStatus and issue.status.is_scrum
   		'<b>' + value.short_name + '</b>'
   	elsif column.name == :subject and issue.scrum_issue?
-  		'<b>' + '<span class="issues-list-issue-id">#' + issue.id.to_s + '</span> ' + issue.tracker.short_name + '</b> : ' + column_content(column, issue) 
+  	  prefix = if issue.children.blank? 
+  	    if issue.is_scrum_task?
+  	     "<span>&nbsp;&nbsp;</span>"
+  	    else
+  	     "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"
+  	    end
+      else
+        "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$j(this).addClass('hover')\" onmouseout=\"$j(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
+      end   
+      
+  		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
+  		"#{issue.tracker.short_name}</b>:</div>" +
+  		"<div class='subject-contents' original-title='#{issue.description}'>&nbsp;#{column_content(column, issue)}</div>" 
   	elsif column.name == :spent_hours and issue.scrum_issue?
   		content = column_content(column, issue)
   		
+  		output_value = value > 0 ? value.to_s : ""
+  		content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
+  		
   		unless issue.children.empty?
-  			content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
-  		else
-  			content = value > 0 ? content : ''
+  			content = value > 0 ? "<span align='center' class='accumelated-result'>#{content}</span>" : content
   		end
+  		
+  		content
   	elsif column.respond_to? :custom_field and issue.scrum_issue?
 			field_format = column.custom_field.field_format
 			
@@ -102,7 +131,7 @@ module ScrumUserstoriesHelper
   		if issue.children.length > 0 or !issue.is_scrum_task?
 				content = value and value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 			else
-				value = 0 unless value;
+				value ||= 0
 				
 				content = value > 0 ? value : ''
 				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
@@ -144,6 +173,31 @@ module ScrumUserstoriesHelper
     level
   end
 
+  def calculate_statistics(issues, query)
+    result = {:total_story_size => 0.0,
+              :total_estimate => 0.0,
+              :total_actual => 0.0,
+              :total_remaining => 0.0}
+    
+    todo_column_caption       = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
+    story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
+    
+    story_column = query.columns.find{|c| c.caption == story_size_column_caption}
+    to_do_column = query.columns.find{|c| c.caption == todo_column_caption}
+    
+    scrum_issues_list(issues) do |issue, level|
+      if issue.parent.nil? || issues.exclude?(issue.parent)
+        result[:total_estimate] += issue.estimated_hours.to_f
+        result[:total_actual]   += issue.spent_hours.to_f
+      end
+      
+      result[:total_story_size] += story_column.value(issue).to_f 
+      result[:total_remaining]  += to_do_column.value(issue).to_f 
+    end 
+    
+    result
+  end
+  
 	def scrummer_image_path path
 		'../plugin_assets/redmine_scrummer/images/' + path
 	end

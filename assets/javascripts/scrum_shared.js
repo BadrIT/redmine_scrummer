@@ -94,3 +94,24 @@ ContextMenu.prototype.showMenu = function(e) {
        if (window.parseStylesheets) { window.parseStylesheets(); } // IE
     }});
 }
+
+function clear_form_elements(ele) {
+    $j(ele).find(':input').each(function() {
+        switch(this.type) {
+            case 'password':
+            case 'select-multiple':
+            case 'select-one':
+            case 'text':
+              $j(this).val('');
+              break;
+            case 'textarea':
+                value = typeof(default_issue_description) == "undefined" ? "" : default_issue_description;
+                $j(this).val(value);
+                break;
+            case 'checkbox':
+            case 'radio':
+                this.checked = false;
+        }
+    });
+
+}

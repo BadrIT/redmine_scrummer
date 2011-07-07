@@ -1,0 +1,19 @@
+<% statistics = calculate_statistics(issues, query) -%>
+
+<div id="statistics">
+  <h3><%= l(:label_statistics) %></h3>
+  <div class="label"><%= l(:label_total_points) %></div>
+  <span class="value"><%= statistics[:total_story_size] %></span>
+  <br/>
+  
+  <div class="label"><%= l(:label_total_estimation) %></div>
+  <span class="value"><%= statistics[:total_estimate] %></span>
+  <br/>
+  
+  <div class="label"><%= l(:label_total_remaining) %></div>
+  <span class="value"><%= statistics[:total_remaining] %></span>
+  <br/>
+  
+  <div class="label"><%= l(:label_total_actual) %></div>
+  <span class="value"><%= statistics[:total_actual] %></span>
+</div>

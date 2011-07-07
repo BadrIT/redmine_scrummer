@@ -27,7 +27,7 @@
                                                            :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}" %>
         </th>
         <% query.columns.each do |column| %>
-          <%= column_header(column) %>
+          <%= column_short_header(column) %>
         <% end %>
         <th>Actions</th>
 			</tr>
@@ -42,13 +42,6 @@
 	    <% query.columns.each do |column| %>
 	    	
 	    	<td class='<%= column.css_classes%>'>
-	    		<% if column.name == :subject -%>
-	    			<% if issue.children.length > 0 -%>
-		    			<span class="expander" onclick="toggleScrumRowGroup(this); return false;" onmouseover="$j(this).addClass('hover')" onmouseout="$j(this).removeClass('hover')">&nbsp;&nbsp;</span>
-		    		<% else %>
-		    			<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-		    		<% end %>		    	
-		    	<% end -%>
 	    		<%= scrum_column_content(column, issue) %>
 	    	</td>
 	    <% end %>    

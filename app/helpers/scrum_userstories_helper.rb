@@ -6,7 +6,23 @@ module ScrumUserstoriesHelper
 	
 	include CustomFieldsHelper unless included_modules.include? CustomFieldsHelper
 	
-	
+	def column_short_header(column)
+	  caption = column.caption
+	  
+	  if caption == Scrummer::Constants::RemainingHoursCustomFieldName
+	    caption = "TODO"
+	  elsif caption == Scrummer::Constants::CustomStorySizeFieldName
+	    caption = "Size"
+	  elsif caption == l("field_estimated_hours")
+	    caption = "Estimate"
+	  end
+	    
+	  
+    column.sortable ? sort_header_tag(column.name.to_s, :caption => caption,
+                                                        :default_order => column.default_order) : 
+                      content_tag('th', caption)
+  end
+  
 	def custom_field_tag_with_add_class_to_float_inputs(name, custom_value)	
 	  custom_field = IssueCustomField.find(custom_value.custom_field_id)
     field_name = "#{name}[custom_field_values][#{custom_field.id}]"
@@ -72,7 +88,15 @@ module ScrumUserstoriesHelper
   	if value.class == IssueStatus and issue.status.is_scrum
   		'<b>' + value.short_name + '</b>'
   	elsif column.name == :subject and issue.scrum_issue?
-  		'<b>' + '<span class="issues-list-issue-id">#' + issue.id.to_s + '</span> ' + issue.tracker.short_name + '</b> : ' + column_content(column, issue) 
+  	  prefix = if issue.children.blank?
+  	    "<span>&nbsp;&nbsp;</span>"
+      else
+        "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$j(this).addClass('hover')\" onmouseout=\"$j(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
+      end   
+      
+  		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
+  		"#{issue.tracker.short_name}</b>:</div>" +
+  		"<div class='subject-contents'>&nbsp;#{column_content(column, issue)}</div>" 
   	elsif column.name == :spent_hours and issue.scrum_issue?
   		content = column_content(column, issue)
   		

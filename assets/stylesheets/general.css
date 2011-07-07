@@ -102,6 +102,13 @@ td.estimated_hours {width: 85px;}
 tr.us-issue{background-color:#EEEEEE}
 tr.task-issue{background-color:#FFFFFF}
 
+table#issue-table td.subject div.prefix{
+  float: left;
+}
+table#issue-table td.subject div.subject-contents{
+  overflow:auto;
+}
+
 #statistics .label {
     width: 150px;
     display: inline;

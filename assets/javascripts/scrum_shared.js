@@ -94,3 +94,21 @@ ContextMenu.prototype.showMenu = function(e) {
        if (window.parseStylesheets) { window.parseStylesheets(); } // IE
     }});
 }
+
+function clear_form_elements(ele) {
+    $j(ele).find(':input').each(function() {
+        switch(this.type) {
+            case 'password':
+            case 'select-multiple':
+            case 'select-one':
+            case 'text':
+            case 'textarea':
+                $j(this).val('');
+                break;
+            case 'checkbox':
+            case 'radio':
+                this.checked = false;
+        }
+    });
+
+}

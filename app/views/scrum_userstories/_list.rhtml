@@ -9,10 +9,15 @@
 												 	submitdata : {
 												 									authenticity_token : '<%= form_authenticity_token %>'
 												 							 },
-												 	indicator  : '<%= image_tag 'loading.gif'%>' 
+												 	indicator  : '<%= image_tag 'loading.gif'%>' ,
+												 	data: function(value, settings) {
+												 	  return $j(this).hasClass("addition") ? "+0" : value;
+												 	}
 												 });
-    $j('.subject-contents').tipsy();	
-    default_issue_description = "<%= Issue.default_description %>";
+												 
+    $j('.subject-contents').tipsy();
+    	
+    default_issue_description = "<%= "As a <role> I want to <goal> so that <reason>\\nVerification Points:\\n<Point1>\\n<Point2>" %>";
     clear_form_elements($j(".inline-issue-add"));	
 	});
 </script>

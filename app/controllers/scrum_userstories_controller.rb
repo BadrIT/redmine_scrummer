@@ -36,16 +36,17 @@ class ScrumUserstoriesController < IssuesController
         render :text => 'Errors in saving'
       end
       
-	  elsif params[:id] =~ /spent_hours/
+	  elsif params[:id] =~ /spent_hours/ && params[:value] =~ /^\+(.*)/
 	    # virtual fields like actual 
       matched_groups = params[:id].match(/issue-(\d+)-spent_hours/)
       issue_id = matched_groups[1]
+      value = params[:value].match(/^\+(.*)/)[1]
       
       @issue = Issue.find(issue_id)
       @time_entry ||= TimeEntry.new(:project => @issue.project, :issue => @issue, :user => User.current, :spent_on => User.current.today)
-      @time_entry.hours = new_value
+      @time_entry.hours = value
       
-      if @time_entry.save
+      if @time_entry.hours > 0 && @time_entry.save
         render :text => @issue.spent_hours.to_s
       else
         render :text => 'Errors in saving'
@@ -65,6 +66,8 @@ class ScrumUserstoriesController < IssuesController
       else
         render :text => 'Errors in saving'
       end
+    else
+      render :text => 'Errors in saving'
 		end
 		
 	rescue Exception => e

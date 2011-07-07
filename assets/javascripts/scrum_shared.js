@@ -102,6 +102,8 @@ function clear_form_elements(ele) {
             case 'select-multiple':
             case 'select-one':
             case 'text':
+              $j(this).val('');
+              break;
             case 'textarea':
                 value = typeof(default_issue_description) == "undefined" ? "" : default_issue_description;
                 $j(this).val(value);

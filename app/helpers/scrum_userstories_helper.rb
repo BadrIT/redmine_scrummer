@@ -9,14 +9,11 @@ module ScrumUserstoriesHelper
 	def column_short_header(column)
 	  caption = column.caption
 	  
-	  if caption == Scrummer::Constants::RemainingHoursCustomFieldName
-	    caption = "TODO"
-	  elsif caption == Scrummer::Constants::CustomStorySizeFieldName
-	    caption = "Size"
-	  elsif caption == l("field_estimated_hours")
-	    caption = "Estimate"
-	  end
-	    
+	  short_headers = {Scrummer::Constants::RemainingHoursCustomFieldName => "TODO",
+	                   Scrummer::Constants::CustomStorySizeFieldName      => "Size",
+	                   l("field_estimated_hours") => "Estimate"}
+	                   
+    caption = short_headers[caption] || caption
 	  
     column.sortable ? sort_header_tag(column.name.to_s, :caption => caption,
                                                         :default_order => column.default_order) : 
@@ -105,7 +102,7 @@ module ScrumUserstoriesHelper
   		content = column_content(column, issue)
   		
   		output_value = value > 0 ? value.to_s : ""
-  		content = "<div align='center' class='edit float' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
+  		content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
   		
   		unless issue.children.empty?
   			content = value > 0 ? "<span align='center' class='accumelated-result'>#{content}</span>" : content

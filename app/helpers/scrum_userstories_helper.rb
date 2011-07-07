@@ -100,11 +100,14 @@ module ScrumUserstoriesHelper
   	elsif column.name == :spent_hours and issue.scrum_issue?
   		content = column_content(column, issue)
   		
+  		output_value = value > 0 ? value.to_s : ""
+  		content = "<div align='center' class='edit float' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
+  		
   		unless issue.children.empty?
-  			content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
-  		else
-  			content = value > 0 ? content : ''
+  			content = value > 0 ? "<span align='center' class='accumelated-result'>#{content}</span>" : content
   		end
+  		
+  		content
   	elsif column.respond_to? :custom_field and issue.scrum_issue?
 			field_format = column.custom_field.field_format
 			
@@ -124,7 +127,7 @@ module ScrumUserstoriesHelper
   		if issue.children.length > 0 or !issue.is_scrum_task?
 				content = value and value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 			else
-				value = 0 unless value;
+				value ||= 0
 				
 				content = value > 0 ? value : ''
 				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"

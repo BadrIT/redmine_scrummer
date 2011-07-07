@@ -5,7 +5,7 @@
 		$j('.edit').editable('<%= url_for :action => :update_single_field, :params => {:project_id => @project.id}%>',
 												 {
 												 	onblur 		 : 'submit',
-												 	placeholder: '<span class="edit-placeholder">Click to Edit</span>',
+												 	placeholder: '<span class="edit-placeholder">Edit</span>',
 												 	submitdata : {
 												 									authenticity_token : '<%= form_authenticity_token %>'
 												 							 },

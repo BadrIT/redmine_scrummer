@@ -1,25 +1,3 @@
-// function collapseAllRowGroups(el) {
-//   var tbody = Element.up(el, 'tbody');
-//   tbody.childElements('tr').each(function(tr) {
-//     if (tr.hasClassName('group')) {
-//       tr.removeClassName('open');
-//     } else {
-//       tr.hide();
-//     }
-//   })
-// }
-// 
-// function expandAllRowGroups(el) {
-//   var tbody = Element.up(el, 'tbody');
-//   tbody.childElements('tr').each(function(tr) {
-//     if (tr.hasClassName('group')) {
-//       tr.addClassName('open');
-//     } else {
-//       tr.show();
-//     }
-//   })
-// }
-
 function toggleScrumRowGroup(el) {
 	var tr = Element.up(el,
 		 'tr');

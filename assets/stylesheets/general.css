@@ -99,8 +99,9 @@ tr:hover .edit-placeholder{display:block; color: #BBBBBB; }
 td.cf_5 {width: 85px;}
 td.estimated_hours {width: 85px;}
 
-tr.us-issue{background-color:#EEEEEE}
+tr.us-issue{background-color:#EEEE9E}
 tr.task-issue{background-color:#FFFFFF}
+tr.epic-issue{background-color:#30be0E}
 
 table#issue-table td.subject div.prefix{
   float: left;

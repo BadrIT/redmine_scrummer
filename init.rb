@@ -4,6 +4,7 @@ require 'dispatcher'
 Dispatcher.to_prepare :redmine_scrummer do
 	require_dependency 'issue'
 	require_dependency 'query'
+	require_dependency 'tracker'
 	
 	unless Issue.included_modules.include? RedmineScrummer::IssuePatch
 		Issue.send :include, RedmineScrummer::IssuePatch
@@ -15,7 +16,7 @@ Dispatcher.to_prepare :redmine_scrummer do
 	
 	unless Tracker.included_modules.include? RedmineScrummer::TrackerPatch
 		Tracker.send :include, RedmineScrummer::TrackerPatch
-	end 
+	end
  
 end
 

@@ -28,11 +28,14 @@
 			<%= observe_field tracker_field_id, :url => { :action => :refresh_inline_add_form, :project_id => @project, :id => @issue },
 			                                     :update => inline_issue_div_id,
 			                                     :with => "Form.serialize('#{inline_form_id}')" %>
+      <br/>
+      <%= f.select :assigned_to_id, @project.members.map{|m| [m.name, m.id]}, :include_blank => l("field_assigned_to") %>
+      
 		</div>
 		
 		<div class='name_size_container'>
 			<div class='scrum_issue_inline_field'>
-				<div class='scrum_issue_inline_label'>Name :</div>
+				<div class='scrum_issue_inline_label'><%= l("field_subject") %></div>
 				<div class='scrum_issue_inline_control'> 
 					<%= f.text_field :subject, :size => 20 %>
 				</div>
@@ -42,7 +45,7 @@
 			
 		<% if @issue.tracker.is_scrum_task? %>
 			<div class='scrum_issue_inline_field'>
-				<div class='scrum_issue_inline_label'>Est. 	(hrs):</div>
+				<div class='scrum_issue_inline_label'>Est. (hrs):</div>
 				<div class='scrum_issue_inline_control'> 
 					<%= f.text_field :estimated_hours, :class => 'inline_issue_field_float_type' %>
 				</div> 
@@ -61,7 +64,7 @@
 		</div>
 		
 		<div class='scrum_issue_inline_field'>
-			<div class='scrum_issue_inline_label'>Description :</div>
+			<div class='scrum_issue_inline_label'><%= l("field_description") %></div>
 			<div class='scrum_issue_inline_control'> 
 				<%= f.text_area :description, :rows => 3, :cols => 50 %>
 			</div>

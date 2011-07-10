@@ -29,7 +29,7 @@
 			                                     :update => inline_issue_div_id,
 			                                     :with => "Form.serialize('#{inline_form_id}')" %>
       <br/>
-      <%= f.select :assigned_to_id, @project.members.map{|m| [m.name, m.id]}, :include_blank => l("field_assigned_to") %>
+      <%= f.select :assigned_to_id, @project.members.map{|m| [m.name, m.user.id]}, :include_blank => l("field_assigned_to") %>
       
 		</div>
 		

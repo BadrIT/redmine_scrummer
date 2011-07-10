@@ -7,7 +7,8 @@ module RedmineScrummer
 				
 				add_available_column QueryColumn.new(:spent_hours)	
 				
-				include InstanceMethods			
+				include InstanceMethods		
+				
 			end
 			
 		end

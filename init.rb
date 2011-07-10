@@ -18,7 +18,19 @@ Dispatcher.to_prepare :redmine_scrummer do
 	unless Tracker.included_modules.include? RedmineScrummer::TrackerPatch
 		Tracker.send :include, RedmineScrummer::TrackerPatch
 	end
- 
+	
+	unless IssueStatus.included_modules.include? RedmineScrummer::IssueStatusPatch
+    IssueStatus.send :include, RedmineScrummer::IssueStatusPatch
+  end
+  
+  unless IssueCustomField.included_modules.include? RedmineScrummer::IssueCustomFieldPatch
+    IssueCustomField.send :include, RedmineScrummer::IssueCustomFieldPatch
+  end
+  
+  unless Role.included_modules.include? RedmineScrummer::RolePatch
+    Role.send :include, RedmineScrummer::RolePatch
+  end
+  
 end
 
 Redmine::Plugin.register :redmine_scrummer do

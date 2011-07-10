@@ -7,9 +7,10 @@ module RedmineScrummer
 				
 				include InstanceMethods
 	
+	      serialize :scrummer_caption
 				
 				def self.scrum_task_tracker
-					Tracker.find_by_name(Scrummer::Constants::ScrumTaskTrackerName)
+					Tracker.find_by_scrummer_caption(:task)
 				end		
 			end
 			

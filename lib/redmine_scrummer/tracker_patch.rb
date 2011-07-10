@@ -19,31 +19,31 @@ module RedmineScrummer
 		module InstanceMethods
 			
 			def is_user_story?
-			  :scrummer_caption == :userstory
+			  scrummer_caption == :userstory
 			end
 			
 			def is_epic?
-			  :scrummer_caption == :epic
+			  scrummer_caption == :epic
 			end
 			
 			def is_theme?
-				:scrummer_caption == :theme
+				scrummer_caption == :theme
 			end
 			
 			def is_scrum_task?
-				:scrummer_caption == :task
+				scrummer_caption == :task
 			end
 			
 			def defect?
-			  :scrummer_caption == :defect			 
+			  scrummer_caption == :defect			 
 			end
 			
 			def defectsuite?
-        :scrummer_caption == :defectsuite       
+        scrummer_caption == :defectsuite       
       end
       
       def refactor?
-        :scrummer_caption == :refactor       
+        scrummer_caption == :refactor       
       end
 		end
 	end

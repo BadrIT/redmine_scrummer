@@ -62,8 +62,5 @@ Redmine::Plugin.register :redmine_scrummer do
   rescue
   end
 
-  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index', :query_id => query_id }, :after => :activity, :param => :project_id
-  menu :project_menu, :scrum_sprint_planing, { :controller => 'scrum_sprints_planning', :action => 'index' }, :after => :activity, :param => :project_id
-  menu :project_menu, :scrum_release_planing, { :controller => 'scrum_releases_planning', :action => 'index' }, :after => :activity, :param => :project_id
-  menu :project_menu, :scrum_charts, { :controller => 'scrum_charts', :action => 'charts' }, :after => :activity, :param => :project_id
+  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index', :query_id => query_id }, :after => :activity, :param => :project_id  
 end

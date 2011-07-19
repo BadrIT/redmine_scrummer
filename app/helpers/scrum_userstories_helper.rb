@@ -84,9 +84,18 @@ module ScrumUserstoriesHelper
   
   def scrum_column_content(column, issue)
   	value = column.value(issue)
-  			
+  		
   	if value.class == IssueStatus and issue.status.is_scrum
-  		'<b>' + value.short_name + '</b>'
+  	  case value.scrummer_caption
+    	  when :defined
+    	    '<b>D</b>'
+    	  when :in_progress
+    	    '<b>DP</b>'
+    	  when :completed
+    	    '<b>DPC</b>'
+    	  when :accepted
+    	    '<b>DPCA</b>'
+  	  end
   	elsif column.name == :subject and issue.scrum_issue?
   	  prefix = if issue.children.blank? 
   	    if issue.is_scrum_task?

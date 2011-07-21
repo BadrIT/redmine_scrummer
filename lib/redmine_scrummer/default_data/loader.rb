@@ -276,6 +276,8 @@ module RedmineScrummer
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
+                                    # localize TODO(hrs)
+                                    # note: it is mentioned in other places, so refactor all
                                     :name             => 'TODO(hrs)',
                                     :field_format     => 'float',
                                     :default_value    => "0")

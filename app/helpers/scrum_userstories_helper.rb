@@ -86,16 +86,18 @@ module ScrumUserstoriesHelper
   	value = column.value(issue)
   		
   	if value.class == IssueStatus and issue.status.is_scrum
-  	  case value.scrummer_caption
+  	  content = case value.scrummer_caption
     	  when :defined
-    	    '<b>D</b>'
+    	    'D'
     	  when :in_progress
-    	    '<b>DP</b>'
+    	    'P'
     	  when :completed
-    	    '<b>DPC</b>'
+    	    'C'
     	  when :accepted
-    	    '<b>DPCA</b>'
+    	    'A'
   	  end
+  	  
+  	  "<div align='center' class='edit status' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
   	elsif column.name == :subject and issue.scrum_issue?
   	  prefix = if issue.children.blank? 
   	    if issue.is_scrum_task?
@@ -127,7 +129,7 @@ module ScrumUserstoriesHelper
 			content = '' 
 			if ["int", "float"].include? field_format 
 				value = issue_accumelated_custom_values(issue, column.custom_field)
-				if issue.children.length > 0 or !issue.is_scrum_task?
+				if issue.children.length > 0 || !(issue.is_scrum_task? || issue.defect?)
 					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 				else
 					content = value > 0 ? value : ''
@@ -137,7 +139,7 @@ module ScrumUserstoriesHelper
 				content = column_content(column, issue)
 			end					
   	elsif column.name == :estimated_hours  		
-  		if issue.children.length > 0 or !issue.is_scrum_task?
+  		if issue.children.length > 0 || !(issue.is_scrum_task? || issue.defect?)
 				content = value and value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 			else
 				value ||= 0

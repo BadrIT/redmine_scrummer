@@ -50,7 +50,7 @@
         </div>
       </div>
 			
-		<% if @issue.tracker.is_scrum_task? %>
+		<% if @issue.tracker.is_scrum_task? || @issue.tracker.defect? %>
 			<div class='scrum_issue_inline_field'>
 				<div class='scrum_issue_inline_label'>Est. (hrs):</div>
 				<div class='scrum_issue_inline_control'> 
@@ -63,9 +63,11 @@
 			
 			
 		<% @issue.custom_field_values.each do |value| %>
+		  <% if value.custom_field.name != "TODO(hrs)" || !@issue.new_record? %>
 			<div class='scrum_issue_inline_field'>
 				<p><%= custom_field_tag_with_label :issue, value %></p>
 			</div>
+			<% end %>
 		<% end -%>			
 			
 		</div>
@@ -73,7 +75,7 @@
 		<div class='scrum_issue_inline_field'>
 			<div class='scrum_issue_inline_label'><%= l("field_description") %></div>
 			<div class='scrum_issue_inline_control'> 
-				<%= f.text_area :description, :rows => 3, :cols => 50 %>
+				<%= f.text_area :description, :rows => 7, :cols => 80 %>
 			</div>
 		</div>
 		

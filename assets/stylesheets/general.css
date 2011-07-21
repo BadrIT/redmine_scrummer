@@ -31,14 +31,17 @@
 .scrum_issue_inline_submit{
 	width: 100%;
 	float: none;
+	clear: both;
+	margin-left: 15px;
 }
 
 .scrum_issue_inline_submit input{
-	float: right;
+	float: left;
+	margin-right: 20px;
 }
 
 .name_size_container{
-	width: 235px;
+	width: 435px;
 	float: left;
 }
 
@@ -91,6 +94,8 @@ tr.open span.expander.hover { background-image: url('../images/row_expanded_icon
 
 .edit{ float: left; width: 100%;}
 .edit.float input{ width: 50px; }
+.edit.status input{ width: 30px; }
+.edit.status{ font-weight: bold }
 .accumelated-result{ font-weight: bolder; float: left; width: 100%;}
 
 .edit-placeholder{display:none; color: #BBBBBB; width:100%;}
@@ -102,6 +107,8 @@ td.estimated_hours {width: 85px;}
 tr.us-issue{background-color:#EEEE9E}
 tr.task-issue{background-color:#FFFFFF}
 tr.epic-issue{background-color:#30be0E}
+tr.ds-issue{background-color:red}
+tr.de-issue{background-color:rgb(255,102,102)}
 
 table#issue-table td.subject div.prefix{
   float: left;

@@ -31,6 +31,25 @@ module RedmineScrummer
 			def is_scrum_task?
 				tracker.is_scrum_task?
 			end
+			
+			def defect?
+			  self.tracker.defect?
+			end
+			
+			def todo
+			  self.custom_field_values.find{|c| c.custom_field.name == "TODO(hrs)"}.try(:value).try(:to_f)
+			end
+			
+			def todo=(value)
+        (self.custom_field_values.find{|c| c.custom_field.name == "TODO(hrs)"}).value = value
+      end
+			
+			def after_create
+			  if self.todo == 0.0
+			    self.todo = self.estimated_hours
+			    self.save
+			  end
+			end
 		end
 	end
 end

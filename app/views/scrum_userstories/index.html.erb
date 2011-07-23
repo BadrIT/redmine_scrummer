@@ -21,9 +21,9 @@
 <h2><%= @query.new_record? ? l(:label_issue_plural) : h(@query.name) %></h2>
 <% html_title(l(:label_stories_plural)) %>
 
-<fieldset id="inline-add" class="collapsible">
+<fieldset id="inline-add" class="collapsible collapsed">
 	<legend onclick="toggleFieldset(this);"><%= l(:label_scrum_stories_inline_add) %></legend>
-	<div id='inline_add_container'>
+	<div id='inline_add_container' style="display:none">
 		<%= render :partial => 'inline_add', :locals => {:hide_cancel => true} %>
 	</div>
 </fieldset>

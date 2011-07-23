@@ -66,6 +66,20 @@ class ScrumUserstoriesController < IssuesController
       else
         render :text => 'Errors in saving'
       end
+    
+    elsif params[:id] =~ /-status/
+      matched_groups = params[:id].match(/issue-(\d+)-status/)
+      issue_id = matched_groups[1]
+      @issue = Issue.find(issue_id)
+      status = IssueStatus.find_by_short_name(params[:value])
+      @issue.status = status
+      
+      if status && @issue.save
+        render :text => params[:value].upcase
+      else
+        render :text => 'Errors in saving'
+      end 
+      
     else
       render :text => 'Errors in saving'
 		end

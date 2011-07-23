@@ -86,6 +86,8 @@ module ScrumUserstoriesHelper
   	value = column.value(issue)
   		
   	if value.class == IssueStatus and issue.status.is_scrum
+  	  #TODO(MK): this should stay "DP", "DPC"....etc, because that's easier to read, and to accomply with
+  	  #          inline-edit behaviour you can clear the edit box on clicking status in the UI
   	  content = case value.scrummer_caption
     	  when :defined
     	    'D'
@@ -129,6 +131,8 @@ module ScrumUserstoriesHelper
 			content = '' 
 			if ["int", "float"].include? field_format 
 				value = issue_accumelated_custom_values(issue, column.custom_field)
+				#TODO(MK): (issue.is_scrum_task? || issue.defect?), seems to be repeatable in multi-places, and others will join (refactor...),
+				#           shouldn't we introduce some generic field and check for it, i.e (time_trackable:boolean)
 				if issue.children.length > 0 || !(issue.is_scrum_task? || issue.defect?)
 					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 				else

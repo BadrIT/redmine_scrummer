@@ -63,6 +63,7 @@
 			
 			
 		<% @issue.custom_field_values.each do |value| %>
+		  <!-- TODO(MK): shouldn't we introduce caption to custom_field, instead of checking name?-->
 		  <% if value.custom_field.name != "TODO(hrs)" || !@issue.new_record? %>
 			<div class='scrum_issue_inline_field'>
 				<p><%= custom_field_tag_with_label :issue, value %></p>

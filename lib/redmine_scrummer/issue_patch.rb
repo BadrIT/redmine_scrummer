@@ -37,10 +37,12 @@ module RedmineScrummer
 			end
 			
 			def todo
+			  #TODO(MK): shouldn't we introduce caption to custom_field, instead of checking name?
 			  self.custom_field_values.find{|c| c.custom_field.name == "TODO(hrs)"}.try(:value).try(:to_f)
 			end
 			
 			def todo=(value)
+			  #TODO(MK): shouldn't we introduce caption to custom_field, instead of checking name?
         (self.custom_field_values.find{|c| c.custom_field.name == "TODO(hrs)"}).value = value
       end
 			

@@ -238,11 +238,11 @@ module RedmineScrummer
           # Seed Scrum Permissions
           #############################################################################################        
           all_scrum_permissions = [:scrum_user_stories,
-                             :scrum_user_stories_add_inline,
-                             :scrum_user_stories_manipulate_inline,
-                             :scrum_sprint_planing,
-                             :scrum_release_planing,
-                             :scrum_charts]
+                                   :scrum_user_stories_add_inline,
+                                   :scrum_user_stories_manipulate_inline,
+                                   :scrum_sprint_planing,
+                                   :scrum_release_planing,
+                                   :scrum_charts]
     
           # seed scrum roles scrum perissions
           Role.find_all_by_is_scrum(true).each do |role|

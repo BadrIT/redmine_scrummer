@@ -99,7 +99,7 @@ module ScrumUserstoriesHelper
     	    'A'
   	  end
   	  
-  	  "<div align='center' class='edit status' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
+  	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
   	elsif column.name == :subject and issue.scrum_issue?
   	  prefix = if issue.children.blank? 
   	    if issue.is_scrum_task?

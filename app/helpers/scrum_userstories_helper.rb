@@ -86,8 +86,6 @@ module ScrumUserstoriesHelper
   	value = column.value(issue)
   		
   	if value.class == IssueStatus and issue.status.is_scrum
-  	  #TODO(MK): this should stay "DP", "DPC"....etc, because that's easier to read, and to accomply with
-  	  #          inline-edit behaviour you can clear the edit box on clicking status in the UI
   	  content = case value.scrummer_caption
     	  when :defined
     	    'D'
@@ -129,7 +127,7 @@ module ScrumUserstoriesHelper
 			field_format = column.custom_field.field_format
 			
 			content = '' 
-			if ["int", "float"].include? field_format 
+			if ["int", "float", "list"].include?(field_format) 
 				value = issue_accumelated_custom_values(issue, column.custom_field)
 				if issue.children.length > 0 || !(issue.time_trackable?)
 					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
@@ -156,7 +154,7 @@ module ScrumUserstoriesHelper
   
   def issue_accumelated_custom_values issue, custom_field
   	format = custom_field.field_format
-  	unless issue.children.empty?  
+  	if issue.children.any? && issue.children.any?{|c| c.tracker.custom_fields.include?(custom_field)}  
   		result = 0
   		issue.children.each do |child|
   			result += issue_accumelated_custom_values child, custom_field
@@ -167,7 +165,7 @@ module ScrumUserstoriesHelper
   		custom_value = issue.custom_value_for custom_field
   		value = custom_value ? custom_value.value : '' 
   		
-  		format == "float" ? value.to_f : value_to_i  		
+  		format == "float" ? value.to_f : value.to_i  		
   	end
   end
   

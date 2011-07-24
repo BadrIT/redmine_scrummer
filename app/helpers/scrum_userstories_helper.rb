@@ -117,7 +117,7 @@ module ScrumUserstoriesHelper
   	elsif column.name == :spent_hours and issue.scrum_issue?
   		content = column_content(column, issue)
   		
-  		output_value = value > 0 ? value.to_s : ""
+  		output_value = value > 0 ? value.round(2).to_s : ""
   		content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
   		
   		unless issue.children.empty?

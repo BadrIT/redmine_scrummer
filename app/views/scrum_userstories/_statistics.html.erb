@@ -15,5 +15,5 @@
   <br/>
   
   <div class="label"><%= l(:label_total_actual) %></div>
-  <span class="value"><%= statistics[:total_actual] %></span>
+  <span class="value"><%= statistics[:total_actual].to_f.round(2) %></span>
 </div>

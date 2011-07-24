@@ -54,6 +54,25 @@ module RedmineScrummer
 			    self.save
 			  end
 			end
+			
+			def method_missing(m, *args, &block)
+			  # check status methods (status_defined?, status_accepted?, completed?, ..etc)
+			  # method name can be (status_status_name?) OR (status_name?) directly
+			  # we had to add status_ in some cases like (defined?) because defined? is a ruby keywork
+			  if m.to_s =~ /^(status_)?(defined|in_progress|completed|accepted)\?$/
+			    self.status.scrummer_caption == $2.to_sym
+			  else
+			    super
+			  end
+			end
+			
+			def after_save
+			  # reset todo hours if completed or accepted
+			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.todo > 0.0
+			   self.todo = 0.0
+			   self.save
+			  end
+			end
 		end
 	end
 end

@@ -50,7 +50,7 @@
         </div>
       </div>
 			
-		<% if @issue.tracker.is_scrum_task? || @issue.tracker.defect? %>
+		<% if @issue.time_trackable? %>
 			<div class='scrum_issue_inline_field'>
 				<div class='scrum_issue_inline_label'>Est. (hrs):</div>
 				<div class='scrum_issue_inline_control'> 
@@ -63,8 +63,7 @@
 			
 			
 		<% @issue.custom_field_values.each do |value| %>
-		  <!-- TODO(MK): shouldn't we introduce caption to custom_field, instead of checking name?-->
-		  <% if value.custom_field.name != "TODO(hrs)" || !@issue.new_record? %>
+		  <% if value.custom_field.scrummer_caption != :remaining_hours || !@issue.new_record? %>
 			<div class='scrum_issue_inline_field'>
 				<p><%= custom_field_tag_with_label :issue, value %></p>
 			</div>

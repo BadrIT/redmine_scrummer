@@ -20,39 +20,6 @@ module RedmineScrummer
                                                    :is_public        => true)
         
           #############################################################################################
-          # Temp (for migration to use loader smoothly)
-          #############################################################################################
-          
-          {Scrummer::Constants::CustomStorySizeFieldName      => :story_size,
-           Scrummer::Constants::RemainingHoursCustomFieldName => :remaining_hours}.each do |name, caption|
-              IssueCustomField.find_by_name(name).update_attributes(:scrummer_caption => caption) if IssueCustomField.find_by_name(name) 
-          end
-      
-          
-          {'Scrum-UserStory'   => :userstory,
-          'Scrum-Task'        => :task,
-          'Scrum-Epic'        => :epic,
-          'Scrum-Theme'       => :theme,
-          'Scrum-Defect'      => :defect,
-          'Scrum-DefectSuite' => :defectsuite,
-          'Scrum-Refactor'    => :refactor}.each do |name, caption|
-            Tracker.find_by_name(name).update_attributes(:scrummer_caption => caption) if Tracker.find_by_name(name)
-          end
-          
-          {'Scrum-ProjectMember' => :project_member,
-          'Scrum-ScrumMaster'   => :scrum_master,
-          'Scrum-ProductOwner'  => :product_owner}.each do |name, caption|
-            Role.find_by_name(name).update_attributes(:scrummer_caption => caption) if Role.find_by_name(name)
-          end
-          
-          {'Scrum-Defined' => :defined,
-          'Scrum-In-Progress' => :in_progress,
-          'Scrum-Completed' => :completed,
-          'Scrum-Accepted' => :accepted}.each do |name, caption|
-            IssueStatus.find_by_name(name).update_attributes(:scrummer_caption => caption) if IssueStatus.find_by_name(name)
-          end
-                    
-          #############################################################################################
           # Create/Update Trackers
           #############################################################################################
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
@@ -276,7 +243,7 @@ module RedmineScrummer
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
-                                    # localize TODO(hrs)
+                                    #TODO: localize TODO(hrs)
                                     # note: it is mentioned in other places, so refactor all
                                     :name             => 'TODO(hrs)',
                                     :field_format     => 'float',

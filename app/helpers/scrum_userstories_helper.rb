@@ -131,9 +131,7 @@ module ScrumUserstoriesHelper
 			content = '' 
 			if ["int", "float"].include? field_format 
 				value = issue_accumelated_custom_values(issue, column.custom_field)
-				#TODO(MK): (issue.is_scrum_task? || issue.defect?), seems to be repeatable in multi-places, and others will join (refactor...),
-				#           shouldn't we introduce some generic field and check for it, i.e (time_trackable:boolean)
-				if issue.children.length > 0 || !(issue.is_scrum_task? || issue.defect?)
+				if issue.children.length > 0 || !(issue.time_trackable?)
 					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 				else
 					content = value > 0 ? value : ''
@@ -143,7 +141,7 @@ module ScrumUserstoriesHelper
 				content = column_content(column, issue)
 			end					
   	elsif column.name == :estimated_hours  		
-  		if issue.children.length > 0 || !(issue.is_scrum_task? || issue.defect?)
+  		if issue.children.length > 0 || !(issue.time_trackable?)
 				content = value and value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 			else
 				value ||= 0

@@ -36,14 +36,18 @@ module RedmineScrummer
 			  self.tracker.defect?
 			end
 			
+			def time_trackable?
+			 self.is_scrum_task? || self.defect?
+		  end
+			 
 			def todo
 			  #TODO(MK): shouldn't we introduce caption to custom_field, instead of checking name?
-			  self.custom_field_values.find{|c| c.custom_field.name == "TODO(hrs)"}.try(:value).try(:to_f)
+			  self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}.try(:value).try(:to_f)
 			end
 			
 			def todo=(value)
 			  #TODO(MK): shouldn't we introduce caption to custom_field, instead of checking name?
-        (self.custom_field_values.find{|c| c.custom_field.name == "TODO(hrs)"}).value = value
+        (self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}).value = value
       end
 			
 			def after_create

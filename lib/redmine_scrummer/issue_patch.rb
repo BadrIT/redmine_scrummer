@@ -47,6 +47,26 @@ module RedmineScrummer
 			def todo=(value)
         (self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}).value = value
       end
+      
+      def story_size
+        # if the issue has children having the story size custom field
+        # then sum children
+        # else take issue story size custom field value
+        children_has_custom_field = self.children.any? do |c| 
+          c.tracker.custom_fields.any?{|field| field.scrummer_caption == :story_size}
+        end  
+        
+        if children_has_custom_field
+          children.map(&:story_size).sum
+        else
+          custom_field = CustomField.find_by_scrummer_caption(:story_size)
+          format = custom_field.field_format
+          custom_value = self.custom_value_for(custom_field)
+          value = custom_value ? custom_value.value : '' 
+          
+          format == "float" ? value.to_f : value.to_i  
+        end
+      end
 			
 			def after_create
 			  if self.todo == 0.0

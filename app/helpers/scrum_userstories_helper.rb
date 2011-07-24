@@ -127,8 +127,13 @@ module ScrumUserstoriesHelper
 			field_format = column.custom_field.field_format
 			
 			content = '' 
-			if ["int", "float", "list"].include?(field_format) 
-				value = issue_accumelated_custom_values(issue, column.custom_field)
+			if ["int", "float", "list"].include?(field_format)
+			  if  column.custom_field.scrummer_caption == :story_size
+			    value = issue.story_size
+			  else
+				  value = issue_accumelated_custom_values(issue, column.custom_field)
+				end
+				
 				if issue.children.length > 0 || !(issue.time_trackable?)
 					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 				else
@@ -200,9 +205,9 @@ module ScrumUserstoriesHelper
       if issue.parent.nil? || issues.exclude?(issue.parent)
         result[:total_estimate] += issue.estimated_hours.to_f
         result[:total_actual]   += issue.spent_hours.to_f
+        result[:total_story_size] += issue.story_size 
       end
       
-      result[:total_story_size] += story_column.value(issue).to_f 
       result[:total_remaining]  += to_do_column.value(issue).to_f 
     end 
     

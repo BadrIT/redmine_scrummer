@@ -48,6 +48,11 @@
         <div class='scrum_issue_inline_control'> 
           <%= f.select :fixed_version_id, @issue.project.versions.map{|v| [v.name, v.id]}, :include_blank => l("field_fixed_version") %>
         </div>
+        
+        <div class='scrum_issue_inline_label' style="padding-left:5px;"><%= l("field_parent_issue") %></div>
+        <div class='scrum_issue_inline_control'> 
+          <%= f.text_field :parent_issue_id, :size => 5 %>
+        </div>
       </div>
 			
 		<% if @issue.time_trackable? %>

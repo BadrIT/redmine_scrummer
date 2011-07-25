@@ -6,12 +6,14 @@ module RedmineScrummer
 				unloadable # Send unloadable so it will not be unloaded in development
 				
 				include InstanceMethods
+				
+				after_create :initiate_todo
+				after_save :update_todo
 			end
 			
 		end
 		
 		module InstanceMethods
-			
 			def scrum_issue?
 				tracker.is_scrum
 			end
@@ -79,7 +81,7 @@ module RedmineScrummer
         level
       end
 			
-			def after_create
+			def initiate_todo
 			  if self.todo == 0.0
 			    self.todo = self.estimated_hours
 			    self.save
@@ -97,7 +99,7 @@ module RedmineScrummer
 			  end
 			end
 			
-			def after_save
+			def update_todo
 			  # reset todo hours if completed or accepted
 			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.todo > 0.0
 			   self.todo = 0.0

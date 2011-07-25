@@ -169,6 +169,14 @@ class ScrumUserstoriesController < IssuesController
   		retrieve_query
   	end
   	
+  	def load_issues_ancestors
+  	  @issues.each do |issue|
+  	    if !issue.parent.nil? && !@issues.include?(issue.parent)
+  	      @issues << issue.parent
+  	    end
+  	  end
+  	end
+  	
   	def load_issues_for_query
   		  
   		case params[:format]
@@ -191,6 +199,9 @@ class ScrumUserstoriesController < IssuesController
                               :order => sort_clause,
                               :offset => @offset,
                               :limit => @limit)
+      
+      load_issues_ancestors
+      
       @issue_count_by_group = @query.issue_count_by_group
   	end
   	

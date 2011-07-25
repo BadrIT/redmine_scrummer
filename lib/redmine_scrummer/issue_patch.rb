@@ -67,6 +67,17 @@ module RedmineScrummer
           format == "float" ? value.to_f : value.to_i  
         end
       end
+      
+      def level
+        parent = self
+        level = 0
+        while (parent.parent) do
+          parent = parent.parent
+          level += 1
+        end
+        
+        level
+      end
 			
 			def after_create
 			  if self.todo == 0.0

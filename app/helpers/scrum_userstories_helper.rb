@@ -39,48 +39,7 @@ module ScrumUserstoriesHelper
   end
 	alias_method_chain :custom_field_tag, :add_class_to_float_inputs  unless method_defined?(:custom_field_tag_without_add_class_to_float_inputs)
  	
- 	def scrum_issues_list(issues, &block)
- 		issues = issues.reverse
- 		
- 		last_processed_level = 0
- 		
- 		result = []
- 		result_set = {}
- 		
- 		# build the hierarchy
- 		while issues.length > 0
-
- 			processed_issues = []
- 			
- 			issues.each do |issue|
- 				level = get_issue_level issue
- 				
- 				# get parent location, and insert right after it
- 				if level == last_processed_level
- 					parent_index = result.index issue.parent
- 					
- 					# if the this issue has no parent, then it's a root element just add it
- 					if parent_index and parent_index >= 0
- 						result.insert parent_index + 1, issue
- 					else
- 						result.insert 0, issue
- 					end
- 					
- 					processed_issues << issue
- 				end
- 			end
- 			
- 			issues = issues - processed_issues
- 			
-	    last_processed_level += 1
-   	end
-   	
-   	# return result
-   	result.each do |issue|
-      yield issue, get_issue_level(issue)
-    end
-    
-  end
+ 	
   
   def scrum_column_content(column, issue)
   	value = column.value(issue)
@@ -178,17 +137,6 @@ module ScrumUserstoriesHelper
   	issue.custom_values.collect{|value| value.custom_field_id}.include? custom_column.custom_field.id
   end
   
-  def get_issue_level issue
-  	parent = issue
-  	level = 0
-    while (parent.parent) do
-    	parent = parent.parent
-    	level += 1
-    end
-    
-    level
-  end
-
   def calculate_statistics(issues, query)
     result = {:total_story_size => 0.0,
               :total_estimate => 0.0,
@@ -201,7 +149,7 @@ module ScrumUserstoriesHelper
     story_column = query.columns.find{|c| c.caption == story_size_column_caption}
     to_do_column = query.columns.find{|c| c.caption == todo_column_caption}
     
-    scrum_issues_list(issues) do |issue, level|
+    issues.each do |issue|
       if issue.parent.nil? || issues.exclude?(issue.parent)
         result[:total_estimate] += issue.estimated_hours.to_f
         result[:total_actual]   += issue.spent_hours.to_f

@@ -158,53 +158,57 @@ class ScrumUserstoriesController < IssuesController
         
   protected
 		
-		def find_parent_issue 
-			parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
-			parent_issue_id ||= params[:issue][:parent_issue_id] if params[:issue] and params[:issue][:parent_issue_id]
-			
-			@parent_issue = (parent_issue_id and !parent_issue_id.empty?) ? Issue.find(parent_issue_id) : nil 
-		end
-  
-  	def find_query
-  		retrieve_query
-  	end
-  	
-  	def load_issues_ancestors
-  	  @issues.each do |issue|
-  	    if !issue.parent.nil? && !@issues.include?(issue.parent)
-  	      @issues << issue.parent
-  	    end
-  	  end
-  	end
-  	
-  	def load_issues_for_query
-  		  
-  		case params[:format]
-      when 'csv', 'pdf'
-        @limit = Setting.issues_export_limit.to_i
-      when 'atom'
-        @limit = Setting.feeds_limit.to_i
-      when 'xml', 'json'
-        @offset, @limit = api_offset_and_limit
-      else
-        @limit = per_page_option
-      end
+	def find_parent_issue 
+		parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
+		parent_issue_id ||= params[:issue][:parent_issue_id] if params[:issue] and params[:issue][:parent_issue_id]
+		
+		@parent_issue = (parent_issue_id and !parent_issue_id.empty?) ? Issue.find(parent_issue_id) : nil 
+	end
 
-      @issue_count = @query.issue_count
-      @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
-      @offset ||= @issue_pages.current.offset
-      @all_issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
-                              :order => sort_clause)
-      @issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
-                              :order => sort_clause,
-                              :offset => @offset,
-                              :limit => @limit)
-      
-      load_issues_ancestors
-      
-      @issue_count_by_group = @query.issue_count_by_group
-  	end
-  	
+	def find_query
+		retrieve_query
+	end
+	
+	def load_issues_ancestors
+	  @issues.each do |issue|
+	    if !issue.parent.nil? && !@issues.include?(issue.parent)
+	      @issues << issue.parent
+	    end
+	  end
+	end
+	
+	def load_issues_for_query
+		  
+		case params[:format]
+    when 'csv', 'pdf'
+      @limit = Setting.issues_export_limit.to_i
+    when 'atom'
+      @limit = Setting.feeds_limit.to_i
+    when 'xml', 'json'
+      @offset, @limit = api_offset_and_limit
+    else
+      @limit = per_page_option
+    end
+
+    @issue_count = @query.issue_count
+    @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
+    @offset ||= @issue_pages.current.offset
+    @all_issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
+                            :order => sort_clause)
+    
+    @issues = @all_issues
+    
+    load_issues_ancestors
+    
+    #build tree heirarachy
+    @issues = scrum_issues_list(@issues)
+    
+    # pagination
+    @issues = @issues[(@offst.to_i)..(@offset.to_i+@limit.to_i-1)]
+    
+    @issue_count_by_group = @query.issue_count_by_group
+	end
+	
   def set_default_values_from_parent
     if @parent_issue
       @issue.parent_issue_id ||= @parent_issue.id
@@ -227,50 +231,92 @@ class ScrumUserstoriesController < IssuesController
       end
     end
   end 
+
+	def initialize_sort
+		sort_init(@query.sort_criteria.empty? ? [['id', 'desc']] : @query.sort_criteria)
+    sort_update(@query.sortable_columns)
+	end
+	 
+	def find_scrum_project
+    project_id = (params[:issue] && params[:issue][:project_id]) || params[:project_id]
+    @project = Project.find(project_id)
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
   
-  	def initialize_sort
-  		sort_init(@query.sort_criteria.empty? ? [['id', 'desc']] : @query.sort_criteria)
-	    sort_update(@query.sortable_columns)
-  	end
-  	 
-  	def find_scrum_project
-	    project_id = (params[:issue] && params[:issue][:project_id]) || params[:project_id]
-	    @project = Project.find(project_id)
-	  rescue ActiveRecord::RecordNotFound
-	    render_404
-	  end
-	  
-	  def check_for_default_scrum_issue_priority_for_inline
-	    if IssueStatus.default.nil?
-	     	render_error_html_for_inline_add content_tag('p', l(:error_no_default_scrum_issue_priority)) 	
-	      return false
-	    end
-	  end	  	 
-	  
-	  def check_for_default_scrum_issue_status_for_inline
-	    if IssuePriority.default.nil?
-	      render_error_html_for_inline_add content_tag('p', l(:error_no_default_scrum_issue_status))
-	      return false
-	    end
-	  end
-	  
-	  def render_error_html_for_inline_add error_html
-	  	render :update do |page|
-		  	page.replace_html "inline_new_issue_errors", error_html
-			end
-	  end
-	  
-	  def check_for_default_issue_status	  
-	    if IssueStatus.default.nil?
-	      render_error l(:error_no_default_scrum_issue_status)
-	      return false
-	    end
-	  end
-	  
-	  def check_for_default_issue_priority
-	    if IssuePriority.default.nil?
-	      render_error l(:error_no_default_scrum_issue_priority)
-	      return false
-	    end
-	  end
+  def check_for_default_scrum_issue_priority_for_inline
+    if IssueStatus.default.nil?
+     	render_error_html_for_inline_add content_tag('p', l(:error_no_default_scrum_issue_priority)) 	
+      return false
+    end
+  end	  	 
+  
+  def check_for_default_scrum_issue_status_for_inline
+    if IssuePriority.default.nil?
+      render_error_html_for_inline_add content_tag('p', l(:error_no_default_scrum_issue_status))
+      return false
+    end
+  end
+  
+  def render_error_html_for_inline_add error_html
+  	render :update do |page|
+	  	page.replace_html "inline_new_issue_errors", error_html
+		end
+  end
+  
+  def check_for_default_issue_status	  
+    if IssueStatus.default.nil?
+      render_error l(:error_no_default_scrum_issue_status)
+      return false
+    end
+  end
+  
+  def check_for_default_issue_priority
+    if IssuePriority.default.nil?
+      render_error l(:error_no_default_scrum_issue_priority)
+      return false
+    end
+  end
+  
+  def scrum_issues_list(issues, &block)
+    issues = issues.reverse
+    
+    last_processed_level = 0
+    
+    result = []
+    result_set = {}
+    
+    # build the hierarchy
+    while issues.length > 0
+
+      processed_issues = []
+      
+      issues.each do |issue|
+        level = issue.level
+        
+        # get parent location, and insert right after it
+        if level == last_processed_level
+          parent_index = result.index issue.parent
+          
+          # if the this issue has no parent, then it's a root element just add it
+          if parent_index and parent_index >= 0
+            result.insert parent_index + 1, issue
+          else
+            result.insert 0, issue
+          end
+          
+          processed_issues << issue
+        end
+      end
+      
+      issues = issues - processed_issues
+      
+      last_processed_level += 1
+    end
+    
+    # return result
+    result
+  end
+  
+  
 end

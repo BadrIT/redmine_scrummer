@@ -10,6 +10,10 @@ module RedmineScrummer
 	      serialize :scrummer_caption
 				
 				def self.method_missing(m, *args, &block)
+				  # retreive a specific tracker
+				  # ex: Tracker.scrum_task_tracker
+				  # ex: Tracker.scrum_userstory_tracker
+				  # ex: Tracker.scrum_user_story_tracker
 				  if m.to_s =~ /^scrum_(.*)_tracker$/
 				    Tracker.find_by_scrummer_caption($1.gsub("_", "").to_sym)
 				  else

@@ -12,7 +12,7 @@
 
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id='inline_new_issue_errors'></div>
-	<% remote_form_for :issue, :url => {:controller => :scrum_userstories, :action => :inline_add},
+	<% remote_form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add},
 														 :html => {:id => inline_form_id} do |f|%>
 	
 	<%= hidden_field_tag :id, @issue.id unless @issue.new_record? %>
@@ -50,7 +50,7 @@
         
         <div class='scrum_issue_inline_label' style="padding-left:5px;"><%= l("field_parent_issue") %></div>
         <div class='scrum_issue_inline_control'> 
-          <%= f.text_field :parent_issue_id, :size => 5, :value => ( @parent_issue ? @parent_issue.id : nil ) %>
+          <%= f.text_field :parent_issue_id, :size => 5 %>
         </div>
       </div>
 			

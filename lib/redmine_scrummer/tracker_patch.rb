@@ -9,9 +9,13 @@ module RedmineScrummer
 	
 	      serialize :scrummer_caption
 				
-				def self.scrum_task_tracker
-					Tracker.find_by_scrummer_caption(:task)
-				end		
+				def self.method_missing(m, *args, &block)
+				  if m.to_s =~ /^scrum_(.*)_tracker$/
+				    Tracker.find_by_scrummer_caption($1.gsub("_", "").to_sym)
+				  else
+				    super
+				  end
+				end
 			end
 			
 		end

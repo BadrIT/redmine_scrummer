@@ -14,6 +14,7 @@ class ScrumUserstoriesController < IssuesController
 	
 	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
 	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form]	
+	before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
 	
 	def update_single_field
 		new_value = params[:value]
@@ -126,7 +127,7 @@ class ScrumUserstoriesController < IssuesController
   	render :partial => 'list'
   end
 
-	def refresh_inline_add_form		
+	def refresh_inline_add_form	
 		respond_to do |format|
 			format.js {render :partial => 'inline_add'}
 		end
@@ -193,6 +194,29 @@ class ScrumUserstoriesController < IssuesController
       @issue_count_by_group = @query.issue_count_by_group
   	end
   	
+  def set_default_values_from_parent
+    if @parent_issue
+      @issue.parent_issue_id ||= @parent_issue.id
+      @issue.fixed_version ||= @parent_issue.fixed_version
+      @issue.assigned_to ||= @parent_issue.assigned_to
+     
+      # can't user ||= because there is before filter set issue default tracker
+      if params[:issue].blank? || params[:issue][:tracker_id].blank?
+        @issue.tracker = case @parent_issue.tracker.scrummer_caption
+        when :epic
+          Tracker.scrum_user_story_tracker
+        when :userstory
+          Tracker.scrum_task_tracker
+        when :defectsuite
+        when :defect
+          Tracker.scrum_defect_tracker
+        else
+          Tracker.scrum_user_story_tracker
+        end
+      end
+    end
+  end 
+  
   	def initialize_sort
   		sort_init(@query.sort_criteria.empty? ? [['id', 'desc']] : @query.sort_criteria)
 	    sort_update(@query.sortable_columns)

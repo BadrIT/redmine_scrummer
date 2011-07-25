@@ -44,7 +44,7 @@ class ScrumUserstoriesController < IssuesController
       value = params[:value].match(/^\+(.*)/)[1]
       
       @issue = Issue.find(issue_id)
-      @time_entry ||= TimeEntry.new(:project => @issue.project, :issue => @issue, :user => User.current, :spent_on => User.current.today)
+      @time_entry = TimeEntry.new(:project => @issue.project, :issue => @issue, :user => User.current, :spent_on => User.current.today)
       @time_entry.hours = value
       
       if @time_entry.hours > 0 && @time_entry.save

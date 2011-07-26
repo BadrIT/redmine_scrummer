@@ -118,19 +118,22 @@ module ScrumUserstoriesHelper
   
   def issue_accumelated_custom_values issue, custom_field
   	format = custom_field.field_format
-  	if issue.children.any? && issue.children.any?{|c| c.tracker.custom_fields.include?(custom_field)}  
-  		result = 0
+    result = 0.0
+  	
+  	if issue.children.any? #&& issue.children.any?{|c| c.tracker.custom_fields.include?(custom_field)}  
   		issue.children.each do |child|
-  			result += issue_accumelated_custom_values child, custom_field
+  			result += issue_accumelated_custom_values(child, custom_field)
   		end
-  		
-  		result  		  		
-  	else
+    end
+      		
+  	if result == 0.0
   		custom_value = issue.custom_value_for custom_field
   		value = custom_value ? custom_value.value : '' 
   		
-  		format == "float" ? value.to_f : value.to_i  		
+  		result=(format == "float" ? value.to_f : value.to_i)  		
   	end
+  	
+  	result
   end
   
   def custom_column_exists_in_issue? custom_column, issue

@@ -7,8 +7,8 @@ module RedmineScrummer
 				
 				include InstanceMethods
 				
-				after_create :initiate_todo
-				after_save :update_todo
+				after_create :initiate_remaining_hours
+				after_save :update_remaining_hours
 			end
 			
 		end
@@ -42,11 +42,11 @@ module RedmineScrummer
 			 self.is_scrum_task? || self.defect?
 		  end
 			 
-			def todo
+			def remaining_hours
 			  self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}.try(:value).try(:to_f)
 			end
 			
-			def todo=(value)
+			def remaining_hours=(value)
         (self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}).value = value
       end
       
@@ -81,9 +81,9 @@ module RedmineScrummer
         level
       end
 			
-			def initiate_todo
-			  if self.todo == 0.0
-			    self.todo = self.estimated_hours
+			def initiate_remaining_hours
+			  if self.remaining_hours == 0.0
+			    self.remaining_hours = self.estimated_hours
 			    self.save
 			  end
 			end
@@ -99,10 +99,10 @@ module RedmineScrummer
 			  end
 			end
 			
-			def update_todo
+			def update_remaining_hours
 			  # reset todo hours if completed or accepted
-			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.todo > 0.0
-			   self.todo = 0.0
+			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.remaining_hours > 0.0
+			   self.remaining_hours = 0.0
 			   self.save
 			  end
 			end

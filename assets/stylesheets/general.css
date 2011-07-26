@@ -23,9 +23,19 @@
   float: left;
 }
 
+.scrum_issue_inline_field label, .scrum_issue_inline_label{ 
+  width: 70px;
+}
+
 .scrum_issue_inline_control{
   float: left;
   margin-left: 3px;
+}
+
+.scrum_issue_row{
+  clear: clear;
+  width: 100%;
+  padding-top: 5px;
 }
 
 .scrum_issue_inline_submit{
@@ -43,10 +53,6 @@
 .name_size_container{
   width: 435px;
   float: left;
-}
-
-.name_size_container .scrum_issue_inline_field{
-  width: 100%;
 }
 
 .name_size_container .scrum_issue_inline_label{

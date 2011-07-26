@@ -193,10 +193,12 @@ class ScrumUserstoriesController < IssuesController
     @issue_count = @query.issue_count
     @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
     @offset ||= @issue_pages.current.offset
+    
+    # all issues is used for statistics
     @all_issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
                             :order => sort_clause)
-    
-    @issues = @all_issues
+    @issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
+                            :order => sort_clause)
     
     load_issues_ancestors
     

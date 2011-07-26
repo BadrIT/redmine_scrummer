@@ -7,9 +7,10 @@ module RedmineScrummer
 				
 				include InstanceMethods
 				
-				after_create :initiate_todo
-				after_save :update_todo
 				validate :validate_status
+				
+				after_create :initiate_remaining_hours
+				after_save :update_remaining_hours
 			end
 			
 		end
@@ -47,11 +48,11 @@ module RedmineScrummer
 			 self.is_scrum_task? || self.defect?
 		  end
 			 
-			def todo
+			def remaining_hours
 			  self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}.try(:value).try(:to_f)
 			end
 			
-			def todo=(value)
+			def remaining_hours=(value)
         (self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}).value = value
       end
       
@@ -59,20 +60,26 @@ module RedmineScrummer
         # if the issue has children having the story size custom field
         # then sum children
         # else take issue story size custom field value
-        children_has_custom_field = self.children.any? do |c| 
-          c.tracker.custom_fields.any?{|field| field.scrummer_caption == :story_size}
-        end  
         
-        if children_has_custom_field
-          children.map(&:story_size).sum
-        else
+        
+        # children_has_custom_field = self.children.any? do |c| 
+        #   c.tracker.custom_fields.any?{|field| field.scrummer_caption == :story_size}
+        # end  
+        # 
+        if self.children.any?
+          result = children.map(&:story_size).sum
+        end
+        
+        if result.to_f == 0.0
           custom_field = CustomField.find_by_scrummer_caption(:story_size)
           format = custom_field.field_format
           custom_value = self.custom_value_for(custom_field)
           value = custom_value ? custom_value.value : '' 
           
-          format == "float" ? value.to_f : value.to_i  
+          result = (format == "float" ? value.to_f : value.to_i)  
         end
+        
+        result
       end
       
       def level
@@ -86,9 +93,9 @@ module RedmineScrummer
         level
       end
 			
-			def initiate_todo
-			  if self.todo == 0.0
-			    self.todo = self.estimated_hours
+			def initiate_remaining_hours
+			  if self.remaining_hours == 0.0
+			    self.remaining_hours = self.estimated_hours
 			    self.save
 			  end
 			end
@@ -104,10 +111,10 @@ module RedmineScrummer
 			  end
 			end
 			
-			def update_todo
+			def update_remaining_hours
 			  # reset todo hours if completed or accepted
-			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.todo.to_f > 0.0
-			   self.todo = 0.0
+			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.remaining_hours.to_f > 0.0
+			   self.remaining_hours = 0.0
 			   self.save
 			  end
 			end

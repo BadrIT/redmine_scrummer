@@ -19,3 +19,7 @@ en:
   label_total_estimation: "Total Est Hrs:"
   label_total_remaining: "Total Remaining Hrs:"
   label_total_actual: "Total Actual Hrs:"
+  
+  short_field_estimated_hours: "Estimate"
+  short_field_story_size: "Size"
+  short_field_remaining_hours: "TODO"

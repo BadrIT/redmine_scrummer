@@ -34,7 +34,7 @@
 		
 		<div class='name_size_container'>
 			<div class='scrum_issue_inline_field'>
-				<div class='scrum_issue_inline_label'><%= l("field_subject") %></div>
+				<%= f.label :subject, l("field_subject"), :class => "scrum_issue_inline_label" %>
 				<div class='scrum_issue_inline_control'> 
 					<%= f.text_field :subject, :size => 37 %>
 				</div>
@@ -43,12 +43,12 @@
 			<br/>
 			
 			<div class='scrum_issue_inline_field'>
-        <div class='scrum_issue_inline_label'><%= l("field_fixed_version") %></div>
+        <%= f.label :fixed_version_id, l("field_fixed_version"), :class => "scrum_issue_inline_label" %>
         <div class='scrum_issue_inline_control'> 
           <%= f.select :fixed_version_id, @issue.project.versions.map{|v| [v.name, v.id]}, :include_blank => l("field_fixed_version") %>
         </div>
         
-        <div class='scrum_issue_inline_label' style="padding-left:5px;"><%= l("field_parent_issue") %></div>
+        <%= f.label :parent_issue_id, l("field_parent_issue"), :class => "scrum_issue_inline_label", :style=>"padding-left:5px;" %>
         <div class='scrum_issue_inline_control'> 
           <%= f.text_field :parent_issue_id, :size => 5 %>
         </div>
@@ -56,7 +56,7 @@
 			
 		<% if @issue.time_trackable? %>
 			<div class='scrum_issue_inline_field'>
-				<div class='scrum_issue_inline_label'>Est. (hrs):</div>
+				<%= f.label :estimated_hours, l("short_field_estimated_hours"), :class => "scrum_issue_inline_label" %>
 				<div class='scrum_issue_inline_control'> 
 					<%= f.text_field :estimated_hours, :class => 'inline_issue_field_float_type' %>
 				</div> 
@@ -77,7 +77,7 @@
 		</div>
 		
 		<div class='scrum_issue_inline_field'>
-			<div class='scrum_issue_inline_label'><%= l("field_description") %></div>
+			<%= f.label :description, l("field_description"), :class => "scrum_issue_inline_label" %>
 			<div class='scrum_issue_inline_control'> 
 				<%= f.text_area :description, :rows => 7, :cols => 80 %>
 			</div>

@@ -12,9 +12,9 @@ module ScrumUserstoriesHelper
 	  
 	  caption = column.caption
 	  
-	  short_headers = {todo_column_caption        => "TODO",
-	                   story_size_column_caption  => "Size",
-	                   l("field_estimated_hours") => "Estimate"}
+	  short_headers = {todo_column_caption        => l("short_field_remaining_hours"),
+	                   story_size_column_caption  => l("short_field_story_size"),
+	                   l("field_estimated_hours") => l("short_field_estimated_hours")}
 	                   
     caption = short_headers[caption] || caption
 	  

@@ -99,7 +99,7 @@ tr.open span.expander { background-image: url('../images/row_expanded_icon.png')
 tr.open span.expander.hover { background-image: url('../images/row_expanded_icon_over.png'); }
 
 .edit{ float: left; width: 100%;}
-.edit.float input{ width: 50px; }
+.edit.float input, .edit.list input{ width: 50px; }
 .edit.status input{ width: 30px; }
 .edit.status{ font-weight: bold }
 .accumelated-result{ font-weight: bolder; float: left; width: 100%;}
@@ -138,5 +138,5 @@ table#issue-table td.subject div.subject-contents{
 .status.in_progress { background-color: skyBlue; width:30px;}
 .status.completed { background-color: orange; width:45px;}
 .status.accepted { background-color: green; width:60px;}
-.status.succeeded { background-color: yellow; width:60px;}
+.status.succeeded { background-color: green; width:60px;}
 .status.failed { background-color: red; width:60px;}

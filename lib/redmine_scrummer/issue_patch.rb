@@ -61,11 +61,6 @@ module RedmineScrummer
         # then sum children
         # else take issue story size custom field value
         
-        
-        # children_has_custom_field = self.children.any? do |c| 
-        #   c.tracker.custom_fields.any?{|field| field.scrummer_caption == :story_size}
-        # end  
-        # 
         if self.children.any?
           result = children.map(&:story_size).sum
         end
@@ -91,6 +86,10 @@ module RedmineScrummer
         end
         
         level
+      end
+      
+      def has_custom_field?(field_name)
+        self.tracker.custom_fields.any?{|field| field.scrummer_caption == field_name.to_sym}
       end
 			
 			def initiate_remaining_hours
@@ -122,11 +121,12 @@ module RedmineScrummer
 			def validate_status
 			  if self.status_id_changed?
 			    # test issues can allow only (defined, success, fail)
-  			  if self.is_test? && !(self.succeeded? || self.failed? || self.status_defined?)
-  			    self.errors.add(:status_id, "invalid status")
-  			    return false
-  			  # non test issues doesn't accept success and fail
-    			elsif !self.is_test? && (self.succeeded? || self.failed?)
+  			  if (self.is_test? && !(self.succeeded? || self.failed? || self.status_defined?)) ||
+  			     # task allow only (defined, progress, completed)
+  			     (self.is_task? && !(self.status_defined? || self.in_progress? || self.completed?)) ||
+  			     # non test issues doesn't accept success and fail
+    			   (!self.is_test? && (self.succeeded? || self.failed?))
+    			   
     			  self.errors.add(:status_id, "invalid status")
     			  return false
   			  end

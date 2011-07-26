@@ -95,11 +95,11 @@ module ScrumUserstoriesHelper
 				  value = issue_accumelated_custom_values(issue, column.custom_field)
 				end
 				
-				if issue.children.length > 0 || !(issue.time_trackable?)
-					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
-				else
+				if issue.children.blank? && issue.has_custom_field?(column.custom_field.scrummer_caption)
 					content = value > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
+			  else
+					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 				end
 			else
 				content = column_content(column, issue)

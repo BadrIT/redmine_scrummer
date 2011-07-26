@@ -9,11 +9,16 @@ module RedmineScrummer
 				
 				after_create :initiate_todo
 				after_save :update_todo
+				validate :validate_status
 			end
 			
 		end
 		
 		module InstanceMethods
+		  def is_test?
+		    tracker.is_test?
+		  end
+		  
 			def scrum_issue?
 				tracker.is_scrum
 			end
@@ -92,7 +97,7 @@ module RedmineScrummer
 			  # check status methods (status_defined?, status_accepted?, completed?, ..etc)
 			  # method name can be (status_status_name?) OR (status_name?) directly
 			  # we had to add status_ in some cases like (defined?) because defined? is a ruby keywork
-			  if m.to_s =~ /^(status_)?(defined|in_progress|completed|accepted)\?$/
+			  if m.to_s =~ /^(status_)?(defined|in_progress|completed|accepted|failed|succeeded)\?$/
 			    self.status.scrummer_caption == $2.to_sym
 			  else
 			    super
@@ -101,9 +106,23 @@ module RedmineScrummer
 			
 			def update_todo
 			  # reset todo hours if completed or accepted
-			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.todo > 0.0
+			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.todo.to_f > 0.0
 			   self.todo = 0.0
 			   self.save
+			  end
+			end
+			
+			def validate_status
+			  if self.status_id_changed?
+			    # test issues can allow only (defined, success, fail)
+  			  if self.is_test? && !(self.succeeded? || self.failed? || self.status_defined?)
+  			    self.errors.add(:status_id, "invalid status")
+  			    return false
+  			  # non test issues doesn't accept success and fail
+    			elsif !self.is_test? && (self.succeeded? || self.failed?)
+    			  self.errors.add(:status_id, "invalid status")
+    			  return false
+  			  end
 			  end
 			end
 		end

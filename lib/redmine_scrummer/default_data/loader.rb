@@ -24,13 +24,14 @@ module RedmineScrummer
           #############################################################################################
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
   
-          scrum_trackers = { :userstory   => { :name => 'Scrum-UserStory',   :short_name => 'US'},
-                             :task        => { :name => 'Scrum-Task',        :short_name => 'Task'},
-                             :epic        => { :name => 'Scrum-Epic',        :short_name => 'Epic'},
+          scrum_trackers = { :userstory   => { :name => 'Scrum-UserStory',   :short_name => 'US'   },
+                             :task        => { :name => 'Scrum-Task',        :short_name => 'Task' },
+                             :epic        => { :name => 'Scrum-Epic',        :short_name => 'Epic' },
                              :theme       => { :name => 'Scrum-Theme',       :short_name => 'Theme'},
-                             :defect      => { :name => 'Scrum-Defect',      :short_name => 'DE'},
-                             :defectsuite => { :name => 'Scrum-DefectSuite', :short_name => 'DS'},
-                             :refactor    => { :name => 'Scrum-Refactor',    :short_name => 'RE'} }
+                             :defect      => { :name => 'Scrum-Defect',      :short_name => 'DE'   },
+                             :defectsuite => { :name => 'Scrum-DefectSuite', :short_name => 'DS'   },
+                             :refactor    => { :name => 'Scrum-Refactor',    :short_name => 'RE'   } ,
+                             :test        => { :name => 'Scrum-Test',        :short_name => 'Test' }}
           
           scrum_trackers.each do |caption, options|
             options = options.merge(scrum_tracker_options)
@@ -54,10 +55,12 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Statuses
           #############################################################################################
-          statuses = [{:scrummer_caption => :defined,     :name => 'Scrum-Defined',     :short_name => 'D', :is_default => true},
-                      {:scrummer_caption => :in_progress, :name => 'Scrum-In-Progress', :short_name => 'P'}, 
-                      {:scrummer_caption => :completed,   :name => 'Scrum-Completed',   :short_name => 'C'}, 
-                      {:scrummer_caption => :accepted,    :name => 'Scrum-Accepted',    :short_name => 'A', :is_closed => true}]
+          statuses = [{:scrummer_caption => :defined,     :is_scrum => true,     :name => 'Scrum-Defined',     :short_name => 'D', :is_default => true},
+                      {:scrummer_caption => :in_progress, :is_scrum => true,     :name => 'Scrum-In-Progress', :short_name => 'P'}, 
+                      {:scrummer_caption => :completed,   :is_scrum => true,        :name => 'Scrum-Completed',   :short_name => 'C'}, 
+                      {:scrummer_caption => :accepted,    :is_scrum => true,      :name => 'Scrum-Accepted',    :short_name => 'A', :is_closed => true},
+                      {:scrummer_caption => :succeeded,   :is_scrum => true,     :name => 'Scrum-Succeeded',   :short_name => 'S', :is_closed => true},
+                      {:scrummer_caption => :failed,      :is_scrum => true,     :name => 'Scrum-Failed',      :short_name => 'F'}]
           
           statuses.each do |options|
             caption = options[:scrummer_caption]

@@ -34,6 +34,10 @@ module RedmineScrummer
 			  scrummer_caption == :epic
 			end
 			
+			def is_test?
+			  scrummer_caption == :test
+			end
+			
 			def is_theme?
 				scrummer_caption == :theme
 			end

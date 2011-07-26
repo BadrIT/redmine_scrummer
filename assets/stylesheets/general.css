@@ -109,6 +109,7 @@ tr.task-issue{background-color:#FFFFFF}
 tr.epic-issue{background-color:#30be0E}
 tr.ds-issue{background-color:red}
 tr.de-issue{background-color:rgb(255,102,102)}
+tr.test-issue{background-color:#FFFFFF}
 
 table#issue-table td.subject div.prefix{
   float: left;
@@ -131,3 +132,5 @@ table#issue-table td.subject div.subject-contents{
 .status.in_progress { background-color: skyBlue; width:30px;}
 .status.completed { background-color: orange; width:45px;}
 .status.accepted { background-color: green; width:60px;}
+.status.succeeded { background-color: yellow; width:60px;}
+.status.failed { background-color: red; width:60px;}

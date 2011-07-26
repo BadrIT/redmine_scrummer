@@ -74,7 +74,6 @@ class ScrumUserstoriesController < IssuesController
       @issue = Issue.find(issue_id)
       status = IssueStatus.find_by_short_name(params[:value])
       @issue.status = status
-      
       if status && @issue.save
         render :text => params[:value].upcase
       else

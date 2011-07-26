@@ -43,7 +43,6 @@ module ScrumUserstoriesHelper
   
   def scrum_column_content(column, issue)
   	value = column.value(issue)
-  		
   	if value.class == IssueStatus and issue.status.is_scrum
   	  content = case value.scrummer_caption
     	  when :defined
@@ -54,8 +53,11 @@ module ScrumUserstoriesHelper
     	    'C'
     	  when :accepted
     	    'A'
+        when :succeeded
+          'S'
+        when :failed
+          'F'
   	  end
-  	  
   	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
   	elsif column.name == :subject and issue.scrum_issue?
   	  prefix = if issue.children.blank? 

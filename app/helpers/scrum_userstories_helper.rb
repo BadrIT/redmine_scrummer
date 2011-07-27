@@ -61,11 +61,11 @@ module ScrumUserstoriesHelper
   	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
   	elsif column.name == :subject and issue.scrum_issue?
   	  prefix = if issue.children.blank? 
-  	    if issue.is_task?
+  	    # if issue.is_task?
   	     "<span>&nbsp;&nbsp;</span>"
-  	    else
-  	     "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"
-  	    end
+  	    # else
+  	    #  "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"
+  	    # end
       else
         "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$j(this).addClass('hover')\" onmouseout=\"$j(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
       end   
@@ -95,7 +95,8 @@ module ScrumUserstoriesHelper
 				  value = issue_accumelated_custom_values(issue, column.custom_field)
 				end
 				
-				if issue.children.blank? && issue.has_custom_field?(column.custom_field.scrummer_caption)
+				if (issue.children.blank? || value.to_f==0.0) && issue.has_custom_field?(column.custom_field.scrummer_caption)
+				# if issue.children.blank? && issue.has_custom_field?(column.custom_field.scrummer_caption)
 					content = value > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else
@@ -105,13 +106,13 @@ module ScrumUserstoriesHelper
 				content = column_content(column, issue)
 			end					
   	elsif column.name == :estimated_hours  		
-  		if issue.children.length > 0 || !(issue.time_trackable?)
-				content = value and value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
-			else
-				value ||= 0
+  		if (issue.children.blank? || value.to_f==0.0) && issue.time_trackable?
+				value ||= 0.0
 				
 				content = value > 0 ? value : ''
 				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
+			else
+				content = (value.to_f > 0) ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 			end			  	
   	else
   		column_content(column, issue)

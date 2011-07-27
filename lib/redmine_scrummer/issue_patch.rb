@@ -36,8 +36,8 @@ module RedmineScrummer
 				tracker.is_theme?
 			end
 			
-			def is_scrum_task?
-				tracker.is_scrum_task?
+			def is_task?
+				tracker.is_task?
 			end
 			
 			def defect?
@@ -45,7 +45,7 @@ module RedmineScrummer
 			end
 			
 			def time_trackable?
-			 self.is_scrum_task? || self.defect?
+			 self.is_task? || self.defect?
 		  end
 			 
 			def remaining_hours

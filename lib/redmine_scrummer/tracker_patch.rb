@@ -42,7 +42,7 @@ module RedmineScrummer
 				scrummer_caption == :theme
 			end
 			
-			def is_scrum_task?
+			def is_task?
 				scrummer_caption == :task
 			end
 			

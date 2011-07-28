@@ -281,8 +281,15 @@ module RedmineScrummer
                                     :name             => 'TODO(hrs)',
                                     :field_format     => 'float',
                                     :default_value    => "0")
+                                    
+          # add business value custom field
+          business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
+          business_value_custom_field.update_attributes(
+                                    :name             => 'Business_Value',
+                                    :field_format     => 'float',
+                                    :default_value    => "0")
 
-          trackers_custom_fields = { :userstory => [:story_size],
+          trackers_custom_fields = { :userstory => [:story_size, :business_value],
                                      :epic      => [:story_size],
                                      :theme     => [:story_size],
                                      :task      => [:remaining_hours],

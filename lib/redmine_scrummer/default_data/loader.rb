@@ -71,19 +71,49 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Workflow
           #############################################################################################                    
+          test_id = Tracker.find_by_scrummer_caption(:test).id
+          task_id = Tracker.find_by_scrummer_caption(:task).id
           Tracker.find_all_by_is_scrum(true).each do |tracker|
             Role.find_all_by_is_scrum(true).each do |role|
               IssueStatus.find_all_by_is_scrum(true).each do |old_status|
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
-                  conditions = {:role_id => role.id, 
-                                  :tracker_id => tracker.id, 
-                                  :old_status_id => old_status.id, 
-                                  :new_status_id => new_status.id}
-                  Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                  #exclude test and task
+                  if tracker.id != test_id && tracker.id != task_id
+                    conditions = {:role_id => role.id, 
+                                    :tracker_id => tracker.id, 
+                                    :old_status_id => old_status.id, 
+                                    :new_status_id => new_status.id}
+                    Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                  end
                 end
               end
             end
-          end   
+          end
+          
+          # workflow for Scrum_Test
+          Role.find_all_by_is_scrum(true).each do |role|
+            [:defined,:succeeded,:failed].each do |old_status|
+              [:defined,:succeeded,:failed].each do |new_status|
+                conditions = {:role_id => role.id, 
+                                :tracker_id => test_id, 
+                                :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
+                                :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+              end
+            end
+          end
+          # workflow for Scrum_Task
+          Role.find_all_by_is_scrum(true).each do |role|
+            [:defined,:in_progress,:completed].each do |old_status|
+              [:defined,:in_progress,:completed].each do |new_status|
+                conditions = {:role_id => role.id, 
+                                :tracker_id => task_id, 
+                                :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
+                                :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+              end
+            end
+          end
     
           #############################################################################################  
           # seed scrum roles permissions

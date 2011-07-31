@@ -24,6 +24,7 @@ module RedmineScrummer
           #############################################################################################
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
   
+          # TODO localize name
           scrum_trackers = { :userstory   => { :name => 'Scrum-UserStory',   :short_name => 'US'   },
                              :task        => { :name => 'Scrum-Task',        :short_name => 'Task' },
                              :epic        => { :name => 'Scrum-Epic',        :short_name => 'Epic' },
@@ -43,6 +44,7 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Roles
           #############################################################################################
+          # TODO localize
           scrum_roles = { :project_member => 'Scrum-ProjectMember',
                           :scrum_master   => 'Scrum-ScrumMaster',
                           :product_owner  => 'Scrum-ProductOwner'}
@@ -55,6 +57,7 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Statuses
           #############################################################################################
+          # TODO localize name
           statuses = [{:scrummer_caption => :defined,     :is_scrum => true,     :name => 'Scrum-Defined',     :short_name => 'D', :is_default => true},
                       {:scrummer_caption => :in_progress, :is_scrum => true,     :name => 'Scrum-In-Progress', :short_name => 'P'}, 
                       {:scrummer_caption => :completed,   :is_scrum => true,        :name => 'Scrum-Completed',   :short_name => 'C'}, 
@@ -71,6 +74,7 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Workflow
           #############################################################################################                    
+          Workflow.destroy_all
           test_id = Tracker.find_by_scrummer_caption(:test).id
           task_id = Tracker.find_by_scrummer_caption(:task).id
           Tracker.find_all_by_is_scrum(true).each do |tracker|
@@ -180,7 +184,7 @@ module RedmineScrummer
                                   :view_wiki_pages]
                                   
           Role.find_all_by_is_scrum(true).each do |role|
-            
+            # TODO localize role.name for all the following
             if(role.name == 'Scrum-ProjectMember')
               project_member_permissions = all_default_permissions - [:add_project,
                                                                       :add_subprojects,
@@ -263,7 +267,8 @@ module RedmineScrummer
           #############################################################################################  
           # Create/Update custom fields
           #############################################################################################  
-  
+          # TODO localize name
+          
           # add story size custom field
           story_size_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :story_size)
           story_size_custom_field.update_attributes(
@@ -276,8 +281,6 @@ module RedmineScrummer
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
-                                    #TODO: localize TODO(hrs)
-                                    # note: it is mentioned in other places, so refactor all
                                     :name             => 'TODO(hrs)',
                                     :field_format     => 'float',
                                     :default_value    => "0")
@@ -285,13 +288,13 @@ module RedmineScrummer
           # add business value custom field
           business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
           business_value_custom_field.update_attributes(
-                                    :name             => 'Business_Value',
+                                    :name             => 'Business Value',
                                     :field_format     => 'float',
                                     :default_value    => "0")
 
           trackers_custom_fields = { :userstory => [:story_size, :business_value],
-                                     :epic      => [:story_size],
-                                     :theme     => [:story_size],
+                                     :epic      => [:story_size, :business_value],
+                                     :theme     => [:story_size, :business_value],
                                      :task      => [:remaining_hours],
                                      :defect    => [:remaining_hours],
                                      :refactor  => [:remaining_hours]}
@@ -299,6 +302,7 @@ module RedmineScrummer
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption)
+            tracker.custom_fields = []
             tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
           end
       

@@ -61,11 +61,7 @@ module ScrumUserstoriesHelper
   	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
   	elsif column.name == :subject and issue.scrum_issue?
   	  prefix = if issue.children.blank? 
-  	    # if issue.is_task?
-  	     "<span>&nbsp;&nbsp;</span>"
-  	    # else
-  	    #  "<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"
-  	    # end
+  	    "<span>&nbsp;&nbsp;</span>"
       else
         "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$j(this).addClass('hover')\" onmouseout=\"$j(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
       end   

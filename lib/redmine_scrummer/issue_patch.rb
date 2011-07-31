@@ -7,8 +7,6 @@ module RedmineScrummer
 				
 				include InstanceMethods
 				
-				validate :validate_status
-				
 				after_create :initiate_remaining_hours
 				after_save :update_remaining_hours
 				
@@ -127,21 +125,6 @@ module RedmineScrummer
         if self.remaining_hours == 0.0
           self.remaining_hours = self.estimated_hours
           self.save
-        end
-      end
-      
-			def validate_status
-        if self.status_id_changed?
-          # test issues can allow only (defined, success, fail)
-          if (self.is_test? && !(self.succeeded? || self.failed? || self.status_defined?)) ||
-             # task allow only (defined, progress, completed)
-             (self.is_task? && !(self.status_defined? || self.in_progress? || self.completed?)) ||
-             # non test issues doesn't accept success and fail
-             (!self.is_test? && (self.succeeded? || self.failed?))
-             
-            self.errors.add(:status_id, "invalid status")
-            return false
-          end
         end
       end
       

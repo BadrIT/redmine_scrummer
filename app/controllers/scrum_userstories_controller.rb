@@ -74,7 +74,10 @@ class ScrumUserstoriesController < IssuesController
       @issue = Issue.find(issue_id)
       status = IssueStatus.find_by_short_name(params[:value])
       @issue.status = status
-      if status && @issue.save
+      
+      allowed_statuses = @issue.new_statuses_allowed_to(User.current)
+      
+      if status && allowed_statuses.include?(status) && @issue.save
         render :text => params[:value].upcase
       else
         render :text => 'Errors in saving'

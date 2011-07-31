@@ -9,6 +9,7 @@ module RedmineScrummer
 				
 				after_create :initiate_remaining_hours
 				after_save :update_remaining_hours
+				after_save :update_children_target_versions
 				
 				after_save :update_parent_status
 				after_destroy :update_parent_status
@@ -155,6 +156,17 @@ module RedmineScrummer
 			    
 			    # update parent status
 			    self.parent.update_status if self.parent
+			  end
+			end
+			
+			def update_children_target_versions
+			  if fixed_version_id_changed? && !self.fixed_version.nil?
+			    children.each do |child|
+			      if child.fixed_version.nil?
+			       child.fixed_version = self.fixed_version
+			       child.save
+			      end
+			    end
 			  end
 			end
 			

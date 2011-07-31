@@ -24,6 +24,7 @@ module RedmineScrummer
           #############################################################################################
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
   
+          # TODO localize name
           scrum_trackers = { :userstory   => { :name => 'Scrum-UserStory',   :short_name => 'US'   },
                              :task        => { :name => 'Scrum-Task',        :short_name => 'Task' },
                              :epic        => { :name => 'Scrum-Epic',        :short_name => 'Epic' },
@@ -43,6 +44,7 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Roles
           #############################################################################################
+          # TODO localize
           scrum_roles = { :project_member => 'Scrum-ProjectMember',
                           :scrum_master   => 'Scrum-ScrumMaster',
                           :product_owner  => 'Scrum-ProductOwner'}
@@ -55,6 +57,7 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Statuses
           #############################################################################################
+          # TODO localize name
           statuses = [{:scrummer_caption => :defined,     :is_scrum => true,     :name => 'Scrum-Defined',     :short_name => 'D', :is_default => true},
                       {:scrummer_caption => :in_progress, :is_scrum => true,     :name => 'Scrum-In-Progress', :short_name => 'P'}, 
                       {:scrummer_caption => :completed,   :is_scrum => true,        :name => 'Scrum-Completed',   :short_name => 'C'}, 
@@ -71,19 +74,50 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Workflow
           #############################################################################################                    
+          Workflow.destroy_all
+          test_id = Tracker.find_by_scrummer_caption(:test).id
+          task_id = Tracker.find_by_scrummer_caption(:task).id
           Tracker.find_all_by_is_scrum(true).each do |tracker|
             Role.find_all_by_is_scrum(true).each do |role|
               IssueStatus.find_all_by_is_scrum(true).each do |old_status|
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
-                  conditions = {:role_id => role.id, 
-                                  :tracker_id => tracker.id, 
-                                  :old_status_id => old_status.id, 
-                                  :new_status_id => new_status.id}
-                  Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                  #exclude test and task
+                  if tracker.id != test_id && tracker.id != task_id
+                    conditions = {:role_id => role.id, 
+                                    :tracker_id => tracker.id, 
+                                    :old_status_id => old_status.id, 
+                                    :new_status_id => new_status.id}
+                    Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                  end
                 end
               end
             end
-          end   
+          end
+          
+          # workflow for Scrum_Test
+          Role.find_all_by_is_scrum(true).each do |role|
+            [:defined,:succeeded,:failed].each do |old_status|
+              [:defined,:succeeded,:failed].each do |new_status|
+                conditions = {:role_id => role.id, 
+                                :tracker_id => test_id, 
+                                :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
+                                :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+              end
+            end
+          end
+          # workflow for Scrum_Task
+          Role.find_all_by_is_scrum(true).each do |role|
+            [:defined,:in_progress,:completed].each do |old_status|
+              [:defined,:in_progress,:completed].each do |new_status|
+                conditions = {:role_id => role.id, 
+                                :tracker_id => task_id, 
+                                :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
+                                :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+              end
+            end
+          end
     
           #############################################################################################  
           # seed scrum roles permissions
@@ -150,7 +184,7 @@ module RedmineScrummer
                                   :view_wiki_pages]
                                   
           Role.find_all_by_is_scrum(true).each do |role|
-            
+            # TODO localize role.name for all the following
             if(role.name == 'Scrum-ProjectMember')
               project_member_permissions = all_default_permissions - [:add_project,
                                                                       :add_subprojects,
@@ -233,7 +267,8 @@ module RedmineScrummer
           #############################################################################################  
           # Create/Update custom fields
           #############################################################################################  
-  
+          # TODO localize name
+          
           # add story size custom field
           story_size_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :story_size)
           story_size_custom_field.update_attributes(
@@ -246,15 +281,20 @@ module RedmineScrummer
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
-                                    #TODO: localize TODO(hrs)
-                                    # note: it is mentioned in other places, so refactor all
                                     :name             => 'TODO(hrs)',
                                     :field_format     => 'float',
                                     :default_value    => "0")
+                                    
+          # add business value custom field
+          business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
+          business_value_custom_field.update_attributes(
+                                    :name             => 'Business Value',
+                                    :field_format     => 'float',
+                                    :default_value    => "0")
 
-          trackers_custom_fields = { :userstory => [:story_size],
-                                     :epic      => [:story_size],
-                                     :theme     => [:story_size],
+          trackers_custom_fields = { :userstory => [:story_size, :business_value],
+                                     :epic      => [:story_size, :business_value],
+                                     :theme     => [:story_size, :business_value],
                                      :task      => [:remaining_hours],
                                      :defect    => [:remaining_hours],
                                      :refactor  => [:remaining_hours]}
@@ -262,6 +302,7 @@ module RedmineScrummer
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption)
+            tracker.custom_fields = []
             tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
           end
       

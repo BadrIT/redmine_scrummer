@@ -227,6 +227,7 @@ class ScrumUserstoriesController < IssuesController
         when :userstory
           Tracker.scrum_task_tracker
         when :defectsuite
+          Tracker.scrum_defect_tracker
         when :defect
           Tracker.scrum_defect_tracker
         else

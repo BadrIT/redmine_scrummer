@@ -19,31 +19,31 @@ module RedmineScrummer
 		
 		module InstanceMethods
 		  def is_test?
-		    tracker.is_test?
+		    tracker.try(:is_test?)
 		  end
 		  
 			def scrum_issue?
-				tracker.is_scrum
+				tracker.try(:is_scrum?)
 			end
 			
 			def is_user_story?
-				tracker.is_user_story?
+				tracker.try(:is_user_story?)
 			end
 			
 			def is_epic?
-				tracker.is_epic?
+				tracker.try(:is_epic?)
 			end
 			
 			def is_theme?
-				tracker.is_theme?
+				tracker.try(:is_theme?)
 			end
 			
 			def is_task?
-				tracker.is_task?
+				tracker.try(:is_task?)
 			end
 			
 			def defect?
-			  self.tracker.defect?
+			  tracker.try(:defect?)
 			end
 			
 			def time_trackable?

@@ -11,6 +11,7 @@ module RedmineScrummer
 				
 				after_create :initiate_remaining_hours
 				after_save :update_remaining_hours
+				after_save :update_children_target_versions
 			end
 			
 		end
@@ -115,6 +116,17 @@ module RedmineScrummer
 			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.remaining_hours.to_f > 0.0
 			   self.remaining_hours = 0.0
 			   self.save
+			  end
+			end
+			
+			def update_children_target_versions
+			  if fixed_version_id_changed? && !self.fixed_version.nil?
+			    children.each do |child|
+			      if child.fixed_version.nil?
+			       child.fixed_version = self.fixed_version
+			       child.save
+			      end
+			    end
 			  end
 			end
 			

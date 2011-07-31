@@ -11,6 +11,9 @@ module RedmineScrummer
 				
 				after_create :initiate_remaining_hours
 				after_save :update_remaining_hours
+				
+				after_save :update_parent_status
+				after_destroy :update_parent_status
 			end
 			
 		end
@@ -92,13 +95,6 @@ module RedmineScrummer
         self.tracker.custom_fields.any?{|field| field.scrummer_caption == field_name.to_sym}
       end
 			
-			def initiate_remaining_hours
-			  if self.remaining_hours == 0.0
-			    self.remaining_hours = self.estimated_hours
-			    self.save
-			  end
-			end
-			
 			def method_missing(m, *args, &block)
 			  # check status methods (status_defined?, status_accepted?, completed?, ..etc)
 			  # method name can be (status_status_name?) OR (status_name?) directly
@@ -110,28 +106,75 @@ module RedmineScrummer
 			  end
 			end
 			
-			def update_remaining_hours
-			  # reset todo hours if completed or accepted
-			  if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.remaining_hours.to_f > 0.0
-			   self.remaining_hours = 0.0
-			   self.save
+			def update_status
+			  # Defined if all children are defined
+			  self.status = if self.children.all?(&:status_defined?)
+			    IssueStatus.status_defined 
+			  # In-Progress if at least one child is in progress OR defined
+			  elsif self.children.any?{|c| c.in_progress? || c.status_defined?}
+          IssueStatus.in_progress
+			  # Completed if all children are completed OR accepted
+			  # if user story is accepted don't move to completed, keep it accepted
+			  elsif !self.accepted? && self.children.all?{|c| c.completed? || c.accepted?}
+          IssueStatus.completed
+			  end
+			  
+			  self.save
+			end
+			
+			protected
+			def initiate_remaining_hours
+        if self.remaining_hours == 0.0
+          self.remaining_hours = self.estimated_hours
+          self.save
+        end
+      end
+      
+			def validate_status
+        if self.status_id_changed?
+          # test issues can allow only (defined, success, fail)
+          if (self.is_test? && !(self.succeeded? || self.failed? || self.status_defined?)) ||
+             # task allow only (defined, progress, completed)
+             (self.is_task? && !(self.status_defined? || self.in_progress? || self.completed?)) ||
+             # non test issues doesn't accept success and fail
+             (!self.is_test? && (self.succeeded? || self.failed?))
+             
+            self.errors.add(:status_id, "invalid status")
+            return false
+          end
+        end
+      end
+      
+      def update_remaining_hours
+        # reset todo hours if completed or accepted
+        if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.remaining_hours.to_f > 0.0
+         self.remaining_hours = 0.0
+         self.save
+        end
+      end
+      
+			def update_parent_status
+			  if self.status_id_changed?
+			    # when a story goes to completed OR accepted, all its children should be completed
+			    if self.completed? || self.accepted?
+			      self.children.each do |child|
+			        if child.is_task? && (child.status_defined? || child.in_progress?)
+			          child.status = IssueStatus.completed
+			          child.save
+			        elsif child.is_user_story? && (child.status_defined? || child.in_progress? || child.completed?)
+                # if moved to completed, move children to completed
+                # if moved to accepted, move children to accepted
+                child.status = self.status
+                child.save
+			        end
+			      end
+			    end
+			    
+			    # update parent status
+			    self.parent.update_status if self.parent
 			  end
 			end
 			
-			def validate_status
-			  if self.status_id_changed?
-			    # test issues can allow only (defined, success, fail)
-  			  if (self.is_test? && !(self.succeeded? || self.failed? || self.status_defined?)) ||
-  			     # task allow only (defined, progress, completed)
-  			     (self.is_task? && !(self.status_defined? || self.in_progress? || self.completed?)) ||
-  			     # non test issues doesn't accept success and fail
-    			   (!self.is_test? && (self.succeeded? || self.failed?))
-    			   
-    			  self.errors.add(:status_id, "invalid status")
-    			  return false
-  			  end
-			  end
-			end
 		end
 	end
 end

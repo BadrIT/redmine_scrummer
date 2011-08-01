@@ -168,7 +168,7 @@ class ScrumUserstoriesController < IssuesController
 	end
 
 	def find_query
-	  if params[:query_id].blank? && session[:query].nil?
+	  if params[:query_id].blank? && (session[:query].nil? || session[:query][:id].nil?)
 	    query = Query.find_by_scrummer_caption('User-Stories')
 	    params[:query_id] = query.id
 	  end

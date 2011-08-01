@@ -157,7 +157,6 @@ module ScrumUserstoriesHelper
         result[:total_actual]   += issue.spent_hours.to_f
         result[:total_story_size] += issue.story_size 
       end
-      
       result[:total_remaining]  += to_do_column.value(issue).to_f 
     end 
     

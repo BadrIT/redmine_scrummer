@@ -24,14 +24,14 @@ module RedmineScrummer
           #############################################################################################
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
   
-          scrum_trackers = { :userstory   => { :name => 'Scrum-UserStory',   :short_name => 'US'   },
-                             :task        => { :name => 'Scrum-Task',        :short_name => 'Task' },
-                             :epic        => { :name => 'Scrum-Epic',        :short_name => 'Epic' },
-                             :theme       => { :name => 'Scrum-Theme',       :short_name => 'Theme'},
-                             :defect      => { :name => 'Scrum-Defect',      :short_name => 'DE'   },
-                             :defectsuite => { :name => 'Scrum-DefectSuite', :short_name => 'DS'   },
-                             :refactor    => { :name => 'Scrum-Refactor',    :short_name => 'RE'   } ,
-                             :test        => { :name => 'Scrum-Test',        :short_name => 'Test' }}
+          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),  :short_name => 'US'   },
+                             :task        => { :name => l(:scrum_task),        :short_name => 'Task' },
+                             :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' },
+                             :theme       => { :name => l(:scrum_theme),       :short_name => 'Theme'},
+                             :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   },
+                             :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   },
+                             :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   } ,
+                             :test        => { :name => l(:scrum_test),        :short_name => 'Test' }}
           
           scrum_trackers.each do |caption, options|
             options = options.merge(scrum_tracker_options)
@@ -43,9 +43,9 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Roles
           #############################################################################################
-          scrum_roles = { :project_member => 'Scrum-ProjectMember',
-                          :scrum_master   => 'Scrum-ScrumMaster',
-                          :product_owner  => 'Scrum-ProductOwner'}
+          scrum_roles = { :project_member => l(:scrum_projectMember),
+                          :scrum_master   => l(:scrum_scrumMaster),
+                          :product_owner  => l(:scrum_productOwner)}
                              
           scrum_roles.each do |caption, name|
             role = Role.find_or_create_by_scrummer_caption(caption);
@@ -55,12 +55,12 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Statuses
           #############################################################################################
-          statuses = [{:scrummer_caption => :defined,     :is_scrum => true,     :name => 'Scrum-Defined',     :short_name => 'D', :is_default => true},
-                      {:scrummer_caption => :in_progress, :is_scrum => true,     :name => 'Scrum-In-Progress', :short_name => 'P'}, 
-                      {:scrummer_caption => :completed,   :is_scrum => true,        :name => 'Scrum-Completed',   :short_name => 'C'}, 
-                      {:scrummer_caption => :accepted,    :is_scrum => true,      :name => 'Scrum-Accepted',    :short_name => 'A', :is_closed => true},
-                      {:scrummer_caption => :succeeded,   :is_scrum => true,     :name => 'Scrum-Succeeded',   :short_name => 'S', :is_closed => true},
-                      {:scrummer_caption => :failed,      :is_scrum => true,     :name => 'Scrum-Failed',      :short_name => 'F'}]
+          statuses = [{:scrummer_caption => :defined,     :is_scrum => true,     :name => l(:scrum_defined),     :short_name => 'D', :is_default => true},
+                      {:scrummer_caption => :in_progress, :is_scrum => true,     :name => l(:scrum_inProgress), :short_name => 'P'}, 
+                      {:scrummer_caption => :completed,   :is_scrum => true,     :name => l(:scrum_completed),   :short_name => 'C'}, 
+                      {:scrummer_caption => :accepted,    :is_scrum => true,     :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true},
+                      {:scrummer_caption => :succeeded,   :is_scrum => true,     :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true},
+                      {:scrummer_caption => :failed,      :is_scrum => true,     :name => l(:scrum_failed),      :short_name => 'F'}]
           
           statuses.each do |options|
             caption = options[:scrummer_caption]
@@ -71,19 +71,50 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Workflow
           #############################################################################################                    
+          Workflow.destroy_all
+          test_id = Tracker.find_by_scrummer_caption(:test).id
+          task_id = Tracker.find_by_scrummer_caption(:task).id
           Tracker.find_all_by_is_scrum(true).each do |tracker|
             Role.find_all_by_is_scrum(true).each do |role|
               IssueStatus.find_all_by_is_scrum(true).each do |old_status|
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
-                  conditions = {:role_id => role.id, 
-                                  :tracker_id => tracker.id, 
-                                  :old_status_id => old_status.id, 
-                                  :new_status_id => new_status.id}
-                  Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                  #exclude test and task
+                  if tracker.id != test_id && tracker.id != task_id
+                    conditions = {:role_id => role.id, 
+                                    :tracker_id => tracker.id, 
+                                    :old_status_id => old_status.id, 
+                                    :new_status_id => new_status.id}
+                    Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                  end
                 end
               end
             end
-          end   
+          end
+          
+          # workflow for Scrum_Test
+          Role.find_all_by_is_scrum(true).each do |role|
+            [:defined,:succeeded,:failed].each do |old_status|
+              [:defined,:succeeded,:failed].each do |new_status|
+                conditions = {:role_id => role.id, 
+                                :tracker_id => test_id, 
+                                :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
+                                :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+              end
+            end
+          end
+          # workflow for Scrum_Task
+          Role.find_all_by_is_scrum(true).each do |role|
+            [:defined,:in_progress,:completed].each do |old_status|
+              [:defined,:in_progress,:completed].each do |new_status|
+                conditions = {:role_id => role.id, 
+                                :tracker_id => task_id, 
+                                :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
+                                :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+              end
+            end
+          end
     
           #############################################################################################  
           # seed scrum roles permissions
@@ -150,8 +181,7 @@ module RedmineScrummer
                                   :view_wiki_pages]
                                   
           Role.find_all_by_is_scrum(true).each do |role|
-            
-            if(role.name == 'Scrum-ProjectMember')
+            if(role.name == l(:scrum_projectMember))
               project_member_permissions = all_default_permissions - [:add_project,
                                                                       :add_subprojects,
                                                                       :add_issues,                          
@@ -178,10 +208,10 @@ module RedmineScrummer
                                                                       :set_issues_private]
               role.permissions = project_member_permissions
               role.save!
-            elsif(role.name == 'Scrum-ScrumMaster')
+            elsif(role.name == l(:scrum_scrumMaster))
               role.permissions = all_default_permissions
               role.save!
-            elsif(role.name == 'Scrum-ProductOwner')
+            elsif(role.name == l(:scrum_productOwner))
               product_owner_permissions = all_default_permissions - [:add_project,
                                                                     :add_subprojects,
                                                                     :delete_issue_watchers,
@@ -217,14 +247,14 @@ module RedmineScrummer
           # seed scrum roles scrum perissions
           Role.find_all_by_is_scrum(true).each do |role|
           
-            if(role.name == 'Scrum-ProjectMember')
+            if(role.name == l(:scrum_projectMember))
               project_member_permissions = all_scrum_permissions
               role.permissions += project_member_permissions
               role.save!
-            elsif(role.name == 'Scrum-ScrumMaster')
+            elsif(role.name == l(:scrum_scrumMaster))
               role.permissions += all_scrum_permissions
               role.save!
-            elsif(role.name == 'Scrum-ProductOwner')
+            elsif(role.name == l(:scrum_productOwner))
               role.permissions += all_scrum_permissions
               role.save!        
             end
@@ -233,11 +263,11 @@ module RedmineScrummer
           #############################################################################################  
           # Create/Update custom fields
           #############################################################################################  
-  
+          
           # add story size custom field
           story_size_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :story_size)
           story_size_custom_field.update_attributes(
-                                    :name             => 'Story-Size',
+                                    :name             => l(:story_size),
                                     :field_format     => 'list',
                                     :possible_values  => Scrummer::Constants::StorySizes.map{|size| size.to_s},
                                     :is_required      => false,
@@ -246,15 +276,20 @@ module RedmineScrummer
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
-                                    #TODO: localize TODO(hrs)
-                                    # note: it is mentioned in other places, so refactor all
-                                    :name             => 'TODO(hrs)',
+                                    :name             => l(:todo),
+                                    :field_format     => 'float',
+                                    :default_value    => "0")
+                                    
+          # add business value custom field
+          business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
+          business_value_custom_field.update_attributes(
+                                    :name             => l(:business_value),
                                     :field_format     => 'float',
                                     :default_value    => "0")
 
-          trackers_custom_fields = { :userstory => [:story_size],
-                                     :epic      => [:story_size],
-                                     :theme     => [:story_size],
+          trackers_custom_fields = { :userstory => [:story_size, :business_value],
+                                     :epic      => [:story_size, :business_value],
+                                     :theme     => [:story_size, :business_value],
                                      :task      => [:remaining_hours],
                                      :defect    => [:remaining_hours],
                                      :refactor  => [:remaining_hours]}
@@ -262,6 +297,7 @@ module RedmineScrummer
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption)
+            tracker.custom_fields = []
             tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
           end
       

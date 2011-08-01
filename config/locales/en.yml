@@ -23,3 +23,28 @@ en:
   short_field_estimated_hours: "Estimate"
   short_field_story_size: "Size"
   short_field_remaining_hours: "TODO"
+  
+  scrum_userStory: "Scrum-UserStory"
+  scrum_task: "Scrum-Task"
+  scrum_epic: "Scrum-Epic"
+  scrum_theme: "Scrum-Theme"
+  scrum_defect: "Scrum-Defect"
+  scrum_defectSuite: "Scrum-DefectSuite"
+  scrum_refactor: "Scrum-Refactor"
+  scrum_test: "Scrum-Test"
+  
+  scrum_projectMember: "Scrum-ProjectMember"
+  scrum_scrumMaster: "Scrum-ScrumMaster"
+  scrum_productOwner: "Scrum-ProductOwner"
+  scrum_projectMember: "Scrum-ProjectMember"
+  
+  scrum_defined: "Scrum-Defined"
+  scrum_inProgress: "Scrum-In-Progress"
+  scrum_completed: "Scrum-Completed"
+  scrum_accepted: "Scrum-Accepted"
+  scrum_succeeded: "Scrum-Succeeded"
+  scrum_failed: "Scrum-Failed"
+  
+  story_size: "Story-Size"
+  todo: "TODO(hrs)"
+  business_value: "Business Value"

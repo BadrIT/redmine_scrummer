@@ -148,11 +148,11 @@ module ScrumUserstoriesHelper
               :total_actual => 0.0,
               :total_remaining => 0.0}
     
-    todo_column_caption       = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
+    remaining_hours_column_caption       = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
     story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
     
     story_column = query.columns.find{|c| c.caption == story_size_column_caption}
-    to_do_column = query.columns.find{|c| c.caption == todo_column_caption}
+    remaining_hours_column = query.columns.find{|c| c.caption == remaining_hours_column_caption}
     
     issues.each do |issue|
       if issue.parent.nil? || issues.exclude?(issue.parent)
@@ -161,7 +161,7 @@ module ScrumUserstoriesHelper
         result[:total_story_size] += issue.story_size 
       end
       
-      result[:total_remaining]  += to_do_column.value(issue).to_f 
+      result[:total_remaining]  += remaining_hours_column ? remaining_hours_column.value(issue).to_f : 0; 
     end 
     
     result

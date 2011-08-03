@@ -55,7 +55,9 @@ module ScrumUserstoriesHelper
     	    'A'
         when :succeeded
           'S'
-        when :failed
+        when :failed 
+          'F'
+        when :finished 
           'F'
   	  end
   	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"

@@ -72,7 +72,12 @@ class ScrumUserstoriesController < IssuesController
       matched_groups = params[:id].match(/issue-(\d+)-status/)
       issue_id = matched_groups[1]
       @issue = Issue.find(issue_id)
-      status = IssueStatus.find_by_short_name(params[:value])
+
+      status = if params[:value].to_s == "f"
+        @issue.is_test? ? IssueStatus.failed : IssueStatus.finished
+      else
+        IssueStatus.find_by_short_name(params[:value])
+      end
       @issue.status = status
       
       allowed_statuses = @issue.new_statuses_allowed_to(User.current)

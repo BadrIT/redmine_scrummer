@@ -56,30 +56,51 @@ module RedmineScrummer
           # Create/Update Statuses
           #############################################################################################
           statuses = [{:scrummer_caption => :defined,     :is_scrum => true,     :name => l(:scrum_defined),     :short_name => 'D', :is_default => true},
-                      {:scrummer_caption => :in_progress, :is_scrum => true,     :name => l(:scrum_inProgress), :short_name => 'P'}, 
+                      {:scrummer_caption => :in_progress, :is_scrum => true,     :name => l(:scrum_inProgress),  :short_name => 'P'}, 
                       {:scrummer_caption => :completed,   :is_scrum => true,     :name => l(:scrum_completed),   :short_name => 'C'}, 
                       {:scrummer_caption => :accepted,    :is_scrum => true,     :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true},
                       {:scrummer_caption => :succeeded,   :is_scrum => true,     :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true},
-                      {:scrummer_caption => :failed,      :is_scrum => true,     :name => l(:scrum_failed),      :short_name => 'F'}]
+                      {:scrummer_caption => :failed,      :is_scrum => true,     :name => l(:scrum_failed),      :short_name => 'F'},
+                      {:scrummer_caption => :finished,    :is_scrum => true,     :name => l(:scrum_finished),    :short_name => 'F', :is_closed => true}]
           
           statuses.each do |options|
             caption = options[:scrummer_caption]
             status = IssueStatus.find_or_create_by_scrummer_caption(caption)
             status.update_attributes(options)
           end
+          
+          # update all tasks from completed or accepted to finished
+          task_id = Tracker.find_by_scrummer_caption(:task).id
+          tasks = Issue.find_all_by_tracker_id(task_id)
+          tasks.each do |task|
+            if(task.status == IssueStatus.accepted || task.status == IssueStatus.completed)
+              task.status = IssueStatus.finished
+              task.save
+            end
+          end
             
           #############################################################################################
           # Create/Update Workflow
           #############################################################################################                    
           Workflow.destroy_all
+          #trackers
           test_id = Tracker.find_by_scrummer_caption(:test).id
           task_id = Tracker.find_by_scrummer_caption(:task).id
+          #statuses
+          finished_id = IssueStatus.find_by_scrummer_caption(:finished).id
+          failed_id = IssueStatus.find_by_scrummer_caption(:failed).id
+          succeeded_id = IssueStatus.find_by_scrummer_caption(:succeeded).id
+          
+          limited_statuses = [failed_id,finished_id,succeeded_id]
+          
           Tracker.find_all_by_is_scrum(true).each do |tracker|
             Role.find_all_by_is_scrum(true).each do |role|
               IssueStatus.find_all_by_is_scrum(true).each do |old_status|
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
-                  #exclude test and task
-                  if tracker.id != test_id && tracker.id != task_id
+                  #exclude test and task trackers
+                  #exclude failed, succeeded and finished statuses
+                  if tracker.id != test_id && tracker.id != task_id &&
+                     !limited_statuses.include?(old_status.id) && !limited_statuses.include?(new_status.id)
                     conditions = {:role_id => role.id, 
                                     :tracker_id => tracker.id, 
                                     :old_status_id => old_status.id, 
@@ -105,8 +126,8 @@ module RedmineScrummer
           end
           # workflow for Scrum_Task
           Role.find_all_by_is_scrum(true).each do |role|
-            [:defined,:in_progress,:completed].each do |old_status|
-              [:defined,:in_progress,:completed].each do |new_status|
+            [:defined,:in_progress,:finished].each do |old_status|
+              [:defined,:in_progress,:finished].each do |new_status|
                 conditions = {:role_id => role.id, 
                                 :tracker_id => task_id, 
                                 :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 

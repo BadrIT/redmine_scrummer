@@ -73,7 +73,7 @@ class ScrumUserstoriesController < IssuesController
       issue_id = matched_groups[1]
       @issue = Issue.find(issue_id)
 
-      status = if params[:value].to_s == "f"
+      status = if ["f", "F"].include? params[:value].to_s 
         @issue.is_test? ? IssueStatus.failed : IssueStatus.finished
       else
         IssueStatus.find_by_short_name(params[:value])
@@ -82,10 +82,14 @@ class ScrumUserstoriesController < IssuesController
       
       allowed_statuses = @issue.new_statuses_allowed_to(User.current)
       
-      if status && allowed_statuses.include?(status) && @issue.save
-        render :text => params[:value].upcase
-      else
+      if !status
+        render :text => 'Status invalid'
+      elsif  !allowed_statuses.include?(status)
+        render :text => 'Status Not Allowed'
+      elsif !@issue.save
         render :text => 'Errors in saving'
+      else
+        render :text => params[:value].upcase
       end 
       
     else

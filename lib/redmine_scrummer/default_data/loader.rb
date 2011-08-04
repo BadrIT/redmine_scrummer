@@ -99,12 +99,16 @@ module RedmineScrummer
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
                   #exclude test and task trackers
                   #exclude failed, succeeded and finished statuses
-                  if tracker.id != test_id && tracker.id != task_id &&
-                     !limited_statuses.include?(old_status.id) && !limited_statuses.include?(new_status.id)
+                  if tracker.id != test_id && 
+                      tracker.id != task_id && 
+                      !limited_statuses.include?(old_status.id) && 
+                      !limited_statuses.include?(new_status.id)
+                    
                     conditions = {:role_id => role.id, 
                                     :tracker_id => tracker.id, 
                                     :old_status_id => old_status.id, 
                                     :new_status_id => new_status.id}
+                    
                     Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
                   end
                 end

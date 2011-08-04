@@ -93,7 +93,9 @@ module ScrumUserstoriesHelper
 				  value = issue_accumelated_custom_values(issue, column.custom_field)
 				end
 				
-				if (issue.children.blank? || value.to_f==0.0) && issue.has_custom_field?(column.custom_field.scrummer_caption)
+				field_caption = column.custom_field.scrummer_caption
+				
+				if (issue.children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
 				# if issue.children.blank? && issue.has_custom_field?(column.custom_field.scrummer_caption)
 					content = value > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
@@ -104,7 +106,7 @@ module ScrumUserstoriesHelper
 				content = column_content(column, issue)
 			end					
   	elsif column.name == :estimated_hours  		
-  		if (issue.children.blank? || value.to_f==0.0) && issue.time_trackable?
+  		if (issue.children.blank? || value.to_f == 0.0) && issue.time_trackable?
 				value ||= 0.0
 				
 				content = value > 0 ? value : ''

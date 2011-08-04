@@ -55,7 +55,9 @@ module ScrumUserstoriesHelper
     	    'A'
         when :succeeded
           'S'
-        when :failed
+        when :failed 
+          'F'
+        when :finished 
           'F'
   	  end
   	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
@@ -157,7 +159,7 @@ module ScrumUserstoriesHelper
         result[:total_actual]   += issue.spent_hours.to_f
         result[:total_story_size] += issue.story_size 
       end
-      
+
       result[:total_remaining]  += remaining_hours_column ? remaining_hours_column.value(issue).to_f : 0; 
     end 
     

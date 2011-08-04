@@ -44,6 +44,8 @@ en:
   scrum_accepted: "Scrum-Accepted"
   scrum_succeeded: "Scrum-Succeeded"
   scrum_failed: "Scrum-Failed"
+  scrum_finished: "Scrum-Finished"
+  
   
   story_size: "Story-Size"
   todo: "TODO(hrs)"

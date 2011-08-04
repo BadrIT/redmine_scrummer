@@ -55,12 +55,5 @@ Redmine::Plugin.register :redmine_scrummer do
   	permission :scrum_charts, 													{ :scrum_charts => [:index]}
   end
   
-  # to solve the issue when try to run migrations before 
-  # Queries table is existing, it was throwing an exception
-  begin
-    query_id = Query.find_by_scrummer_caption("User-Stories").try(:id)
-  rescue
-  end
-
-  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index', :query_id => query_id }, :after => :activity, :param => :project_id  
+  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id  
 end

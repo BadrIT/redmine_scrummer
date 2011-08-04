@@ -98,7 +98,7 @@ module RedmineScrummer
 			  # check status methods (status_defined?, status_accepted?, completed?, ..etc)
 			  # method name can be (status_status_name?) OR (status_name?) directly
 			  # we had to add status_ in some cases like (defined?) because defined? is a ruby keywork
-			  if m.to_s =~ /^(status_)?(defined|in_progress|completed|accepted|failed|succeeded)\?$/
+			  if m.to_s =~ /^(status_)?(defined|in_progress|completed|accepted|failed|succeeded|finished)\?$/
 			    self.status.scrummer_caption == $2.to_sym
 			  else
 			    super
@@ -110,12 +110,12 @@ module RedmineScrummer
 			  self.status = if self.children.all?(&:status_defined?)
 			    IssueStatus.status_defined 
 			  # In-Progress if at least one child is in progress OR defined
-			  elsif self.children.any?{|c| c.in_progress? || c.status_defined?}
+			  elsif self.children.any?{|c| c.in_progress? || c.status_defined?} && !self.is_test?
           IssueStatus.in_progress
-			  # Completed if all children are completed OR accepted
+			  # Completed if all children are completed, accepted OR finished
 			  # if user story is accepted don't move to completed, keep it accepted
-			  elsif !self.accepted? && self.children.all?{|c| c.completed? || c.accepted?}
-          IssueStatus.completed
+			  elsif !self.accepted? && self.children.all?{|c| c.completed? || c.accepted? || c.status_finished?} && !self.is_test?
+          self.is_task? ? IssueStatus.finished : IssueStatus.completed
 			  end
 			  
 			  self.save
@@ -130,8 +130,8 @@ module RedmineScrummer
       end
       
       def update_remaining_hours
-        # reset todo hours if completed or accepted
-        if status_id_changed? && (self.status_completed? || self.status_accepted?) && self.remaining_hours.to_f > 0.0
+        # reset todo hours if completed, accepted or finished
+        if status_id_changed? && (self.status_completed? ||self.status_finished? || self.status_accepted?) && self.remaining_hours.to_f > 0.0
          self.remaining_hours = 0.0
          self.save
         end
@@ -143,7 +143,7 @@ module RedmineScrummer
 			    if self.completed? || self.accepted?
 			      self.children.each do |child|
 			        if child.is_task? && (child.status_defined? || child.in_progress?)
-			          child.status = IssueStatus.completed
+			          child.status = IssueStatus.finished
 			          child.save
 			        elsif child.is_user_story? && (child.status_defined? || child.in_progress? || child.completed?)
                 # if moved to completed, move children to completed

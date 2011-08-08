@@ -111,7 +111,7 @@ class ScrumUserstoriesController < IssuesController
 
   def index
   	initialize_sort
-    
+
     if @query.valid?
  			load_issues_for_query
  			
@@ -139,7 +139,7 @@ class ScrumUserstoriesController < IssuesController
   end
 
 	def refresh_inline_add_form
-    @issue.description = @issue.is_user_story? ? "As a <role> I want to <goal> so that <reason>\nVerification Points:\n<Point1>\n<Point2>":""
+    @issue.description = @issue.is_user_story? ? l(:default_description):""
     
 	  respond_to do |format|
 			format.js {render :partial => 'inline_add'}
@@ -179,11 +179,12 @@ class ScrumUserstoriesController < IssuesController
 	end
 
 	def find_query
+	  	  
 	  if params[:query_id].blank? && (session[:query].nil? || session[:query][:id].nil?)
 	    query = Query.find_by_scrummer_caption('User-Stories')
 	    params[:query_id] = query.id
 	  end
-		retrieve_query
+	  retrieve_query
 	end
 	
 	def load_issues_ancestors

@@ -171,4 +171,8 @@ module ScrumUserstoriesHelper
 	def scrummer_image_path path
 		'../plugin_assets/redmine_scrummer/images/' + path
 	end
+	
+  def to_jss(string)
+    string.gsub("\n","\\n")
+  end
 end

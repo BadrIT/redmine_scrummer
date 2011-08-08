@@ -13,6 +13,8 @@ module RedmineScrummer
 				
 				after_save :update_parent_status
 				after_destroy :update_parent_status
+				
+				before_save :init_was_new
 			end
 			
 		end
@@ -138,7 +140,7 @@ module RedmineScrummer
       end
       
 			def update_parent_status
-			  if self.status_id_changed?
+			  if self.status_id_changed? || @was_a_new_record
 			    # when a story goes to completed OR accepted, all its children should be completed
 			    if self.completed? || self.accepted?
 			      self.children.each do |child|
@@ -153,9 +155,9 @@ module RedmineScrummer
 			        end
 			      end
 			    end
+           # update parent status
+			    self.parent.update_status if self.parent
 			  end
-         # update parent status
-        self.parent.update_status if self.parent
 			end
 			
 			def update_children_target_versions
@@ -168,6 +170,11 @@ module RedmineScrummer
 			    end
 			  end
 			end
+			
+			def init_was_new
+        @was_a_new_record = self.new_record? if @was_a_new_record.nil?
+        return true
+      end  
 			
 		end
 	end

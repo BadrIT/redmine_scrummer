@@ -153,10 +153,9 @@ module RedmineScrummer
 			        end
 			      end
 			    end
-			    
-			    # update parent status
-			    self.parent.update_status if self.parent
 			  end
+         # update parent status
+        self.parent.update_status if self.parent
 			end
 			
 			def update_children_target_versions

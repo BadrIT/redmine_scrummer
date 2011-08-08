@@ -138,8 +138,10 @@ class ScrumUserstoriesController < IssuesController
   	render :partial => 'list'
   end
 
-	def refresh_inline_add_form	
-		respond_to do |format|
+	def refresh_inline_add_form
+    @issue.description = @issue.is_user_story? ? "As a <role> I want to <goal> so that <reason>\nVerification Points:\n<Point1>\n<Point2>":""
+    
+	  respond_to do |format|
 			format.js {render :partial => 'inline_add'}
 		end
 	end

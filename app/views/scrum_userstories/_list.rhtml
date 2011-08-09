@@ -57,10 +57,12 @@
 	    <% end %>    
 	    
 	    <td>
+	    	<%unless issue.is_task? || issue.is_test?%>
 	    	<%= link_to_remote image_tag( scrummer_image_path('add_issue.gif') ), 
 	    										 :url => {:action => 'get_inline_issue_form'},
 	    										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",
 	    										 :update => "issue-#{issue.id}-inline-child" %>
+	  		<%end%>
 	    	<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
 	    										 :url => {:action => 'get_inline_issue_form'},
 	    										 :with => "'issue_id=#{issue.id}&project_id=#{@project.id}'",

@@ -15,6 +15,7 @@ class ScrumUserstoriesController < IssuesController
 	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
 	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form]	
 	before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
+	before_filter :set_default_values, :only => [:refresh_inline_add_form ,:index]
 	
 	def update_single_field
 		new_value = params[:value]
@@ -139,8 +140,7 @@ class ScrumUserstoriesController < IssuesController
   end
 
 	def refresh_inline_add_form
-    @issue.description = @issue.is_user_story? ? l(:default_description):""
-    
+	  
 	  respond_to do |format|
 			format.js {render :partial => 'inline_add'}
 		end
@@ -337,6 +337,13 @@ class ScrumUserstoriesController < IssuesController
     
     # return result
     result
+  end
+  
+  def set_default_values
+    @issue.description = @issue.is_user_story? ? l(:default_description):""
+    if params[:issue].nil? || params[:issue][:parent_issue_id].empty?
+      @issue.fixed_version =  Version.find_by_name(@query.name) if @issue.fixed_version.nil?
+    end
   end
   
   

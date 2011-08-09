@@ -16,7 +16,7 @@
 												 });
 												 
     $j('.subject-contents').tipsy();
-    	
+    default_issue_target_version = "<%=@issue.fixed_version.try(:id)%>";
     default_issue_description = "<%= to_jss l(:default_description)%>";
     clear_form_elements($j(".inline-issue-add"));	
 	});

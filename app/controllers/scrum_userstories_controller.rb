@@ -1,4 +1,7 @@
 class ScrumUserstoriesController < IssuesController
+  include ActionView::Helpers::ActiveRecordHelper
+  include ActionView::Helpers::TagHelper
+  
   unloadable
 
 	include ScrumUserstoriesHelper
@@ -13,7 +16,7 @@ class ScrumUserstoriesController < IssuesController
 	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list]
 	
 	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
-	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form]	
+	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form ,:inline_add ]	
 	before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
 	before_filter :set_default_values, :only => [:refresh_inline_add_form ,:index]
 	
@@ -163,7 +166,7 @@ class ScrumUserstoriesController < IssuesController
 				end
 			end
  		else
- 			render_error_html_for_inline_add(error_messages_for 'issue')			
+ 			render_error_html_for_inline_add(error_messages_for :issue)
  		end
  	rescue ActiveRecord::RecordNotFound
     render_404 
@@ -281,7 +284,7 @@ class ScrumUserstoriesController < IssuesController
   
   def render_error_html_for_inline_add error_html
   	render :update do |page|
-	  	page.replace_html "inline_new_issue_errors", error_html
+	  	page.replace_html "errors_for_#{get_inline_issue_div_id}", error_html
 		end
   end
   

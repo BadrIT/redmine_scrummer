@@ -48,8 +48,12 @@ module RedmineScrummer
 			  tracker.try(:defect?)
 			end
 			
+			def is_refactor?
+			  tracker.try(:refactor?)
+			end
+			
 			def time_trackable?
-			 self.is_task? || self.defect?
+			 self.is_task? || self.defect? || self.is_refactor?
 		  end
 			 
 			def remaining_hours

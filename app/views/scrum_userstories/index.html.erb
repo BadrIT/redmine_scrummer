@@ -2,6 +2,7 @@
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
     <%= stylesheet_link_tag 'tipsy', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'sidebar', :plugin => 'redmine_scrummer' %>
     <%= javascript_tag "var task_tracker_id = #{Tracker.scrum_task_tracker.id}"%>    
     <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.jeditable.js', :plugin => 'redmine_scrummer' %>
@@ -9,6 +10,8 @@
     <%= javascript_include_tag 'context_menu.js'%>
     <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.tipsy.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.sidebar.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
 <% end %>
 
 <div class="contextual">
@@ -93,3 +96,4 @@
     <%= render :partial => 'issues/sidebar' %>
     <%= render :partial => 'statistics', :locals => {:issues => @all_issues, :query => @query} %>
 <% end %>
+

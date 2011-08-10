@@ -345,8 +345,11 @@ class ScrumUserstoriesController < IssuesController
   def set_default_values
     @issue.description = @issue.is_user_story? ? l(:default_description):""
     
-    if params[:issue].nil? || params[:issue][:parent_issue_id].empty?
-      @issue.fixed_version =  Version.find_by_name(@query.name) if @issue.fixed_version.nil?
+    if @issue.fixed_version.nil? && !@query.filters['fixed_version_id'].nil? && 
+      @query.filters['fixed_version_id'][:operator] == '='&& 
+      (params[:issue].nil? || params[:issue][:parent_issue_id].empty?)
+       
+        @issue.fixed_version =  Version.find(@query.filters['fixed_version_id'][:values][0].to_i)
     end
   end
   

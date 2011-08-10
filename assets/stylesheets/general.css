@@ -141,3 +141,12 @@ table#issue-table td.subject div.subject-contents{
 .status.accepted { background-color: green; width:60px;}
 .status.succeeded { background-color: green; width:60px;}
 .status.failed { background-color: red; width:60px;}
+
+#sidebar {
+	width: 300px;
+}
+
+#content {
+	width: 98%;
+	padding: 4px 4px 0 6px;
+}

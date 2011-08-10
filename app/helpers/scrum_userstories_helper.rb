@@ -179,7 +179,6 @@ module ScrumUserstoriesHelper
   def get_inline_issue_div_id
     inline_issue_div_id = @issue.new_record? ? "inline_edit_for_#{@issue.id}" : "new_issue_inline_div"
     inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : inline_issue_div_id
-    inline_issue_div_id
   end
 
 end

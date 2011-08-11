@@ -73,28 +73,28 @@ div.sidebar-container-bottom {
 
 div.sidebar-inject-left {
     position:absolute;
-    background:url("inject-left.png") center no-repeat;
+    background:url('../images/inject-left.png') center no-repeat;
     top:0px;
     right:0px;
 }
 
 div.sidebar-inject-right {
     position:absolute;
-    background:url("inject-right.png") center no-repeat;
+    background:url('../images/inject-right.png') center no-repeat;
     top:0px;
     left:0px;
 }
 
 div.sidebar-inject-top {
     position:absolute;
-    background:url("inject-top.png") center no-repeat;
+    background:url('../images/inject-top.png') center no-repeat;
     bottom:0px;
     left:0px;
 }
 
 div.sidebar-inject-bottom {
     position:absolute;
-    background:url("inject-bottom.png") center no-repeat;
+    background:url('../images/inject-bottom.png') center no-repeat;
     top:0px;
     right:0px;
 }

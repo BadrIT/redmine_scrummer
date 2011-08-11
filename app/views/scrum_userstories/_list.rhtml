@@ -15,7 +15,7 @@
 												 	}
 												 });
 												 
-    $j('.subject-contents').tipsy();
+    $j('.subject-tipsy').tipsy();
     default_issue_target_version = "<%=@issue.fixed_version.try(:id)%>";
     default_issue_description = "<%= to_jss l(:default_description)%>";
     clear_form_elements($j(".inline-issue-add"));	
@@ -25,6 +25,20 @@
     	open:"click"
 	});
 	
+	$j('.subject-contents').cluetip({
+		splitTitle: '|',
+		positionBy: 'mouse',
+		sticky: true,
+		mouseOutClose: true,
+		closeText: 'X',
+		closePosition: 'title',
+		topOffset: -6,
+		fx: {
+              open:       'fadeIn', // can be 'show' or 'slideDown' or 'fadeIn'
+              openSpeed:  'slow'
+    	},
+	});
+		
 	});
 </script>
 

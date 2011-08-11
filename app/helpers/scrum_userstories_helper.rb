@@ -70,7 +70,7 @@ module ScrumUserstoriesHelper
       
   		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
   		"#{issue.tracker.short_name}</b>:</div>" +
-  		"<div class='subject-contents' original-title='#{textilizable issue.description}'>&nbsp;#{column_content(column, issue)}</div>" 
+  		"<div class='subject-contents' title='#{issue.subject}|#{textilizable issue.description}'>&nbsp;#{column_content(column, issue)}</div>" 
   	elsif column.name == :spent_hours and issue.scrum_issue?
   		content = column_content(column, issue)
   		

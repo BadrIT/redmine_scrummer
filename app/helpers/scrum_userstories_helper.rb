@@ -70,7 +70,7 @@ module ScrumUserstoriesHelper
       
   		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
   		"#{issue.tracker.short_name}</b>:</div>" +
-  		"<div class='subject-contents' title='#{issue.subject}|#{textilizable issue.description}'>&nbsp;#{column_content(column, issue)}</div>" 
+  		"<div >&nbsp;#{subject_content(column, issue)}</div>" 
   	elsif column.name == :spent_hours && issue.scrum_issue?
   		content = column_content(column, issue)
   		
@@ -180,5 +180,14 @@ module ScrumUserstoriesHelper
     inline_issue_div_id = @issue.new_record? ? "inline_edit_for_#{@issue.id}" : "new_issue_inline_div"
     inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : inline_issue_div_id
   end
-
+  
+  def subject_content(column , issue)
+    value = column.value(issue)
+    description = textilizable(issue.description).gsub("'","\'")
+    
+    options = description.empty? ? {} : {:title=>"#{issue.subject}|#{description}", :class=>'subject-contents'};
+    
+    link_to(h(value), {:controller => 'issues', :action => 'show', :id => issue }, options)
+  end
+  
 end

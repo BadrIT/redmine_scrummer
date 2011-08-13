@@ -118,7 +118,6 @@ class ScrumUserstoriesController < IssuesController
 
     if @query.valid?
  			load_issues_for_query
- 			logger.info { "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }
  			
       respond_to do |format|
         format.html 
@@ -152,7 +151,7 @@ class ScrumUserstoriesController < IssuesController
 
   def inline_add
   	initialize_sort  	  	
-  	
+  	div_name = get_inline_issue_div_id
   	call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
     if @query.valid? && @issue.save
     	load_issues_for_query 	
@@ -160,10 +159,10 @@ class ScrumUserstoriesController < IssuesController
       flash[:notice] = l(:notice_successful_create)
    
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})   		
- 			
  			if @issues.length > 0
 	 			render :update do |page|
 				  page.replace_html "issues_list", :partial => "list", :locals => {:issues => @issues, :query => @query}
+				  page.replace_html "errors_for_#{div_name}", ""
 				end
 			end
  		else

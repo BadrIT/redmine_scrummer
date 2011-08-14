@@ -27,13 +27,23 @@
 		mouseOutClose: true,
 		closeText: 'X',
 		closePosition: 'title',
-		topOffset: -6,
+		topOffset: -3,
+		width: 'auto',
 		fx: {
               open:       'fadeIn', // can be 'show' or 'slideDown' or 'fadeIn'
-              openSpeed:  'slow'
+              openSpeed:  'fast'
     	},
-	});
-		
+    	clickThrough:     true,
+	    hoverIntent: {
+                      sensitivity:  3,
+                      interval:     2000,
+                      timeout:      0
+	    	}
+		});
+		$j(document).scroll(function(){
+			$j(this).trigger('hideCluetip');
+		});   
+	
 	});
 </script>
 

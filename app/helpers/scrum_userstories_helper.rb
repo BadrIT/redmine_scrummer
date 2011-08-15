@@ -95,8 +95,10 @@ module ScrumUserstoriesHelper
 				
 				field_caption = column.custom_field.scrummer_caption
 				
+				# can be editable if doesn't have children
+				# OR having children but all children custom field aren't set then value will equal zero
+				# ex: US1 has children (US2, US3) and they don't have story size set then I can edit US1 story size
 				if (issue.direct_children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
-				# if issue.children.blank? && issue.has_custom_field?(column.custom_field.scrummer_caption)
 					content = value.to_f > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else

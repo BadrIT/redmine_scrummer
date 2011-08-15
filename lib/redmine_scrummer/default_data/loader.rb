@@ -70,6 +70,7 @@ module RedmineScrummer
           end
           
           # update all tasks from completed or accepted to finished
+          # TEMP
           task_id = Tracker.find_by_scrummer_caption(:task).id
           tasks = Issue.find_all_by_tracker_id(task_id)
           
@@ -82,10 +83,12 @@ module RedmineScrummer
           # Create/Update Workflow
           #############################################################################################                    
           Workflow.destroy_all
-          #trackers
+          
+          # trackers
           test_id = Tracker.find_by_scrummer_caption(:test).id
           task_id = Tracker.find_by_scrummer_caption(:task).id
-          #statuses
+          
+          # statuses
           finished_id = IssueStatus.find_by_scrummer_caption(:finished).id
           failed_id = IssueStatus.find_by_scrummer_caption(:failed).id
           succeeded_id = IssueStatus.find_by_scrummer_caption(:succeeded).id
@@ -96,8 +99,8 @@ module RedmineScrummer
             Role.find_all_by_is_scrum(true).each do |role|
               IssueStatus.find_all_by_is_scrum(true).each do |old_status|
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
-                  #exclude test and task trackers
-                  #exclude failed, succeeded and finished statuses
+                  # exclude test and task trackers
+                  # exclude failed, succeeded and finished statuses
                   if tracker.id != test_id && 
                       tracker.id != task_id && 
                       !limited_statuses.include?(old_status.id) && 
@@ -300,7 +303,7 @@ module RedmineScrummer
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
-                                    :name             => l(:todo),
+                                    :name             => l(:remaining_hours),
                                     :field_format     => 'float',
                                     :default_value    => "0")
                                     

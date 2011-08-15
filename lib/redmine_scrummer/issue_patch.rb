@@ -14,6 +14,9 @@ module RedmineScrummer
 				after_save :update_parent_status
 				after_destroy :update_parent_status
 				
+				after_save :update_story_size
+				after_destroy :update_parent_story_size
+				
 				before_save :init_was_new
 				
 				# the same as .children but it is an association
@@ -69,27 +72,6 @@ module RedmineScrummer
         (self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}).value = value
       end
       
-      def story_size
-        unless @story_size
-          # if the issue has children having the story size custom field
-          # then sum children
-          # else take issue story size custom field value
-          if self.direct_children.any?
-            @story_size = direct_children.map(&:story_size).sum
-          end
-          
-          if @story_size.to_f == 0.0
-            # TODO save in class variable
-            custom_field = CustomField.find_by_scrummer_caption(:story_size)
-            value = (self.custom_value_for(custom_field).try(:value) || '')
-            
-            @story_size = (custom_field.field_format == "float" ? value.to_f : value.to_i)  
-          end
-        end
-        
-        @story_size
-      end
-      
       def level
         parent = self
         level = 0
@@ -132,7 +114,32 @@ module RedmineScrummer
 			  self.save
 			end
 			
+			def update_story_size(custom_field=nil)
+        # if the issue has children having the story size custom field
+        # then sum children
+        # else take issue story size custom field value
+        if self.direct_children.any?
+          value = direct_children.sum(:story_size)
+        end
+        
+        if value.to_f == 0.0
+          custom_field ||= CustomField.find_by_scrummer_caption(:story_size)
+          value = (self.custom_value_for(custom_field).try(:value) || '').to_i
+        end
+      
+        if self.story_size.to_i != value.to_i
+          self.update_attribute(:story_size, value)
+          self.update_parent_story_size(custom_field)
+        end
+      end
+      
+      
 			protected
+      
+      def update_parent_story_size(custom_field=nil)
+        self.parent.update_story_size(custom_field) if self.parent
+      end
+      
 			def initiate_remaining_hours
         if self.remaining_hours == 0.0
           self.remaining_hours = self.estimated_hours

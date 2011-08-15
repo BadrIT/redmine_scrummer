@@ -16,6 +16,11 @@ class ScrumUserstoriesController < IssuesController
 	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form]	
 	before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
 	
+	
+	include ActionView::Helpers::ActiveRecordHelper
+  include ActionView::Helpers::TagHelper
+
+
 	def update_single_field
 		new_value = params[:value]
 
@@ -161,7 +166,7 @@ class ScrumUserstoriesController < IssuesController
 				end
 			end
  		else
- 			render_error_html_for_inline_add(error_messages_for 'issue')			
+ 			 render_error_html_for_inline_add(error_messages_for 'issue')			
  		end
  	rescue ActiveRecord::RecordNotFound
     render_404 

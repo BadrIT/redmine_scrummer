@@ -1,5 +1,4 @@
-<% inline_issue_div_id = @issue.new_record? ? "inline_edit_for_#{@issue.id}" : "new_issue_inline_div" %>
-<% inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : inline_issue_div_id %>
+<% inline_issue_div_id = get_inline_issue_div_id %>
 
 <% tracker_field_id    = @issue.new_record? ? "issue_tracker_id" : "issue_tracker_id_for_#{@issue.id}" %>
 <% tracker_field_id    = @parent_issue ? "issue_tracker_id_child_for_#{@parent_issue.id}" : tracker_field_id %>
@@ -11,7 +10,7 @@
 <% hide_cancel 				||= false %>
 
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
-	<div id='inline_new_issue_errors'></div>
+	<div id= <%="errors_for_#{inline_issue_div_id}"%> ></div>
 	<% remote_form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add},
 														 :html => {:id => inline_form_id} do |f|%>
 	

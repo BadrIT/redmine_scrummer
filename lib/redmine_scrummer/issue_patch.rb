@@ -13,6 +13,13 @@ module RedmineScrummer
 				
 				after_save :update_parent_status
 				after_destroy :update_parent_status
+				
+				before_save :init_was_new
+				
+				# the same as .children but it is an association
+				# in order to be used in eager loading include
+				has_many :direct_children, :foreign_key => :parent_id, :class_name => "Issue"
+				belongs_to :direct_parent, :foreign_key => :parent_id, :class_name => "Issue"
 			end
 			
 		end
@@ -46,8 +53,12 @@ module RedmineScrummer
 			  tracker.try(:defect?)
 			end
 			
+			def is_refactor?
+			  tracker.try(:refactor?)
+			end
+			
 			def time_trackable?
-			 self.is_task? || self.defect?
+			 self.is_task? || self.defect? || self.is_refactor?
 		  end
 			 
 			def remaining_hours
@@ -59,31 +70,31 @@ module RedmineScrummer
       end
       
       def story_size
-        # if the issue has children having the story size custom field
-        # then sum children
-        # else take issue story size custom field value
-        
-        if self.children.any?
-          result = children.map(&:story_size).sum
-        end
-        
-        if result.to_f == 0.0
-          custom_field = CustomField.find_by_scrummer_caption(:story_size)
-          format = custom_field.field_format
-          custom_value = self.custom_value_for(custom_field)
-          value = custom_value ? custom_value.value : '' 
+        unless @story_size
+          # if the issue has children having the story size custom field
+          # then sum children
+          # else take issue story size custom field value
+          if self.direct_children.any?
+            @story_size = direct_children.map(&:story_size).sum
+          end
           
-          result = (format == "float" ? value.to_f : value.to_i)  
+          if @story_size.to_f == 0.0
+            # TODO save in class variable
+            custom_field = CustomField.find_by_scrummer_caption(:story_size)
+            value = (self.custom_value_for(custom_field).try(:value) || '')
+            
+            @story_size = (custom_field.field_format == "float" ? value.to_f : value.to_i)  
+          end
         end
         
-        result
+        @story_size
       end
       
       def level
         parent = self
         level = 0
-        while (parent.parent) do
-          parent = parent.parent
+        while (parent.direct_parent) do
+          parent = parent.direct_parent
           level += 1
         end
         
@@ -138,7 +149,7 @@ module RedmineScrummer
       end
       
 			def update_parent_status
-			  if self.status_id_changed?
+			  if self.status_id_changed? || @was_a_new_record
 			    # when a story goes to completed OR accepted, all its children should be completed
 			    if self.completed? || self.accepted?
 			      self.children.each do |child|
@@ -153,8 +164,7 @@ module RedmineScrummer
 			        end
 			      end
 			    end
-			    
-			    # update parent status
+           # update parent status
 			    self.parent.update_status if self.parent
 			  end
 			end
@@ -169,6 +179,11 @@ module RedmineScrummer
 			    end
 			  end
 			end
+			
+			def init_was_new
+        @was_a_new_record = self.new_record? if @was_a_new_record.nil?
+        return true
+      end  
 			
 		end
 	end

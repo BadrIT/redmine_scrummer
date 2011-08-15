@@ -15,10 +15,35 @@
 												 	}
 												 });
 												 
-    $j('.subject-contents').tipsy();
-    	
-    default_issue_description = "<%= "As a <role> I want to <goal> so that <reason>\\nVerification Points:\\n<Point1>\\n<Point2>" %>";
+    $j('.subject-tipsy').tipsy();
+    default_issue_target_version = "<%=@issue.try(:fixed_version).try(:id)%>";
+    default_issue_description = "<%= to_jss l(:default_description)%>";
     clear_form_elements($j(".inline-issue-add"));	
+    
+	$j('.subject-contents').cluetip({
+		splitTitle: '|',
+		positionBy: 'mouse',
+		sticky: true,
+		mouseOutClose: true,
+		closeText: 'X',
+		closePosition: 'title',
+		topOffset: -3,
+		width: 'auto',
+		fx: {
+              open:       'fadeIn', // can be 'show' or 'slideDown' or 'fadeIn'
+              openSpeed:  'fast'
+    	},
+    	clickThrough:     true,
+	    hoverIntent: {
+                      sensitivity:  3,
+                      interval:     2000,
+                      timeout:      0
+	    	}
+		});
+		$j(document).scroll(function(){
+			$j(this).trigger('hideCluetip');
+		});   
+	
 	});
 </script>
 
@@ -45,7 +70,7 @@
 	<tbody>
 	<% issues.each do |issue| -%>
 	  <% level = issue.level -%>
-		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:short_name).downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.children.length > 0 ? "group open" : nil%>">			
+		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:short_name).downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.direct_children.length > 0 ? "group open" : nil%>">			
 			
 		  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
 	       
@@ -57,10 +82,13 @@
 	    <% end %>    
 	    
 	    <td>
+	    	<!--Remove 'add_child' form task and test trackers -->
+	    	<%if !(issue.is_task? || issue.is_test?)%>
 	    	<%= link_to_remote image_tag( scrummer_image_path('add_issue.gif') ), 
 	    										 :url => {:action => 'get_inline_issue_form'},
 	    										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",
 	    										 :update => "issue-#{issue.id}-inline-child" %>
+	  		<%end%>
 	    	<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
 	    										 :url => {:action => 'get_inline_issue_form'},
 	    										 :with => "'issue_id=#{issue.id}&project_id=#{@project.id}'",

@@ -183,7 +183,7 @@
         fade: false,
         fallback: '',
         gravity: 'n',
-        html: false,
+        html: true,
         live: false,
         offset: 0,
         opacity: 0.8,

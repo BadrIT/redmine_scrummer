@@ -1,4 +1,7 @@
 class ScrumUserstoriesController < IssuesController
+  include ActionView::Helpers::ActiveRecordHelper
+  include ActionView::Helpers::TagHelper
+  
   unloadable
 
 	include ScrumUserstoriesHelper
@@ -13,8 +16,9 @@ class ScrumUserstoriesController < IssuesController
 	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list]
 	
 	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
-	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form]	
+	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form, :inline_add ]	
 	before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
+	before_filter :set_default_values, :only => [:refresh_inline_add_form, :index]
 	
 	
 	include ActionView::Helpers::ActiveRecordHelper
@@ -116,7 +120,7 @@ class ScrumUserstoriesController < IssuesController
 
   def index
   	initialize_sort
-    
+
     if @query.valid?
  			load_issues_for_query
  			
@@ -143,15 +147,16 @@ class ScrumUserstoriesController < IssuesController
   	render :partial => 'list'
   end
 
-	def refresh_inline_add_form	
-		respond_to do |format|
+	def refresh_inline_add_form
+	  
+	  respond_to do |format|
 			format.js {render :partial => 'inline_add'}
 		end
 	end
 
   def inline_add
   	initialize_sort  	  	
-  	
+  	div_name = get_inline_issue_div_id
   	call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
     if @query.valid? && @issue.save
     	load_issues_for_query 	
@@ -159,14 +164,14 @@ class ScrumUserstoriesController < IssuesController
       flash[:notice] = l(:notice_successful_create)
    
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})   		
- 			
  			if @issues.length > 0
 	 			render :update do |page|
 				  page.replace_html "issues_list", :partial => "list", :locals => {:issues => @issues, :query => @query}
+				  page.replace_html "errors_for_#{div_name}", ""
 				end
 			end
  		else
- 			 render_error_html_for_inline_add(error_messages_for 'issue')			
+ 			render_error_html_for_inline_add(error_messages_for :issue)
  		end
  	rescue ActiveRecord::RecordNotFound
     render_404 
@@ -182,17 +187,18 @@ class ScrumUserstoriesController < IssuesController
 	end
 
 	def find_query
+	  	  
 	  if params[:query_id].blank? && (session[:query].nil? || session[:query][:id].nil?)
 	    query = Query.find_by_scrummer_caption('User-Stories')
 	    params[:query_id] = query.id
 	  end
-		retrieve_query
+	  retrieve_query
 	end
 	
 	def load_issues_ancestors
 	  @issues.each do |issue|
-	    if !issue.parent.nil? && !@issues.include?(issue.parent)
-	      @issues << issue.parent
+	    if !issue.direct_parent.nil? && !@issues.include?(issue.direct_parent)
+	      @issues << issue.direct_parent
 	    end
 	  end
 	end
@@ -215,10 +221,11 @@ class ScrumUserstoriesController < IssuesController
     @offset ||= @issue_pages.current.offset
     
     # all issues is used for statistics
-    @all_issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
+    @all_issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version, :custom_values, :direct_children, :direct_parent],
                             :order => sort_clause)
-    @issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version],
-                            :order => sort_clause)
+    # clone all issues in a new array 
+    # but having the same objects in order not to calcluate statistics twice
+    @issues = @all_issues.map
     
     load_issues_ancestors
     
@@ -283,7 +290,7 @@ class ScrumUserstoriesController < IssuesController
   
   def render_error_html_for_inline_add error_html
   	render :update do |page|
-	  	page.replace_html "inline_new_issue_errors", error_html
+	  	page.replace_html "errors_for_#{get_inline_issue_div_id}", error_html
 		end
   end
   
@@ -319,7 +326,7 @@ class ScrumUserstoriesController < IssuesController
         
         # get parent location, and insert right after it
         if level == last_processed_level
-          parent_index = result.index issue.parent
+          parent_index = result.index(issue.direct_parent)
           
           # if the this issue has no parent, then it's a root element just add it
           if parent_index and parent_index >= 0
@@ -339,6 +346,17 @@ class ScrumUserstoriesController < IssuesController
     
     # return result
     result
+  end
+  
+  def set_default_values
+    @issue.description = @issue.is_user_story? ? l(:default_description):""
+    
+    if @issue.fixed_version.nil? && !@query.filters['fixed_version_id'].nil? && 
+      @query.filters['fixed_version_id'][:operator] == '='&& 
+      (params[:issue].nil? || params[:issue][:parent_issue_id].empty?)
+       
+        @issue.fixed_version =  Version.find(@query.filters['fixed_version_id'][:values][0].to_i)
+    end
   end
   
   

@@ -43,7 +43,7 @@ module ScrumUserstoriesHelper
   
   def scrum_column_content(column, issue)
   	value = column.value(issue)
-  	if value.class == IssueStatus and issue.status.is_scrum
+  	if value.class == IssueStatus && issue.status.is_scrum
   	  content = case value.scrummer_caption
     	  when :defined
     	    'D'
@@ -61,8 +61,8 @@ module ScrumUserstoriesHelper
           'F'
   	  end
   	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
-  	elsif column.name == :subject and issue.scrum_issue?
-  	  prefix = if issue.children.blank? 
+  	elsif column.name == :subject && issue.scrum_issue?
+  	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
       else
         "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$j(this).addClass('hover')\" onmouseout=\"$j(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
@@ -70,19 +70,19 @@ module ScrumUserstoriesHelper
       
   		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
   		"#{issue.tracker.short_name}</b>:</div>" +
-  		"<div class='subject-contents' original-title='#{issue.description}'>&nbsp;#{column_content(column, issue)}</div>" 
-  	elsif column.name == :spent_hours and issue.scrum_issue?
+  		"<div >&nbsp;#{subject_content(column, issue)}</div>" 
+  	elsif column.name == :spent_hours && issue.scrum_issue?
   		content = column_content(column, issue)
   		
   		output_value = value > 0 ? value.round(2).to_s : ""
   		content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
   		
-  		unless issue.children.empty?
+  		unless issue.direct_children.empty?
   			content = value > 0 ? "<span align='center' class='accumelated-result'>#{content}</span>" : content
   		end
   		
   		content
-  	elsif column.respond_to? :custom_field and issue.scrum_issue?
+  	elsif column.respond_to?(:custom_field) && issue.scrum_issue?
 			field_format = column.custom_field.field_format
 			
 			content = '' 
@@ -95,7 +95,7 @@ module ScrumUserstoriesHelper
 				
 				field_caption = column.custom_field.scrummer_caption
 				
-				if (issue.children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
+				if (issue.direct_children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
 				# if issue.children.blank? && issue.has_custom_field?(column.custom_field.scrummer_caption)
 					content = value > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
@@ -106,7 +106,7 @@ module ScrumUserstoriesHelper
 				content = column_content(column, issue)
 			end					
   	elsif column.name == :estimated_hours  		
-  		if (issue.children.blank? || value.to_f == 0.0) && issue.time_trackable?
+  		if (issue.direct_children.blank? || value.to_f == 0.0) && issue.time_trackable?
 				value ||= 0.0
 				
 				content = value > 0 ? value : ''
@@ -123,8 +123,8 @@ module ScrumUserstoriesHelper
   	format = custom_field.field_format
     result = 0.0
   	
-  	if issue.children.any? #&& issue.children.any?{|c| c.tracker.custom_fields.include?(custom_field)}  
-  		issue.children.each do |child|
+  	if issue.direct_children.any? #&& issue.children.any?{|c| c.tracker.custom_fields.include?(custom_field)}  
+  		issue.direct_children.each do |child|
   			result += issue_accumelated_custom_values(child, custom_field)
   		end
     end
@@ -156,7 +156,7 @@ module ScrumUserstoriesHelper
     remaining_hours_column = query.columns.find{|c| c.caption == remaining_hours_column_caption}
     
     issues.each do |issue|
-      if issue.parent.nil? || issues.exclude?(issue.parent)
+      if issue.direct_parent.nil? || issues.exclude?(issue.direct_parent)
         result[:total_estimate] += issue.estimated_hours.to_f
         result[:total_actual]   += issue.spent_hours.to_f
         result[:total_story_size] += issue.story_size 
@@ -171,4 +171,23 @@ module ScrumUserstoriesHelper
 	def scrummer_image_path path
 		'../plugin_assets/redmine_scrummer/images/' + path
 	end
+	
+  def to_jss(string)
+    string.gsub("\n","\\n")
+  end
+  
+  def get_inline_issue_div_id
+    inline_issue_div_id = @issue.new_record? ? "inline_edit_for_#{@issue.id}" : "new_issue_inline_div"
+    inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : inline_issue_div_id
+  end
+  
+  def subject_content(column , issue)
+    value = column.value(issue)
+    description = textilizable(issue.description).gsub("'","\'")
+    
+    options = description.empty? ? {} : {:title=>"#{issue.subject}|#{description}", :class=>'subject-contents'};
+    
+    link_to(h(value), {:controller => 'issues', :action => 'show', :id => issue }, options)
+  end
+  
 end

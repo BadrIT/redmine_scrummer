@@ -2,13 +2,21 @@
 <% content_for :header_tags do %>
     <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
     <%= stylesheet_link_tag 'tipsy', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'sidebar', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'jquery.cluetip.css', :plugin => 'redmine_scrummer' %>
     <%= javascript_tag "var task_tracker_id = #{Tracker.scrum_task_tracker.id}"%>    
     <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.jeditable.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
     <%= javascript_include_tag 'context_menu.js'%>
+    
     <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.tipsy.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.sidebar.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
 <% end %>
 
 <div class="contextual">
@@ -28,64 +36,66 @@
 	</div>
 </fieldset>
 
+
+
 <% form_tag({:controller => 'scrum_userstories', :action => 'index'}, :method => :get, :id => 'query_form') do |f|%>
     <%= hidden_field_tag 'set_filter', '1' %>
-		<div id="query_form_content" class="hide-when-print">
-			
-		<%= hidden_field_tag 'project_id', @project.id%>
+    <div id="query_form_content" class="hide-when-print">
+      
+    <%= hidden_field_tag 'project_id', @project.id%>
     
     <fieldset id="filters" class="collapsible <%= @query.new_record? ? "" : "collapsed" %>">
-    	<legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
-    	<div style="<%= @query.new_record? ? "" : "display: none;" %>">
-    		<%= render :partial => 'queries/filters', :locals => {:query => @query} %>
-    	</div>
+      <legend onclick="toggleFieldset(this);"><%= l(:label_filter_plural) %></legend>
+      <div style="<%= @query.new_record? ? "" : "display: none;" %>">
+        <%= render :partial => 'queries/filters', :locals => {:query => @query} %>
+      </div>
     </fieldset>
     <fieldset class="collapsible collapsed">
-    	<legend onclick="toggleFieldset(this);"><%= l(:label_options) %></legend>
-    	<div style="display: none;">
-    		<table>
-    			<tr>
-    				<td><%= l(:field_column_names) %></td>
-						<td><%= render :partial => 'queries/columns', :locals => {:query => @query} %></td>
-					</tr>
-					<tr>
-						<td><%= l(:field_group_by) %></td>
-						<td><%= select_tag('group_by', options_for_select([[]] + @query.groupable_columns.collect {|c| [c.caption, c.name.to_s]}, @query.group_by)) %></td>
-					</tr>
-				</table>
-			</div>
-		</fieldset>
-		</div>
+      <legend onclick="toggleFieldset(this);"><%= l(:label_options) %></legend>
+      <div style="display: none;">
+        <table>
+          <tr>
+            <td><%= l(:field_column_names) %></td>
+            <td><%= render :partial => 'queries/columns', :locals => {:query => @query} %></td>
+          </tr>
+          <tr>
+            <td><%= l(:field_group_by) %></td>
+            <td><%= select_tag('group_by', options_for_select([[]] + @query.groupable_columns.collect {|c| [c.caption, c.name.to_s]}, @query.group_by)) %></td>
+          </tr>
+        </table>
+      </div>
+    </fieldset>
+    </div>
     <p class="buttons hide-when-print">
 
     <%= link_to_function l(:button_apply), 'submit_query_form("query_form")', :class => 'icon icon-checked' %>
     <%= link_to l(:button_clear), { :set_filter => 1, :project_id => @project }, :class => 'icon icon-reload'  %>
     <% if @query.new_record? && User.current.allowed_to?(:save_queries, @project, :global => true) %>
-	    <%= link_to_function l(:button_save), "$('query_form').action='#{ url_for :controller => 'queries', :action => 'new', :project_id => @project }'; submit_query_form('query_form')", :class => 'icon icon-save' %>
+      <%= link_to_function l(:button_save), "$('query_form').action='#{ url_for :controller => 'queries', :action => 'new', :project_id => @project }'; submit_query_form('query_form')", :class => 'icon icon-save' %>
     <% end %>
     </p>
 <% end %>
 
 <%= error_messages_for 'query' %>
 <% if @query.valid? %>
-	<% if @issues.empty? %>
-		<div id='issues_list'>
-			<p class="nodata"><%= l(:label_no_data) %></p>
-		</div>
-	<% else %>
-	
-		<div id='issues_list'>
-			<%= render :partial => 'list', :locals => {:issues => @issues, :query => @query} %>
-		</div>
-		
-		<p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
-	<% end %>
-	
-	<% other_formats_links do |f| %>
-		<%= f.link_to 'Atom', :url => params.merge(:key => User.current.rss_key) %>
-		<%= f.link_to 'CSV', :url => params %>
-		<%= f.link_to 'PDF', :url => params %>
-	<% end %>
+  <% if @issues.empty? %>
+    <div id='issues_list'>
+      <p class="nodata"><%= l(:label_no_data) %></p>
+    </div>
+  <% else %>
+  
+    <div id='issues_list'>
+      <%= render :partial => 'list', :locals => {:issues => @issues, :query => @query} %>
+    </div>
+    
+    <p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
+  <% end %>
+  
+  <% other_formats_links do |f| %>
+    <%= f.link_to 'Atom', :url => params.merge(:key => User.current.rss_key) %>
+    <%= f.link_to 'CSV', :url => params %>
+    <%= f.link_to 'PDF', :url => params %>
+  <% end %>
 
 <% end %>
 
@@ -93,3 +103,11 @@
     <%= render :partial => 'issues/sidebar' %>
     <%= render :partial => 'statistics', :locals => {:issues => @all_issues, :query => @query} %>
 <% end %>
+<script type='text/javascript'>
+$j(function() {
+  $j("#sidebar").sidebar({  
+    position:"right",  
+    open:"click"
+  });
+});
+</script>

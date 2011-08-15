@@ -73,7 +73,7 @@ module RedmineScrummer
           task_id = Tracker.find_by_scrummer_caption(:task).id
           tasks = Issue.find_all_by_tracker_id(task_id)
           
-          tasks.select{|t| t.status == IssueStatus.accepted || t.status == IssueStatus.completed }.each do
+          tasks.select{|t| t.status == IssueStatus.accepted || t.status == IssueStatus.completed }.each do |task|
             task.status = IssueStatus.finished
             task.save            
           end

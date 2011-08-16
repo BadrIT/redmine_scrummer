@@ -48,12 +48,13 @@ Redmine::Plugin.register :redmine_scrummer do
   	permission :scrum_user_stories_add_inline, 					{ :scrum_userstories => [:inline_add, :get_inline_issue_form] }
   	permission :scrum_user_stories_manipulate_inline, 	{ :scrum_userstories => [:refresh_inline_add_form, :update_single_field] }
   	
-  	permission :scrum_sprint_planing, 									{ :scrum_sprints_planning  => [:index]}
+  	permission :scrum_sprint_planing, 									{ :scrum_userstories  => [:sprint_planing]}
   	
   	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index]}
   	
   	permission :scrum_charts, 													{ :scrum_charts => [:index]}
   end
   
-  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id  
+  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id 
+  menu :project_menu, :scrum_sprint_planing, { :controller => 'scrum_userstories', :action => 'sprint_planing' }, :after => :activity, :param => :project_id 
 end

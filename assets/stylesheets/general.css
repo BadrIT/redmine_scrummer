@@ -151,3 +151,21 @@ table#issue-table td.subject div.subject-contents{
 	width: 98%;
 	padding: 4px 4px 0 6px;
 }
+#sprints {
+	float: right;
+	width: 42%;
+	background-color: WhiteSmoke;
+}
+.sprint-name {
+	background-color: ButtonFace;
+}
+.nil-version-issues{
+	float: left;
+	background-color: WhiteSmoke;
+	width: 53%
+}
+
+.issue-actions {
+	float: right;
+	margin-right: 10px;
+}

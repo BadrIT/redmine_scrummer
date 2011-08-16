@@ -9,9 +9,11 @@
 <% issue_id      			 = @issue ? @issue.id : nil %>
 <% hide_cancel 				||= false %>
 
+<% list_id = params[:list_id] || 'issues_list' %>
+
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id= <%="errors_for_#{inline_issue_div_id}"%> ></div>
-	<% remote_form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add},
+	<% remote_form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add, :list_id => list_id},
 														 :html => {:id => inline_form_id} do |f|%>
 	
 	<%= hidden_field_tag :id, @issue.id unless @issue.new_record? %>
@@ -23,7 +25,7 @@
 			
 			
 			<%= select_tag "issue[tracker_id]", options_from_collection_for_select(@project.trackers, 'id', 'name', @issue.tracker.try(:id)), :id => tracker_field_id %>
-			<%= observe_field tracker_field_id, :url => { :action => :refresh_inline_add_form, :project_id => @project, :id => @issue },
+			<%= observe_field tracker_field_id, :url => { :action => :refresh_inline_add_form, :project_id => @project, :id => @issue, :list_id => list_id},
 			                                     :update => inline_issue_div_id,
 			                                     :with => "Form.serialize('#{inline_form_id}')" %>
       <%= f.select :assigned_to_id, @project.members.map{|m| [m.name, m.user.id]}, :include_blank => l("field_assigned_to") %>

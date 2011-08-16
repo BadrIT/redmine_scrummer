@@ -1,5 +1,9 @@
 <% query  ||= @query %>
 <% issues ||= @issues %>
+
+<% list_id ||= 'issues_list' %>
+<% hierarchy = (list_id == 'issues_list') %>
+
 <script type='text/javascript'>
 	$j(function() {
 		$j('.edit').editable('<%= url_for :action => :update_single_field, :params => {:project_id => @project.id}%>',
@@ -50,9 +54,13 @@
 <% form_tag('', {:id => 'context_menu_form'}) do -%>
 	<%= hidden_field_tag 'back_url', url_for(params) %>
 <% end %>
-<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
-<%= " / " %>
-<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
+
+<%if hierarchy%>
+	<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
+	<%= " / " %>
+	<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
+<%end%>
+
 <div class="autoscroll">
 <table id='issue-table' class="list issues">
     <thead>
@@ -69,7 +77,7 @@
 	<% previous_group = false %>
 	<tbody>
 	<% issues.each do |issue| -%>
-	  <% level = issue.level -%>
+	  <% level = hierarchy ? issue.level : 0 -%>
 		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:short_name).downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.direct_children.length > 0 ? "group open" : nil%>">			
 			
 		  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
@@ -81,24 +89,24 @@
 	    	</td>
 	    <% end %>    
 	    
-	    <td>
+	    <td class='issue-actions'>
 	    	<!--Remove 'add_child' form task and test trackers -->
 	    	<%if !(issue.is_task? || issue.is_test?)%>
 	    	<%= link_to_remote image_tag( scrummer_image_path('add_issue.gif') ), 
-	    										 :url => {:action => 'get_inline_issue_form'},
+	    										 :url => {:action => 'get_inline_issue_form', :list_id => list_id},
 	    										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",
 	    										 :update => "issue-#{issue.id}-inline-child" %>
 	  		<%end%>
 	    	<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
-	    										 :url => {:action => 'get_inline_issue_form'},
+	    										 :url => {:action => 'get_inline_issue_form', :list_id => list_id},
 	    										 :with => "'issue_id=#{issue.id}&project_id=#{@project.id}'",
 	    										 :update => "issue-#{issue.id}-inline-child" %>
-	    	<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list) %>
+	    	<% issues_list_url = url_for(:action => :issues_list) %>
 	    	<%= link_to_remote image_tag( scrummer_image_path('remove_issue.gif') ), 
 	    										 :url => (issue_path issue.id),
 	    										 :method => :delete,
-	    										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ query.id }&project_id=#{@project.identifier}')",
-	    										 :update => "issues_list" %>
+	    										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ query.id }&project_id=#{@project.identifier}&list_id=#{list_id}')",
+	    										 :update => list_id %>
 	    </td>	    
 		</tr>
 		<!-- The following Tr is sued as a place holder for inline-add-child -->
@@ -112,3 +120,9 @@
 	</tbody>
 </table>
 </div>
+<% unless hierarchy %>
+	<script>
+		$j('span.expander').css('display','none');
+		$j('.prefix > span').css('display','none');
+	</script>
+<% end %>

@@ -13,7 +13,7 @@ class ScrumUserstoriesController < IssuesController
 	prepend_before_filter :check_for_default_issue_priority, :only => [:index]
 	
 	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list]						# must be called after find_scrum_project
-	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list]
+	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :sprint_planing]
 	
 	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
 	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form, :inline_add ]	
@@ -137,9 +137,13 @@ class ScrumUserstoriesController < IssuesController
   def issues_list
   	initialize_sort
   	
-    load_issues_for_query
+  	if params[:list_id] == 'issues_list'
+      load_issues_for_query
+    else
+      set_issues_and_query_for_list
+    end
     
-  	render :partial => 'list'
+  	render :partial => 'list', :locals=>{:list_id => params[:list_id]}
   end
 
 	def refresh_inline_add_form
@@ -160,8 +164,9 @@ class ScrumUserstoriesController < IssuesController
    
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})   		
  			if @issues.length > 0
+ 			  set_issues_and_query_for_list
 	 			render :update do |page|
-				  page.replace_html "issues_list", :partial => "list", :locals => {:issues => @issues, :query => @query}
+				  page.replace_html params[:list_id], :partial => "list", :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id]}
 				  page.replace_html "errors_for_#{div_name}", ""
 				end
 			end
@@ -354,5 +359,42 @@ class ScrumUserstoriesController < IssuesController
     end
   end
   
+  def set_issues_and_query_for_list
+    if params[:list_id] == 'nil-version-issues'
+      
+      # TODO refactoring
+      if params[:tracker_id]
+        @issues = @project.issues.backlog.by_tracker(params[:tracker_id])
+      else
+        @issues = @project.issues.backlog
+      end
+    elsif params[:list_id].to_s =~ /sprint-(\d*)/
+      @issues = @project.issues.find(:all,:conditions =>["fixed_version_id = ?", $1])
+    end
+    
+    build_planing_query
+    # if params[:list_id] == 'issues_list' use all issues
+  end
   
+  
+  # Sprint planing actions
+  public
+  def sprint_planing
+    # retrive the sprints ordered by its date
+    @sprints = @project.versions.find(:all,:order => 'effective_date ASC')
+    @nil_version_issues = @project.issues.backlog
+    
+    build_planing_query
+    initialize_sort
+  end
+  
+  def build_planing_query
+    @query = Query.new
+    @query.project = @project
+    @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours]
+  end
+  
+  def refresh_backlog
+    
+  end
 end

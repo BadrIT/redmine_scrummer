@@ -20,6 +20,14 @@ module RedmineScrummer
 				# in order to be used in eager loading include
 				has_many :direct_children, :foreign_key => :parent_id, :class_name => "Issue"
 				belongs_to :direct_parent, :foreign_key => :parent_id, :class_name => "Issue"
+				
+				# returns the conditions used to find the backlog issues
+				def self.backlog_conditions
+				  ["fixed_version_id is ? AND (tracker_id = ? OR tracker_id = ? OR tracker_id = ?)", nil,
+				                               Tracker.scrum_user_story_tracker.id,
+				                               Tracker.scrum_defect_tracker.id,
+				                               Tracker.scrum_defectsuite_tracker.id]
+				end
 			end
 			
 		end

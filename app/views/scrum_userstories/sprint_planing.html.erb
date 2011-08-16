@@ -1,0 +1,55 @@
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'tipsy', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'sidebar', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'jquery.cluetip.css', :plugin => 'redmine_scrummer' %>
+    <%= javascript_tag "var task_tracker_id = #{Tracker.scrum_task_tracker.id}"%>    
+    <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.jeditable.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
+    <%= javascript_include_tag 'context_menu.js'%>
+    
+    <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.tipsy.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.sidebar.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
+<% end %>
+
+<!--Sprints stacked vertically-->
+<div id='side-panel'>
+	<div id='sprints'>
+		<%for sprint in @sprints%>
+			<h2 class='sprint-name'><%= sprint.name %></h2>
+			<div id=<%="sprint-#{sprint.id}"%> class='issues_list'>
+  				<%= render :partial => 'scrum_userstories/list', :locals => {:issues => sprint.fixed_issues, :query => @query, :list_id => "sprint-#{sprint.id}"} %>
+			</div>
+		<%end%>
+	</div>
+</div>
+
+<!--backlog filters-->
+<%=link_to_remote "User-Stories",
+  :url => {:controller => 'scrum_userstories', :action => 'issues_list', :list_id => 'nil-version-issues', :backlog_filter => 'US', :project_id =>@project },
+  :update => { :success => 'nil-version-issues'}%>
+
+<%=link_to_remote "Defects",
+  :url => {:controller => 'scrum_userstories', :action => 'issues_list', :list_id => 'nil-version-issues', :backlog_filter => 'D', :project_id =>@project},
+  :update => { :success => 'nil-version-issues'}%>
+
+<%=link_to_remote "Defect-Suites",
+  :url => {:controller => 'scrum_userstories', :action => 'issues_list', :list_id => 'nil-version-issues', :backlog_filter => 'DS', :project_id =>@project},
+  :update => { :success => 'nil-version-issues'}%>
+  
+<!--listing nil-version issues-->
+<div id= 'nil-version-issues' class='nil-version-issues'>
+	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @nil_version_issues, :query => @query, :hierarchy => false, :list_id => 'nil-version-issues'} %>
+</div>
+
+<script>
+	$j('#sprints').accordion({
+		autoHeight: false
+	});
+</script>

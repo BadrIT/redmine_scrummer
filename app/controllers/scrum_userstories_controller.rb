@@ -385,7 +385,7 @@ class ScrumUserstoriesController < IssuesController
   public
   def sprint_planing
     # retrive the sprints ordered by its date
-    @sprints = @project.versions.find(:all,:order => 'effective_date ASC')
+    @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
     @backlog_issues = @project.issues.backlog.sprint_planing
     
     build_planing_query

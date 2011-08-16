@@ -20,6 +20,11 @@ class ScrumUserstoriesController < IssuesController
 	before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
 	before_filter :set_default_values, :only => [:refresh_inline_add_form, :index]
 	
+	
+	include ActionView::Helpers::ActiveRecordHelper
+  include ActionView::Helpers::TagHelper
+
+
 	def update_single_field
 		new_value = params[:value]
 

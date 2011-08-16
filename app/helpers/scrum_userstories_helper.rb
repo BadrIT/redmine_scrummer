@@ -95,12 +95,14 @@ module ScrumUserstoriesHelper
 				
 				field_caption = column.custom_field.scrummer_caption
 				
+				# can be editable if doesn't have children
+				# OR having children but all children custom field aren't set then value will equal zero
+				# ex: US1 has children (US2, US3) and they don't have story size set then I can edit US1 story size
 				if (issue.direct_children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
-				# if issue.children.blank? && issue.has_custom_field?(column.custom_field.scrummer_caption)
-					content = value > 0 ? value : ''
+					content = value.to_f > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else
-					content = value > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
+					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 				end
 			else
 				content = column_content(column, issue)
@@ -149,20 +151,25 @@ module ScrumUserstoriesHelper
               :total_actual => 0.0,
               :total_remaining => 0.0}
     
-    remaining_hours_column_caption       = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
+    remaining_hours_column_caption = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
     story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
     
     story_column = query.columns.find{|c| c.caption == story_size_column_caption}
     remaining_hours_column = query.columns.find{|c| c.caption == remaining_hours_column_caption}
     
     issues.each do |issue|
-      if issue.direct_parent.nil? || issues.exclude?(issue.direct_parent)
-        result[:total_estimate] += issue.estimated_hours.to_f
-        result[:total_actual]   += issue.spent_hours.to_f
-        result[:total_story_size] += issue.story_size 
+      # don't add story size if an issue having children having story sizes
+      unless issue.direct_children.sum(:story_size) > 0.0
+        result[:total_story_size] += issue.story_size
       end
-
-      result[:total_remaining]  += remaining_hours_column ? remaining_hours_column.value(issue).to_f : 0; 
+      
+      # don't add estimate if an issue having children having estimated hours
+      unless issue.direct_children.sum(:estimated_hours) > 0.0
+        result[:total_estimate] += issue.estimated_hours.to_f 
+      end
+      
+      result[:total_actual]    += issue.time_entries.sum(:hours) 
+      result[:total_remaining] += remaining_hours_column ? remaining_hours_column.value(issue).to_f : 0; 
     end 
     
     result

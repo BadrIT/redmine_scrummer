@@ -153,16 +153,16 @@ table#issue-table td.subject div.subject-contents{
 }
 #sprints {
 	float: right;
-	width: 42%;
+	width: 49%;
 	background-color: WhiteSmoke;
 }
 .sprint-name {
 	background-color: ButtonFace;
 }
-.nil-version-issues{
+#backlog{
 	float: left;
 	background-color: WhiteSmoke;
-	width: 53%
+	width: 49.5%
 }
 
 .issue-actions {

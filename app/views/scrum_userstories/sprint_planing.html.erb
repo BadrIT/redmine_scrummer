@@ -24,28 +24,21 @@
 		<%for sprint in @sprints%>
 			<h2 class='sprint-name'><%= sprint.name %></h2>
 			<div id=<%="sprint-#{sprint.id}"%> class='issues_list'>
-  				<%= render :partial => 'scrum_userstories/list', :locals => {:issues => sprint.fixed_issues, :query => @query, :list_id => "sprint-#{sprint.id}"} %>
+  				<%= render :partial => 'scrum_userstories/list', :locals => {:issues => sprint.fixed_issues.sprint_planing, :query => @query, :list_id => "sprint-#{sprint.id}"} %>
 			</div>
 		<%end%>
 	</div>
 </div>
 
 <!--backlog filters-->
-<%=link_to_remote "User-Stories",
-  :url => {:controller => 'scrum_userstories', :action => 'issues_list', :list_id => 'nil-version-issues', :backlog_filter => 'US', :project_id =>@project },
-  :update => { :success => 'nil-version-issues'}%>
-
-<%=link_to_remote "Defects",
-  :url => {:controller => 'scrum_userstories', :action => 'issues_list', :list_id => 'nil-version-issues', :backlog_filter => 'D', :project_id =>@project},
-  :update => { :success => 'nil-version-issues'}%>
-
-<%=link_to_remote "Defect-Suites",
-  :url => {:controller => 'scrum_userstories', :action => 'issues_list', :list_id => 'nil-version-issues', :backlog_filter => 'DS', :project_id =>@project},
-  :update => { :success => 'nil-version-issues'}%>
+<%= backlog_filter nil, "All"%>
+<%= backlog_filter Tracker.scrum_user_story_tracker.id, "User-Stories" %> 
+<%= backlog_filter Tracker.scrum_defect_tracker.id, "Defects"%> 
+<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, "Defect-Suites" %>
   
 <!--listing nil-version issues-->
-<div id= 'nil-version-issues' class='nil-version-issues'>
-	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @nil_version_issues, :query => @query, :hierarchy => false, :list_id => 'nil-version-issues'} %>
+<div id= 'backlog'>
+	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false, :list_id => 'backlog'} %>
 </div>
 
 <script>

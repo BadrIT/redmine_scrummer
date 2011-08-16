@@ -21,13 +21,14 @@ module RedmineScrummer
 				has_many :direct_children, :foreign_key => :parent_id, :class_name => "Issue"
 				belongs_to :direct_parent, :foreign_key => :parent_id, :class_name => "Issue"
 				
-				# returns the conditions used to find the backlog issues
-				def self.backlog_conditions
-				  ["fixed_version_id is ? AND (tracker_id = ? OR tracker_id = ? OR tracker_id = ?)", nil,
-				                               Tracker.scrum_user_story_tracker.id,
-				                               Tracker.scrum_defect_tracker.id,
-				                               Tracker.scrum_defectsuite_tracker.id]
-				end
+				# backlog issues
+				named_scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
+                                                                Tracker.scrum_user_story_tracker.id,
+                                                                Tracker.scrum_defect_tracker.id,
+                                                                Tracker.scrum_defectsuite_tracker.id]} }
+        named_scope :by_tracker, lambda { |*args| {:conditions => ['tracker_id = ?', args.first]} }
+        
+        named_scope :backlog, :conditions => {:fixed_version_id => nil}                      
 			end
 			
 		end

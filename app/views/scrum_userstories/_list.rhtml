@@ -64,10 +64,14 @@
 <div class="autoscroll">
 <table id='issue-table' class="list issues">
     <thead>
-    	<tr>    		
+    	<tr>
+    	
+    	<% if hierarchy %>	
         <th class="checkbox hide-when-print"><%= link_to image_tag('toggle_check.png'), {}, :onclick => 'toggleIssuesSelection(Element.up(this, "form")); return false;',
                                                            :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}" %>
         </th>
+        <% end %>
+        
         <% query.columns.each do |column| %>
           <%= column_short_header(column) %>
         <% end %>
@@ -79,9 +83,11 @@
 	<% issues.each do |issue| -%>
 	  <% level = hierarchy ? issue.level : 0 -%>
 		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:short_name).downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.direct_children.length > 0 ? "group open" : nil%>">			
-			
+		
+		<% if hierarchy %>	
 		  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
-	       
+        <% end %>
+	    
 	    <% query.columns.each do |column| %>
 	    	
 	    	<td class='<%= column.css_classes%>'>

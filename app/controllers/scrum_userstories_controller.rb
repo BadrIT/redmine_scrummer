@@ -164,7 +164,7 @@ class ScrumUserstoriesController < IssuesController
    
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})   		
  			if @issues.length > 0
- 			  set_issues_and_query_for_list
+ 			  set_issues_and_query_for_list unless params[:list_id] == 'issues_list'
 	 			render :update do |page|
 				  page.replace_html params[:list_id], :partial => "list", :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id]}
 				  page.replace_html "errors_for_#{div_name}", ""
@@ -360,20 +360,19 @@ class ScrumUserstoriesController < IssuesController
   end
   
   def set_issues_and_query_for_list
-    if params[:list_id] == 'nil-version-issues'
-      
-      # TODO refactoring
+    if params[:list_id] == 'backlog'
       if params[:tracker_id]
+        # if filtering by only userstories, defects, ..etc
         @issues = @project.issues.backlog.by_tracker(params[:tracker_id])
       else
-        @issues = @project.issues.backlog
+        @issues = @project.issues.backlog.sprint_planing
       end
+      
     elsif params[:list_id].to_s =~ /sprint-(\d*)/
-      @issues = @project.issues.find(:all,:conditions =>["fixed_version_id = ?", $1])
+      @issues = Version.find($1).fixed_issues.backlog
     end
     
     build_planing_query
-    # if params[:list_id] == 'issues_list' use all issues
   end
   
   
@@ -382,7 +381,7 @@ class ScrumUserstoriesController < IssuesController
   def sprint_planing
     # retrive the sprints ordered by its date
     @sprints = @project.versions.find(:all,:order => 'effective_date ASC')
-    @nil_version_issues = @project.issues.backlog
+    @backlog_issues = @project.issues.backlog.sprint_planing
     
     build_planing_query
     initialize_sort
@@ -394,7 +393,4 @@ class ScrumUserstoriesController < IssuesController
     @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours]
   end
   
-  def refresh_backlog
-    
-  end
 end

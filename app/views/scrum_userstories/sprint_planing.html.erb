@@ -22,8 +22,11 @@
 <div id='side-panel'>
 	<div id='sprints'>
 		<%for sprint in @sprints%>
-			<h2 class='sprint-name'><%= sprint.name %></h2>
-			<div id=<%="sprint-#{sprint.id}"%> class='issues_list'>
+			<div class='sprint-info'>
+				<div class='name'><%= sprint.name %></div>
+				<div class='date'><%= sprint.effective_date %></div>
+			</div>
+			<div id=<%="sprint-#{sprint.id}"%> class='sprint'>
   				<%= render :partial => 'scrum_userstories/list', :locals => {:issues => sprint.fixed_issues.sprint_planing, :query => @query, :list_id => "sprint-#{sprint.id}"} %>
 			</div>
 		<%end%>
@@ -40,9 +43,52 @@
 <div id= 'backlog'>
 	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false, :list_id => 'backlog'} %>
 </div>
-
 <script>
-	$j('#sprints').accordion({
-		autoHeight: false
+//	$j('#sprints').accordion({
+//		autoHeight: false
+//	});
+	$j('.sprint-info').click(function() {
+		$(this).next().toggle('slow');
+		return false;
+	}).next().hide();
+	
+	$j('.sprint-info')[0].next().show('slow');
+	
+	$j('tr.issue').draggable({
+		helper: 'clone',
+		revert: 'invalid',
+		drag: function(){
+				$j(this).hide('slow');
+		},
+		stop: function(){
+				$j(this).show('slow');
+			}
+	});
+	
+	$j('.sprint , #backlog').droppable({
+		drop: function(){
+			// get the dragged row id (e.g. 'issue-5')
+			var  id = $j('.ui-draggable-dragging')[0].id;
+			
+			if ($j('.autoscroll > table > tr#'+id,this).size() != 0)
+				return;
+			
+			var tr = $j('#'+id+' + tr');
+			$j('.autoscroll > table',this).append($j('#'+id));
+			$j('.autoscroll > table',this).append(tr);
+			
+
+			// changing the fixed-version of the issue ussing AJAX request
+			var url = '<%= url_for :action => :update_single_field, :params => {:project_id => @project.id}%>'
+			new Ajax.Request(url,{
+				parameters:{
+					id: id +"-version",
+					value:this.id
+					},
+				method: 'post',
+				asynchronous:true
+			});
+		}
+		
 	});
 </script>

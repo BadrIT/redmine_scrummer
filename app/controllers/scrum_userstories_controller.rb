@@ -101,6 +101,16 @@ class ScrumUserstoriesController < IssuesController
         render :text => params[:value].upcase
       end 
       
+    elsif params[:id] =~ /-version/
+      matched_groups = params[:id].match(/issue-(\d+)-version/)
+      issue_id = matched_groups[1]
+      @issue = Issue.find(issue_id)
+      
+      version_id = params[:value] == 'backlog' ? nil : params[:value].gsub('sprint-','').to_i
+      
+      @issue.fixed_version_id = version_id
+      @issue.save
+      
     else
       render :text => 'Errors in saving'
 		end

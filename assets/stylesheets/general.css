@@ -156,9 +156,26 @@ table#issue-table td.subject div.subject-contents{
 	width: 49%;
 	background-color: WhiteSmoke;
 }
-.sprint-name {
+.sprint-info {
 	background-color: ButtonFace;
+	padding-left: 5px;
+	height: 35px;
+    border-color: LightSlateGray;
+    border-style: outset;
 }
+.sprint-info > div.date {
+	float: right;
+	padding-right: 5px;
+}
+.sprint-info > div.name {
+	float: left;
+	font-size: 150%;
+	font-weight: bold;
+}
+.sprint {
+	margin-bottom: -17px;
+}
+
 #backlog{
 	float: left;
 	background-color: WhiteSmoke;

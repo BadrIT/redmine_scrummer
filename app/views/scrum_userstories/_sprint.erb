@@ -1,0 +1,7 @@
+<div class='sprint-info'>
+	<div class='name'><%= sprint.name %></div>
+	<div class='date'><%= sprint.effective_date %></div>
+</div>
+<div id=<%="sprint-#{sprint.id}"%> class='sprint'>
+	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => sprint.fixed_issues.sprint_planing, :query => @query, :list_id => "sprint-#{sprint.id}"} %>
+</div>

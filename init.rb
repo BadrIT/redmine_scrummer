@@ -31,6 +31,10 @@ Dispatcher.to_prepare :redmine_scrummer do
     Role.send :include, RedmineScrummer::RolePatch
   end
   
+  unless Version.included_modules.include? RedmineScrummer::VersionPatch
+    Version.send :include, RedmineScrummer::VersionPatch
+  end
+  
 end
 
 Redmine::Plugin.register :redmine_scrummer do
@@ -45,8 +49,8 @@ Redmine::Plugin.register :redmine_scrummer do
   
   project_module :scrummer do
   	permission :scrum_user_stories, 										{ :scrum_userstories => [:index, :issues_list] }
-  	permission :scrum_user_stories_add_inline, 					{ :scrum_userstories => [:inline_add, :get_inline_issue_form] }
-  	permission :scrum_user_stories_manipulate_inline, 	{ :scrum_userstories => [:refresh_inline_add_form, :update_single_field] }
+  	permission :scrum_user_stories_add_inline, 					{ :scrum_userstories => [:inline_add, :get_inline_issue_form, :inline_add_version] }
+  	permission :scrum_user_stories_manipulate_inline, 	{ :scrum_userstories => [:refresh_inline_add_form, :update_single_field, :inline_add_version] }
   	
   	permission :scrum_sprint_planing, 									{ :scrum_userstories  => [:sprint_planing]}
   	

@@ -13,7 +13,7 @@ class ScrumUserstoriesController < IssuesController
 	prepend_before_filter :check_for_default_issue_priority, :only => [:index]
 	
 	prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list]						# must be called after find_scrum_project
-	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :sprint_planing]
+	prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :sprint_planing, :inline_add_version]
 	
 	before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
 	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form, :inline_add ]	
@@ -384,7 +384,7 @@ class ScrumUserstoriesController < IssuesController
       end
       
     elsif params[:list_id].to_s =~ /sprint-(\d*)/
-      @issues = Version.find($1).fixed_issues.backlog
+      @issues = Version.find($1).fixed_issues.sprint_planing
     end
     
     build_planing_query
@@ -397,6 +397,7 @@ class ScrumUserstoriesController < IssuesController
     # retrive the sprints ordered by its date
     @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
     @backlog_issues = @project.issues.backlog.sprint_planing
+    @version = @project.versions.build
     
     build_planing_query
     initialize_sort
@@ -407,5 +408,33 @@ class ScrumUserstoriesController < IssuesController
     @query.project = @project
     @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours]
   end
+  
+  def inline_add_version
+    @sprint = Version.new(params[:version])
+    @sprint.project = @project
+    
+    if @sprint.save
+      flash[:notice] = l(:notice_successful_create)
+      
+      @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
+      build_planing_query
+      initialize_sort
+      
+      render :update do |page|
+        page.replace_html 'sprints', :partial => "sprint", :collection => @sprints
+        page.replace_html 'inline_add_container', :partial => 'inline_add_version'
+        page.replace_html 'version_errors', ""
+        page.call 'init_planning'
+      end
+      
+    else
+      errors = error_messages_for 'version'
+      render :update do |page|
+        page.replace_html 'version_errors', errors 
+      end
+      
+    end
+  end
+  
   
 end

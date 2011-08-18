@@ -327,7 +327,18 @@ module RedmineScrummer
             tracker.custom_fields = []
             tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
           end
-      
+          
+          # add buffer_size custom field to versions
+          buffer_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :buffer_size)
+          buffer_custom_field.update_attributes(
+                              :name          => l(:buffer_size),
+                              :field_format  => 'float',
+                              :default_value => "0")
+          # add start_date custom field to versions
+          start_date_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :start_date)
+          start_date_custom_field.update_attributes(
+                              :name          => l(:start_date),
+                              :field_format  => 'date')
           true
         end
       end

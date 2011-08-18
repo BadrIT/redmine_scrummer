@@ -24,7 +24,7 @@ module ScrumUserstoriesHelper
   end
   
 	def custom_field_tag_with_add_class_to_float_inputs(name, custom_value)	
-	  custom_field = IssueCustomField.find(custom_value.custom_field_id)
+	  custom_field = CustomField.find(custom_value.custom_field_id)
     field_name = "#{name}[custom_field_values][#{custom_field.id}]"
     field_id = "#{name}_custom_field_values_#{custom_field.id}"
 

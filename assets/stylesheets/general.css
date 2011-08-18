@@ -151,9 +151,11 @@ table#issue-table td.subject div.subject-contents{
 	width: 98%;
 	padding: 4px 4px 0 6px;
 }
-#sprints {
+#right-side-panel {
 	float: right;
 	width: 49%;
+}
+#sprints {
 	background-color: WhiteSmoke;
 }
 .sprint-info {
@@ -185,4 +187,20 @@ table#issue-table td.subject div.subject-contents{
 .issue-actions {
 	float: right;
 	margin-right: 10px;
+}
+
+.scrum_version_inline_label {
+    float: left;
+    font-weight: bold;
+    margin-left: -87px;
+    text-align: right;
+    width: 175px;
+    margin-right: 10px;
+}
+.box > p {
+	margin-top: -5px;
+}
+.new-version-header {
+	margin-bottom: 0px;
+	padding-left: 10px;
 }

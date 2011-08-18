@@ -17,19 +17,20 @@
     <%= javascript_include_tag 'jquery.cluetip.min.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
 <% end %>
+<h2>Sprint Planning</h2>
 
 <!--Sprints stacked vertically-->
-<div id='side-panel'>
+<div id='right-side-panel' >
+	
+	<fieldset id="inline-add" class="collapsible collapsed">
+		<legend onclick="toggleFieldset(this);"><%= l(:label_version_new) %></legend>
+		<div id='inline_add_container' style="display:none">
+			<%= render :partial => 'scrum_userstories/inline_add_version'%>
+		</div>
+	</fieldset>
+	
 	<div id='sprints'>
-		<%for sprint in @sprints%>
-			<div class='sprint-info'>
-				<div class='name'><%= sprint.name %></div>
-				<div class='date'><%= sprint.effective_date %></div>
-			</div>
-			<div id=<%="sprint-#{sprint.id}"%> class='sprint'>
-  				<%= render :partial => 'scrum_userstories/list', :locals => {:issues => sprint.fixed_issues.sprint_planing, :query => @query, :list_id => "sprint-#{sprint.id}"} %>
-			</div>
-		<%end%>
+		<%= render(:partial => "sprint", :collection => @sprints) %>
 	</div>
 </div>
 
@@ -43,10 +44,10 @@
 <div id= 'backlog'>
 	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false, :list_id => 'backlog'} %>
 </div>
+
+
 <script>
-//	$j('#sprints').accordion({
-//		autoHeight: false
-//	});
+function init_planning(){
 	$j('.sprint-info').click(function() {
 		$(this).next().toggle('slow');
 		return false;
@@ -70,13 +71,14 @@
 			// get the dragged row id (e.g. 'issue-5')
 			var  id = $j('.ui-draggable-dragging')[0].id;
 			
-			if ($j('.autoscroll > table > tr#'+id,this).size() != 0)
+			// prevent sending request if the issue dropped in the same place
+			if ($j('.autoscroll > table > tbody > tr#'+id,this).size() != 0)
 				return;
 			
+			// get the dragged row
 			var tr = $j('#'+id+' + tr');
 			$j('.autoscroll > table',this).append($j('#'+id));
 			$j('.autoscroll > table',this).append(tr);
-			
 
 			// changing the fixed-version of the issue ussing AJAX request
 			var url = '<%= url_for :action => :update_single_field, :params => {:project_id => @project.id}%>'
@@ -91,4 +93,6 @@
 		}
 		
 	});
+}
+init_planning();
 </script>

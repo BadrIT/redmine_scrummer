@@ -60,6 +60,7 @@
 		$j('tr.issue').draggable({
 			helper: 'clone',
 			revert: 'invalid',
+			appendTo: 'body',
 			drag: function(){
 					$j(this).hide('slow');
 			},
@@ -80,10 +81,18 @@
 				if ($j('.autoscroll > table > tbody > tr#'+id,this).size() != 0)
 					return;
 				
-				// get the dragged row
+				// append the row and the inline-place-holder to the new table
 				var tr = $j('#'+id+' + tr');
 				$j('.autoscroll > table',this).append($j('#'+id));
 				$j('.autoscroll > table',this).append(tr);
+				
+				// update row actions to fit the new table.
+				var list_id = $j(this)[0].id.toString();
+				$j('.issue-actions > a', $j('#'+id)).each(function(){
+					var request = $j(this).attr('onclick');
+					request = request.replace(/list_id=[^\']*/,"list_id="+list_id);
+					$j(this).attr('onclick',request);
+				});
 	
 				// changing the fixed-version of the issue ussing AJAX request
 				var url = '<%= url_for :action => :update_single_field, :params => {:project_id => @project.id}%>'

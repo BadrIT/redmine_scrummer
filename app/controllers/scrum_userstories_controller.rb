@@ -30,15 +30,13 @@ class ScrumUserstoriesController < IssuesController
 
     # custom field for todo
 		if params[:id] =~ /custom/
-			matched_groups = params[:id].match(/issue-(\d+)-custom-field-(.+)/)
+			matched_groups = params[:id].match(/issue-(\d+)-custom-field-cf_(\d+)/)
 			issue_id = matched_groups[1]
-			column_name = matched_groups[2].to_sym
 			
-			query_column = @query.column_with_name column_name
-			custom_field = query_column.custom_field			
+			custom_field_id = matched_groups[2]			
 			
 			@issue = Issue.find(issue_id)
-			@issue.custom_field_values = {custom_field.id => new_value}
+			@issue.custom_field_values = {custom_field_id => new_value}
 	  
 	    if @issue.save
         render :text => new_value
@@ -409,7 +407,7 @@ class ScrumUserstoriesController < IssuesController
   def build_planing_query
     @query = Query.new
     @query.project = @project
-    @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours]
+    @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours, :cf_3]
   end
   
   def inline_add_version
@@ -432,7 +430,7 @@ class ScrumUserstoriesController < IssuesController
       end
       
     else
-      errors = error_messages_for 'version'
+      errors = error_messages_for 'sprint'
       render :update do |page|
         page.replace_html 'version_errors', errors 
       end

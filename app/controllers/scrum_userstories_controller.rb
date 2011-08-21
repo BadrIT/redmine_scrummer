@@ -110,6 +110,9 @@ class ScrumUserstoriesController < IssuesController
       
       @issue.fixed_version_id = version_id
       @issue.save
+      render :update do |page|
+        page.call 'update_sprint_status'
+      end
       
     else
       render :text => 'Errors in saving'
@@ -419,6 +422,7 @@ class ScrumUserstoriesController < IssuesController
       @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
       build_planing_query
       initialize_sort
+      @version = @project.versions.build
       
       render :update do |page|
         page.replace_html 'sprints', :partial => "sprint", :collection => @sprints

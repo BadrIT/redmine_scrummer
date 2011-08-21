@@ -1,6 +1,8 @@
-<div class='sprint-info'>
+<div class='sprint-info' buffer-size='<%= sprint.buffer_size %>'>
 	<div class='name'><%= sprint.name %></div>
 	<div class='date'><%= sprint.effective_date %></div>
+	<div class="status-bar"></div>
+	<div class="size"></div>
 </div>
 <div id=<%="sprint-#{sprint.id}"%> class='sprint'>
 	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => sprint.fixed_issues.sprint_planing, :query => @query, :list_id => "sprint-#{sprint.id}"} %>

@@ -35,7 +35,7 @@
 	</p>
 	
 	<% @version.custom_field_values.each do |value| %>
-		<p><%= custom_field_tag_with_label :version, value %></p>
+		<p class='version_custon_field_label'><%= custom_field_tag_with_label :version, value %></p>
 	<% end %>
 	
 	<%= f.submit %>

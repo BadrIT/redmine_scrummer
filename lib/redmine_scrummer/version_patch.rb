@@ -13,8 +13,13 @@ module RedmineScrummer
     
     module InstanceMethods
       
-      def buffer_status
-        children_size = self.fixed_issues.count(&:story_size)
+      # returns the value of the buffer_size custom field
+      def buffer_size
+        buffer_size_field_id = VersionCustomField.find_by_scrummer_caption(:buffer_size).id
+        
+        buffer_size_field = self.custom_field_values.find {|field| field.custom_field_id = buffer_size_field_id}
+        
+        buffer_size_field.value.to_i
       end
       
     end

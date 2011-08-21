@@ -189,7 +189,7 @@ table#issue-table td.subject div.subject-contents{
 	margin-right: 10px;
 }
 
-.scrum_version_inline_label {
+.scrum_version_inline_label , .version_custon_field_label > label {
     float: left;
     font-weight: bold;
     margin-left: -87px;
@@ -203,4 +203,13 @@ table#issue-table td.subject div.subject-contents{
 .new-version-header {
 	margin-bottom: 0px;
 	padding-left: 10px;
+}
+.sprint-info > .status-bar {
+	width: 100px;
+	height: 20px;
+	float: right;
+	margin-right: 20px;
+}
+.sprint-info > .size {
+	float: right;
 }

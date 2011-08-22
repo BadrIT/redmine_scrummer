@@ -117,6 +117,7 @@ tr.epic-issue{background-color:#30be0E}
 tr.ds-issue{background-color:red}
 tr.de-issue{background-color:rgb(255,102,102)}
 tr.test-issue{background-color:#FFFFFF}
+tr.spark-issue{background-color:PaleTurquoise}
 
 table#issue-table td.subject div.prefix{
   float: left;

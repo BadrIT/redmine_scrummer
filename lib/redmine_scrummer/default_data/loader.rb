@@ -24,14 +24,15 @@ module RedmineScrummer
           #############################################################################################
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
   
-          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),  :short_name => 'US'   },
+          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   },
                              :task        => { :name => l(:scrum_task),        :short_name => 'Task' },
                              :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' },
                              :theme       => { :name => l(:scrum_theme),       :short_name => 'Theme'},
                              :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   },
                              :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   },
-                             :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   } ,
-                             :test        => { :name => l(:scrum_test),        :short_name => 'Test' }}
+                             :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   },
+                             :test        => { :name => l(:scrum_test),        :short_name => 'Test' },
+                             :spark       => { :name => l(:scrum_spark),       :short_name => 'Spark'}}
           
           scrum_trackers.each do |caption, options|
             options = options.merge(scrum_tracker_options)
@@ -87,6 +88,7 @@ module RedmineScrummer
           # trackers
           test_id = Tracker.find_by_scrummer_caption(:test).id
           task_id = Tracker.find_by_scrummer_caption(:task).id
+          spark_id = Tracker.find_by_scrummer_caption(:spark).id
           
           # statuses
           finished_id = IssueStatus.find_by_scrummer_caption(:finished).id
@@ -99,10 +101,11 @@ module RedmineScrummer
             Role.find_all_by_is_scrum(true).each do |role|
               IssueStatus.find_all_by_is_scrum(true).each do |old_status|
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
-                  # exclude test and task trackers
+                  # exclude test, task and spark trackers
                   # exclude failed, succeeded and finished statuses
                   if tracker.id != test_id && 
                       tracker.id != task_id && 
+                      tracker.id != spark_id &&
                       !limited_statuses.include?(old_status.id) && 
                       !limited_statuses.include?(new_status.id)
                     
@@ -134,11 +137,13 @@ module RedmineScrummer
           Role.find_all_by_is_scrum(true).each do |role|
             [:defined,:in_progress,:finished].each do |old_status|
               [:defined,:in_progress,:finished].each do |new_status|
-                conditions = {:role_id         => role.id, 
-                                :tracker_id    => task_id, 
-                                :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
-                                :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
-                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                [task_id, spark_id].each do |tracker_id|
+                  conditions = {:role_id         => role.id, 
+                                  :tracker_id    => tracker_id, 
+                                  :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
+                                  :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                  Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                end
               end
             end
           end
@@ -319,7 +324,8 @@ module RedmineScrummer
                                      :theme     => [:story_size, :business_value],
                                      :task      => [:remaining_hours],
                                      :defect    => [:remaining_hours],
-                                     :refactor  => [:remaining_hours]}
+                                     :refactor  => [:remaining_hours],
+                                     :spark     => [:remaining_hours]}
                     
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|

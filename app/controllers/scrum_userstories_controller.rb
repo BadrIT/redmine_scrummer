@@ -408,6 +408,7 @@ class ScrumUserstoriesController < IssuesController
     @query = Query.new
     @query.project = @project
     @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours, :cf_3]
+    @query.sort_criteria = [[:cf_3, 'desc']]
   end
   
   def inline_add_version

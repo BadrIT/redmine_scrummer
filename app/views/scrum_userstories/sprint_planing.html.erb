@@ -38,9 +38,11 @@
 
 <!--backlog filters-->
 <%= backlog_filter nil, "All"%>
-<%= backlog_filter Tracker.scrum_user_story_tracker.id, "User-Stories" %> 
-<%= backlog_filter Tracker.scrum_defect_tracker.id, "Defects"%> 
-<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, "Defect-Suites" %>
+<%= backlog_filter Tracker.scrum_user_story_tracker.id, l(:scrum_userStory) %> 
+<%= backlog_filter Tracker.scrum_defect_tracker.id, l(:scrum_defect) %> 
+<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, l(:scrum_defectSuite)  %>
+<%= backlog_filter Tracker.scrum_refactor_tracker.id, l(:scrum_refactor)  %>
+<%= backlog_filter Tracker.scrum_spark_tracker.id, l(:scrum_spark)  %>
   
 <!--listing nil-version issues-->
 <div id= 'backlog'>
@@ -49,15 +51,8 @@
 
 
 <script>
-	function init_planning(){
-		$j('.sprint-info').click(function() {
-			$(this).next().toggle('slow');
-			return false;
-		}).next().hide();
-		
-		$j('.sprint-info')[0].next().show('slow');
-		
-		$j('tr.issue').draggable({
+	function init_drag_and_drop(){
+				$j('tr.issue').draggable({
 			helper: 'clone',
 			revert: 'invalid',
 			appendTo: 'body',
@@ -108,6 +103,17 @@
 			
 		});
 	}
+	
+	function init_planning(){
+		$j('.sprint-info').click(function() {
+			$(this).next().toggle('slow');
+			return true;
+		}).next().hide();
+		
+		$j('.sprint-info')[0].next().show('slow');
+		init_drag_and_drop();
+	}
+	
 	
 	function update_sprint_status(){
 		$j('.sprint').each(function(){

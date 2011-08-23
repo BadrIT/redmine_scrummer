@@ -1,4 +1,6 @@
-<% remote_form_for @version, :url => {:controller => :scrum_userstories, :action => :inline_add_version, :project_id => @project} do |f| %>
+<% version ||= @project.versions.build %>
+
+<% remote_form_for :version, :url => {:controller => :scrum_userstories, :action => :inline_add_version, :project_id => @project} do |f| %>
 
 	<div id='version_errors'></div>
 	<!--%= error_messages_for 'version' %-->
@@ -31,10 +33,10 @@
 	
 	<p>
 	<%= f.label :sharing, l("field_sharing"), :class => "scrum_version_inline_label" %>
-	<%= f.select :sharing, @version.allowed_sharings.collect {|v| [format_version_sharing(v), v]} %>
+	<%= f.select :sharing, version.allowed_sharings.collect {|v| [format_version_sharing(v), v]} %>
 	</p>
 	
-	<% @version.custom_field_values.each do |value| %>
+	<% version.custom_field_values.each do |value| %>
 		<p class='version_custon_field_label'><%= custom_field_tag_with_label :version, value %></p>
 	<% end %>
 	

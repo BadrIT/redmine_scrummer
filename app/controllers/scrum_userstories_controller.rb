@@ -199,7 +199,7 @@ class ScrumUserstoriesController < IssuesController
 		parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
 		parent_issue_id ||= params[:issue][:parent_issue_id] if params[:issue] and params[:issue][:parent_issue_id]
 		
-		@parent_issue = (parent_issue_id and !parent_issue_id.empty?) ? Issue.find(parent_issue_id) : nil 
+		@parent_issue = (parent_issue_id and !parent_issue_id.empty? and Issue.exists?(parent_issue_id)) ? Issue.find(parent_issue_id) : nil
 	end
 
 	def find_query
@@ -379,39 +379,38 @@ class ScrumUserstoriesController < IssuesController
   end
   
   def set_issues_and_query_for_list
+    build_planing_query
+    
     if params[:list_id] == 'backlog'
       if params[:tracker_id]
         # if filtering by only userstories, defects, ..etc
-        @issues = @project.issues.backlog.by_tracker(params[:tracker_id])
+        @issues = @project.issues.backlog.by_tracker(params[:tracker_id]).find(:all, :order => sort_clause)
       else
-        @issues = @project.issues.backlog.sprint_planing
+        @issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
       end
       
     elsif params[:list_id].to_s =~ /sprint-(\d*)/
-      @issues = Version.find($1).fixed_issues.sprint_planing
+      @issues = Version.find($1).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
     end
-    
-    build_planing_query
   end
   
   
   # Sprint planing actions
   public
   def sprint_planing
-    # retrive the sprints ordered by its date
-    @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
-    @backlog_issues = @project.issues.backlog.sprint_planing
-    @version = @project.versions.build
-    
     build_planing_query
     initialize_sort
+    # retrive the sprints ordered by its date
+    @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
+    @backlog_issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
+    
   end
   
   def build_planing_query
     @query = Query.new
     @query.project = @project
     @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours, :cf_3]
-    @query.sort_criteria = [[:cf_1, 'desc']]
+    @query.sort_criteria = [[:cf_3, 'desc']]
   end
   
   def inline_add_version
@@ -424,7 +423,6 @@ class ScrumUserstoriesController < IssuesController
       build_planing_query
       initialize_sort
       @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
-      @version = @project.versions.build
       
       render :update do |page|
         page.replace_html 'sprints', :partial => "sprint", :collection => @sprints

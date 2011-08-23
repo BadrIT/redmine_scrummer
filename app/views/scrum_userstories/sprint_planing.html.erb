@@ -52,7 +52,7 @@
 
 <script>
 	function init_drag_and_drop(){
-				$j('tr.issue').draggable({
+		$j('tr.issue').draggable({
 			helper: 'clone',
 			revert: 'invalid',
 			appendTo: 'body',
@@ -88,7 +88,7 @@
 					request = request.replace(/list_id=[^\']*/,"list_id="+list_id);
 					$j(this).attr('onclick',request);
 				});
-	
+				
 				// changing the fixed-version of the issue ussing AJAX request
 				var url = '<%= url_for :action => :update_single_field, :params => {:project_id => @project.id}%>'
 				new Ajax.Request(url,{
@@ -103,7 +103,7 @@
 			
 		});
 	}
-	
+
 	function init_planning(){
 		$j('.sprint-info').click(function() {
 			$(this).next().toggle('slow');
@@ -111,6 +111,7 @@
 		}).next().hide();
 		
 		$j('.sprint-info')[0].next().show('slow');
+		
 		init_drag_and_drop();
 	}
 	

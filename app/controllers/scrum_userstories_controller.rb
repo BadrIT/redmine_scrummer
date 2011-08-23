@@ -203,11 +203,14 @@ class ScrumUserstoriesController < IssuesController
 	end
 
 	def find_query
-	  	  
-	  if params[:query_id].blank? && (session[:query].nil? || session[:query][:id].nil?)
-	    query = Query.find_by_scrummer_caption('User-Stories')
-	    params[:query_id] = query.id
-	  end
+	  # # if params[:query_id].blank? && (session[:query].nil? || session[:query][:id].nil?)
+	    # query = Query.find_by_scrummer_caption('User-Stories')
+	    # params[:query_id] = query.id
+	  # end
+	  if session[:query].nil? || params[:set_filter] == 'clear'
+      query = Query.find_by_scrummer_caption('User-Stories')
+      params[:query_id] = query.id
+	  end 
 	  retrieve_query
 	end
 	
@@ -408,7 +411,7 @@ class ScrumUserstoriesController < IssuesController
     @query = Query.new
     @query.project = @project
     @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours, :cf_3]
-    @query.sort_criteria = [[:cf_3, 'desc']]
+    @query.sort_criteria = [[:cf_1, 'desc']]
   end
   
   def inline_add_version
@@ -418,9 +421,9 @@ class ScrumUserstoriesController < IssuesController
     if @sprint.save
       flash[:notice] = l(:notice_successful_create)
       
-      @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
       build_planing_query
       initialize_sort
+      @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
       @version = @project.versions.build
       
       render :update do |page|
@@ -435,7 +438,6 @@ class ScrumUserstoriesController < IssuesController
       render :update do |page|
         page.replace_html 'version_errors', errors 
       end
-      
     end
   end
   

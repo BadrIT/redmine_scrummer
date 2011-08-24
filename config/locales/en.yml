@@ -53,5 +53,5 @@ en:
   business_value: "Business Value"
   buffer_size: "Buffer size"
   start_date: "Start date"
-  
+
   default_description: "As a <role> I want to <goal> so that <reason>\nVerification Points:\n<Point1>\n<Point2>"

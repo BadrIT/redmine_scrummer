@@ -78,8 +78,8 @@
 				
 				// append the row and the inline-place-holder to the new table
 				var tr = $j('#'+id+' + tr');
-				$j('.autoscroll > table',this).append($j('#'+id));
-				$j('.autoscroll > table',this).append(tr);
+				$j('.autoscroll > table > tbody',this).append($j('#'+id));
+				$j('.autoscroll > table > tbody',this).append(tr);
 				
 				// update row actions to fit the new table.
 				var list_id = $j(this)[0].id.toString();

@@ -34,7 +34,8 @@ module RedmineScrummer
                                                                 
         named_scope :by_tracker, lambda { |*args| {:conditions => ['tracker_id = ?', args.first]} }
         
-        named_scope :backlog, :conditions => {:fixed_version_id => nil}                      
+        named_scope :backlog, :conditions => {:fixed_version_id => nil}
+        
 			end
 			
 		end
@@ -140,10 +141,10 @@ module RedmineScrummer
         
         if value.to_f == 0.0
           custom_field ||= CustomField.find_by_scrummer_caption(:story_size)
-          value = (self.custom_value_for(custom_field).try(:value) || '').to_i
+          value = (self.custom_value_for(custom_field).try(:value) || '').to_f
         end
       
-        if self.story_size.to_i != value.to_i
+        if self.story_size.to_f != value.to_f
           self.update_attribute(:story_size, value)
           self.update_parent_story_size(custom_field)
         end

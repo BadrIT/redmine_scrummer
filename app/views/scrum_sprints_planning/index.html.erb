@@ -1,0 +1,58 @@
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'tipsy', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'sidebar', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'jquery-ui.css', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'jquery.cluetip.css', :plugin => 'redmine_scrummer' %>
+    <%= javascript_tag "var task_tracker_id = #{Tracker.scrum_task_tracker.id}"%>    
+    <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.jeditable.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
+    <%= javascript_include_tag 'context_menu.js'%>
+    
+    <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.tipsy.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.sidebar.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'sprint_planning.js', :plugin => 'redmine_scrummer' %>
+    
+<% end %>
+<h2>Sprint Planning</h2>
+
+<!--Sprints stacked vertically-->
+<div id='right-side-panel' >
+	
+	<fieldset id="inline-add" class="collapsible collapsed">
+		<legend onclick="toggleFieldset(this);"><%= l(:label_version_new) %></legend>
+		<div id='inline_add_container' style="display:none">
+			<%= render :partial => 'inline_add_version'%>
+		</div>
+	</fieldset>
+	
+	<div id='sprints'>
+		<%= render(:partial => "sprint", :collection => @sprints) %>
+	</div>
+</div>
+
+<!--backlog filters-->
+<%= backlog_filter nil, "All"%>
+<%= backlog_filter Tracker.scrum_user_story_tracker.id, l(:scrum_userStory) %> 
+<%= backlog_filter Tracker.scrum_defect_tracker.id, l(:scrum_defect) %> 
+<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, l(:scrum_defectSuite)  %>
+<%= backlog_filter Tracker.scrum_refactor_tracker.id, l(:scrum_refactor)  %>
+<%= backlog_filter Tracker.scrum_spark_tracker.id, l(:scrum_spark)  %>
+  
+<!--listing nil-version issues-->
+<div id= 'backlog'>
+	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false, :list_id => 'backlog'} %>
+</div>
+
+
+<script>
+	var url = '<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id}%>'
+	update_sprint_status();
+	init_planning();
+</script>

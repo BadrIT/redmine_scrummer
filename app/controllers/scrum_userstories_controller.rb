@@ -379,8 +379,9 @@ class ScrumUserstoriesController < IssuesController
   end
   
   def set_issues_and_query_for_list
-    build_planing_query
-    
+    # set the query to sprint-planning query
+    @query = Query.find_by_scrummer_caption("Sprint-Planning")
+
     if params[:list_id] == 'backlog'
       if params[:tracker_id]
         # if filtering by only userstories, defects, ..etc
@@ -393,51 +394,5 @@ class ScrumUserstoriesController < IssuesController
       @issues = Version.find($1).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
     end
   end
-  
-  
-  # Sprint planing actions
-  public
-  def sprint_planing
-    build_planing_query
-    initialize_sort
-    # retrive the sprints ordered by its date
-    @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
-    @backlog_issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
-    
-  end
-  
-  def build_planing_query
-    @query = Query.new
-    @query.project = @project
-    @query.column_names = [:subject, :assigned_to, :cf_1, :status, :estimated_hours, :cf_3]
-    @query.sort_criteria = [[:cf_3, 'desc']]
-  end
-  
-  def inline_add_version
-    @sprint = Version.new(params[:version])
-    @sprint.project = @project
-    
-    if @sprint.save
-      flash[:notice] = l(:notice_successful_create)
-      
-      build_planing_query
-      initialize_sort
-      @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
-      
-      render :update do |page|
-        page.replace_html 'sprints', :partial => "sprint", :collection => @sprints
-        page.replace_html 'inline_add_container', :partial => 'inline_add_version'
-        page.replace_html 'version_errors', ""
-        page.call 'init_planning'
-      end
-      
-    else
-      errors = error_messages_for 'sprint'
-      render :update do |page|
-        page.replace_html 'version_errors', errors 
-      end
-    end
-  end
-  
   
 end

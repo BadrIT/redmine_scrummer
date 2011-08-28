@@ -1,6 +1,6 @@
 <% version ||= @project.versions.build %>
 
-<% remote_form_for :version, :url => {:controller => :scrum_userstories, :action => :inline_add_version, :project_id => @project} do |f| %>
+<% remote_form_for :version, :url => {:controller => :scrum_sprints_planning, :action => :inline_add_version, :project_id => @project} do |f| %>
 
 	<div id='version_errors'></div>
 	<!--%= error_messages_for 'version' %-->

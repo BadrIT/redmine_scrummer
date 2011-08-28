@@ -21,7 +21,8 @@ module RedmineScrummer
 				
 				has_many :history,
 				         :class_name => 'IssueHistory',
-				         :table_name => 'issue_histories'
+				         :table_name => 'issue_histories',
+				         :order => 'date DESC'
 				
 				# the same as .children but it is an association
 				# in order to be used in eager loading include
@@ -211,7 +212,7 @@ module RedmineScrummer
 			def init_was_new
         @was_a_new_record = self.new_record? if @was_a_new_record.nil?
         return true
-      end  
+      end
 			
 		end
 	end

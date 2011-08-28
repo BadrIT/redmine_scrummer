@@ -31,6 +31,7 @@ class ScrumSprintsPlanningController < ScrumUserstoriesController
         page.replace_html 'inline_add_container', :partial => 'inline_add_version'
         page.replace_html 'version_errors', ""
         page.call 'init_planning'
+        page.call 'update_sprint_status'
       end
       
     else

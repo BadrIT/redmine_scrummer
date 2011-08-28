@@ -192,7 +192,7 @@ module ScrumUserstoriesHelper
     value = column.value(issue)
     description = textilizable(issue.description).gsub("'","\'")
     
-    options = {:title=>"#{issue.subject}|#{description}", :class=>'subject-contents'};
+    options = {:title=>"#{issue.subject}|#{description}", :class=>'subject-contents'}
     
     link_to(h(value), {:controller => 'issues', :action => 'show', :id => issue }, options)
   end

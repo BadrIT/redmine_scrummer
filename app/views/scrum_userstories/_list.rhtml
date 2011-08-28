@@ -130,6 +130,7 @@
 	<script>
 		$j('span.expander').css('display','none');
 		$j('.prefix > span').css('display','none');
-		init_drag_and_drop();
+		if (typeof(init_drag_and_drop) == 'function')
+			init_drag_and_drop();
 	</script>
 <% end %>

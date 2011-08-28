@@ -59,6 +59,7 @@ Redmine::Plugin.register :redmine_scrummer do
   	permission :scrum_charts, 													{ :scrum_charts => [:index]}
   end
   
+  menu :project_menu, :scrum_charts, { :controller => 'scrum_charts', :action => 'index' }, :after => :activity, :param => :project_id
   menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id 
   menu :project_menu, :scrum_sprint_planing, { :controller => 'scrum_userstories', :action => 'sprint_planing' }, :after => :activity, :param => :project_id 
 end

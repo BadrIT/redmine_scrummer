@@ -19,6 +19,10 @@ module RedmineScrummer
 				
 				before_save :init_was_new
 				
+				has_many :history,
+				         :class_name => 'IssueHistory',
+				         :table_name => 'issue_histories'
+				
 				# the same as .children but it is an association
 				# in order to be used in eager loading include
 				has_many :direct_children, :foreign_key => :parent_id, :class_name => "Issue"

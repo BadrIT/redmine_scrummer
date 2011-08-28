@@ -15,11 +15,14 @@ module RedmineScrummer
       
       # returns the value of the buffer_size custom field
       def buffer_size
-        buffer_size_field_id = VersionCustomField.find_by_scrummer_caption(:buffer_size).id
-        
-        buffer_size_field = self.custom_field_values.find {|field| field.custom_field_id = buffer_size_field_id}
-        
-        buffer_size_field.value.to_i
+        buffer_size_field = VersionCustomField.find_by_scrummer_caption(:buffer_size)
+        self.custom_value.for(buffer_size_field).value.try(:to_i)
+      end
+      
+      # returns the value of the start_date custom field
+      def start_date
+        start_date_field = VersionCustomField.find_by_scrummer_caption(:start_date)
+        self.custom_value.for(start_date_field).value.try(:to_date)
       end
       
     end

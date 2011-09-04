@@ -19,6 +19,8 @@ module RedmineScrummer
 				
 				before_save :init_was_new
 				
+				after_save :check_history_entries
+				
 				has_many :history,
 				         :class_name => 'IssueHistory',
 				         :table_name => 'issue_histories',
@@ -213,6 +215,31 @@ module RedmineScrummer
         @was_a_new_record = self.new_record? if @was_a_new_record.nil?
         return true
       end
+			
+			def check_history_entries
+			  # Time-Untrackable issues have no history entry
+			  return unless self.time_trackable?
+			  
+			  # get the newest history entry
+			  history_entry = self.history.first
+			  
+			  # if it was today's entry just update it
+        if history_entry.date == Time.now.to_date
+          history_entry.update_attributes :actual => self.spent_hours,
+                                          :remaining => self.remaining_hours
+        # else build new history entry
+        else
+          self.build_history_entry.save
+        end
+			end
+			
+			public
+			
+			def build_history_entry
+			  IssueHistory.new :issue_id => self.id,
+			                   :actual => self.spent_hours,
+		                     :remaining => self.remaining_hours
+			end
 			
 		end
 	end

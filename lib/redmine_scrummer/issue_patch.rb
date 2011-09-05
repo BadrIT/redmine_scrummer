@@ -223,8 +223,9 @@ module RedmineScrummer
 			  # get the newest history entry
 			  history_entry = self.history.first
 			  
+			  
 			  # if it was today's entry just update it
-        if history_entry.date == Time.now.to_date
+        if history_entry && history_entry.date == Time.now.to_date
           history_entry.update_attributes :actual => self.spent_hours,
                                           :remaining => self.remaining_hours
         # else build new history entry

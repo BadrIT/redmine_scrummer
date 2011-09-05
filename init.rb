@@ -56,7 +56,7 @@ Redmine::Plugin.register :redmine_scrummer do
   	
   	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index]}
   	
-  	permission :scrum_charts, 													{ :scrum_charts => [:index]}
+  	permission :scrum_charts, 													{ :scrum_charts => [:index, :update_chart]}
   end
   
   menu :project_menu, :scrum_charts, { :controller => 'scrum_charts', :action => 'index' }, :after => :activity, :param => :project_id

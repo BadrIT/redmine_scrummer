@@ -24,6 +24,21 @@ class ScrumUserstoriesController < IssuesController
 	include ActionView::Helpers::ActiveRecordHelper
   include ActionView::Helpers::TagHelper
 
+  
+  module SharedScrumConstrollers
+    
+    protected
+    
+    def find_scrum_project
+      project_id = (params[:issue] && params[:issue][:project_id]) || params[:project_id]
+      @project = Project.find(project_id)
+    rescue ActiveRecord::RecordNotFound
+      render_404
+    end
+    
+  end
+  
+  include SharedScrumConstrollers
 
 	def update_single_field
 		new_value = params[:value]
@@ -194,7 +209,7 @@ class ScrumUserstoriesController < IssuesController
   end
         
   protected
-		
+  
 	def find_parent_issue 
 		parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
 		parent_issue_id ||= params[:issue][:parent_issue_id] if params[:issue] and params[:issue][:parent_issue_id]
@@ -281,14 +296,7 @@ class ScrumUserstoriesController < IssuesController
 		sort_init(@query.sort_criteria.empty? ? [['id', 'desc']] : @query.sort_criteria)
     sort_update(@query.sortable_columns)
 	end
-	 
-	def find_scrum_project
-    project_id = (params[:issue] && params[:issue][:project_id]) || params[:project_id]
-    @project = Project.find(project_id)
-  rescue ActiveRecord::RecordNotFound
-    render_404
-  end
-  
+	
   def check_for_default_scrum_issue_priority_for_inline
     if IssueStatus.default.nil?
      	render_error_html_for_inline_add content_tag('p', l(:error_no_default_scrum_issue_priority)) 	

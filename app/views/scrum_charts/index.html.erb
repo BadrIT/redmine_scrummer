@@ -7,20 +7,46 @@
     <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.flot.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
 <% end %>
+
 <h2>ScrumCharts#index</h2>
-<div id="placeholder" style="width:600px;height:300px;"></div>
-<script type="text/javascript"> 
-$j(function () {
-    var d1 = [];
-    for (var i = 0; i < 14; i += 0.5)
-        d1.push([i, Math.sin(i)]);
- 
-    var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
- 
-    // a null signifies separate line segments
-    var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-    
-    $j.plot($j("#placeholder"), [ d1, d2, d3 ]);
-});
+<div id="chart" style="width:700px;height:400px;float:left"></div>
+
+<script type="text/javascript">
+function draw(d1, d2){
+ 	var options = {
+   	 series: {
+    	  lines: { show: true },
+    	  points: { show: true }
+    	}
+  	};
+	$j.plot($j("#chart"),[
+	{
+		data: d2,
+		label: "Actual + TODO"
+	}
+	,
+	{
+		data: d1,
+		label: "Actual"
+	}
+	], options);
+}
+var d1 = <%= @lower.inspect%>;
+var d2 = <%= @upper.inspect%>;
+draw(d1, d2);
 </script>
+
+<div id="chart-actions" style='float:left'>
+<ul>
+  <% @sprints.each do |sprint|%>
+  <li>
+  <%= link_to_remote sprint.name,
+                :url => {:action => 'update_chart', :project_id =>@project, :sprint => sprint.id},
+                :success => "eval(data);",
+                :method => 'GET' %>
+  </li>
+  <%end%>
+</ul>
+</div>

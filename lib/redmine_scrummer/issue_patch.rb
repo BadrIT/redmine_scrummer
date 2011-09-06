@@ -217,26 +217,28 @@ module RedmineScrummer
         return true
       end
 			
-			def check_history_entries
-			  # Time-Untrackable issues have no history entry
-			  return unless self.time_trackable?
-			  
-			  # get the newest history entry
-			  history_entry = self.history.first
-			  
-			  
-			  # if it was today's entry just update it
-        if history_entry && history_entry.date == Time.now.to_date
-          history_entry.update_attributes :actual => self.spent_hours,
-                                          :remaining => self.remaining_hours
-        # else build new history entry
-        else
-          self.build_history_entry.save
-        end
-			end
-			
 			public
 			
+			def check_history_entries
+        # Time-Untrackable issues have no history entry
+        return unless self.time_trackable?
+        
+        # get the newest history entry
+        history_entry = self.history.first
+        
+        # there is no history entries for this issue
+        if history_entry.nil?
+          self.build_history_entry.save
+        # it was today's entry just update it
+        elsif history_entry.date == Time.now.to_date
+          history_entry.update_attributes :actual => self.spent_hours,
+                                          :remaining => self.remaining_hours
+        # create a new one just in case of new changes occurred
+        elsif history_entry.actual != self.spent_hours && history_entry.remaining != self.remaining_hours
+          self.build_history_entry.save
+        end
+      end
+      
 			def build_history_entry
 			  IssueHistory.new :issue_id => self.id,
 			                   :actual => self.spent_hours,

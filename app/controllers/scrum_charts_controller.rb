@@ -44,9 +44,9 @@ class ScrumChartsController < IssuesController
         if issue.time_trackable?
           history_entry = issue.history.find(:first, :conditions => ['date <= ?', @start_date + day])
           
-          if history_entry
+          if history_entry && history_entry.actual && history_entry.remaining
             @p1 += history_entry.actual
-            @p2 += (history_entry.remaining + history_entry.actual)
+            @p2 += history_entry.remaining + history_entry.actual
           end
         end
       end

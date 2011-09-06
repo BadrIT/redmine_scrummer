@@ -26,6 +26,7 @@ module RedmineScrummer
 				         :table_name => 'issue_histories',
 				         :order => 'date DESC'
 				
+				acts_as_list :scope => :fixed_version
 				# the same as .children but it is an association
 				# in order to be used in eager loading include
 				has_many :direct_children, :foreign_key => :parent_id, :class_name => "Issue"

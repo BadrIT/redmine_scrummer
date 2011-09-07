@@ -114,9 +114,9 @@
 	    										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ query.id }&project_id=#{@project.identifier}&list_id=#{list_id}')",
 	    										 :update => list_id %>
 	    </td>	    
-		</tr>
 		<!-- The following Tr is sued as a place holder for inline-add-child -->
-		<tr level="<%= (level + 1).to_s %>">
+		</tr>
+		<tr id='placeholder-<%=issue.id%>' level="<%= (level + 1).to_s %>">
 			<td colspan="9">
 				<div id="issue-<%= issue.id%>-inline-child" class='inline_child_container'></div>
 			</td>	
@@ -130,7 +130,7 @@
 	<script>
 		$j('span.expander').css('display','none');
 		$j('.prefix > span').css('display','none');
-		if (typeof(init_drag_and_drop) == 'function')
-			init_drag_and_drop();
+		if (typeof(init_sortable) == 'function')
+			init_sortable();
 	</script>
 <% end %>

@@ -214,3 +214,7 @@ table#issue-table td.subject div.subject-contents{
 .sprint-info > .size {
 	float: right;
 }
+
+.ui-sortable-helper{
+	border: inset;
+}

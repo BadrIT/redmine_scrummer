@@ -1,66 +1,13 @@
-function init_drag_and_drop(){
-	$j('tr.issue').draggable({
-		helper: 'clone',
-		revert: 'invalid',
-		appendTo: 'body',
-		drag: function(){
-				$j(this).hide('slow');
-		},
-		stop: function(){
-				$j(this).show('slow');
-				
-				// update the status of each sprint
-				update_sprint_status();
-			}
-	});
-	
-	$j('.sprint , #backlog').droppable({
-		drop: function(){
-			// get the dragged row id (e.g. 'issue-5')
-			var  id = $j('.ui-draggable-dragging')[0].id;
-			
-			// prevent sending request if the issue dropped in the same place
-			if ($j('.autoscroll > table > tbody > tr#'+id,this).size() != 0)
-				return;
-			
-			// append the row and the inline-place-holder to the new table
-			var tr = $j('#'+id+' + tr');
-			$j('.autoscroll > table > tbody',this).append($j('#'+id));
-			$j('.autoscroll > table > tbody',this).append(tr);
-			
-			// update row actions to fit the new table.
-			var list_id = $j(this)[0].id.toString();
-			$j('.issue-actions > a', $j('#'+id)).each(function(){
-				var request = $j(this).attr('onclick');
-				request = request.replace(/list_id=[^\']*/,"list_id="+list_id);
-				$j(this).attr('onclick',request);
-			});
-			
-			// changing the fixed-version of the issue ussing AJAX request
-			new Ajax.Request(url,{
-				parameters:{
-					id: id +"-version",
-					value:this.id
-					},
-				method: 'post',
-					asynchronous:true
-				});
-			}
-			
-		});
-}
-	
 function init_planning(){
 	$j('.sprint-info').click(function() {
-	$(this).next().toggle('slow');
-	return true;
-}).next().hide();
+		$(this).next().toggle('slow');
+		return true;
+	}).next().hide();
 
-$j('.sprint-info')[0].next().show('slow');
+	$j('.sprint-info')[0].next().show('slow');
 	
-	init_drag_and_drop();
+	init_sortable();
 }
-
 
 function update_sprint_status(){
 	$j('.sprint').each(function(){
@@ -76,4 +23,43 @@ function update_sprint_status(){
 	$j('.status-bar', $j(this).prev()).progressbar({value:  status});
 	$j('.size', $j(this).prev()).html(statusHTML);
 	});
+}
+
+function init_sortable(){
+	$j('tbody').sortable({
+		revert: true,
+		appendTo: 'body',
+		tolerance: 'pointer',
+		items: '.issue',
+		connectWith: $j('tbody'),
+		update: function(event, ui){
+			// get the dragged row id (e.g. 'issue-5')
+			var id = ui.item[0].id;
+			
+			$j(ui.item).after($j('#placeholder-'+id.replace('issue-','')));
+				
+			var index = ui.item.index();
+			
+			// update row actions to fit the new table.
+			var list_id = $j(ui.item)[0].parentNode.parentNode.parentNode.parentNode.id;
+			$j('.issue-actions > a', $j('#'+id)).each(function(){
+				var request = $j(this).attr('onclick');
+				request = request.replace(/list_id=[^\']*/,"list_id="+list_id);
+				$j(this).attr('onclick',request);
+			});
+			
+			// alert ('ajax req'+value);
+			// // changing the fixed-version of the issue ussing AJAX request
+			// new Ajax.Request(url,{
+				// parameters:{
+					// id: id +"-version",
+					// index: index,
+					// value:list_id
+					// },
+				// method: 'post',
+					// asynchronous:true
+				// });
+		}
+	});
+		
 }

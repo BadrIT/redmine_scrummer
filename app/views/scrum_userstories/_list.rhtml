@@ -79,7 +79,7 @@
 			</tr>
 		</thead>
 	<% previous_group = false %>
-	<tbody>
+	<tbody sort='<%=@sort_criteria.first_key%>'>
 	<% issues.each do |issue| -%>
 	  <% level = hierarchy ? issue.level : 0 -%>
 		<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:short_name).downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.direct_children.length > 0 ? "group open" : nil%>">			

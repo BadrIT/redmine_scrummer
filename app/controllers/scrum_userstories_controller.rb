@@ -123,7 +123,7 @@ class ScrumUserstoriesController < IssuesController
       version_id = params[:value] == 'backlog' ? nil : params[:value].gsub('sprint-','').to_i
       
       @issue.fixed_version_id = version_id
-      @issue.insert_at_position = params[:index] || 0
+      @issue.insert_at params[:index] || 0
       @issue.save
       render :update do |page|
         page.call 'update_sprint_status'

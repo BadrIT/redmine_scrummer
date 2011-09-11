@@ -35,15 +35,19 @@
 		<%= render(:partial => "sprint", :collection => @sprints) %>
 	</div>
 </div>
-
 <!--backlog filters-->
-<%= backlog_filter nil, "All"%>
-<%= backlog_filter Tracker.scrum_user_story_tracker.id, l(:scrum_userStory) %> 
-<%= backlog_filter Tracker.scrum_defect_tracker.id, l(:scrum_defect) %> 
-<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, l(:scrum_defectSuite)  %>
-<%= backlog_filter Tracker.scrum_refactor_tracker.id, l(:scrum_refactor)  %>
-<%= backlog_filter Tracker.scrum_spark_tracker.id, l(:scrum_spark)  %>
-  
+<div class='filters'>
+	<%= backlog_filter nil, "All"%>
+	<%= backlog_filter Tracker.scrum_user_story_tracker.id, l(:scrum_userStory) %> 
+	<%= backlog_filter Tracker.scrum_defect_tracker.id, l(:scrum_defect) %> 
+	<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, l(:scrum_defectSuite)  %>
+	<%= backlog_filter Tracker.scrum_refactor_tracker.id, l(:scrum_refactor)  %>
+	<%= backlog_filter Tracker.scrum_spark_tracker.id, l(:scrum_spark)  %>
+</div>
+<%= link_to "Sort by rank",
+			 :controller => :scrum_sprints_planning,
+			 :project_id => @project,
+			 :sort => :position %>
 <!--listing nil-version issues-->
 <div id= 'backlog'>
 	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false, :list_id => 'backlog'} %>

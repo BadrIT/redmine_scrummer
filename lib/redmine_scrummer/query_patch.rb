@@ -6,6 +6,7 @@ module RedmineScrummer
 				unloadable # Send unloadable so it will not be unloaded in development
 				
 				add_available_column QueryColumn.new(:spent_hours)	
+				add_available_column QueryColumn.new(:position, :sortable => "#{Issue.table_name}.position")
 				
 				include InstanceMethods		
 				

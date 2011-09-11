@@ -24,7 +24,12 @@ function update_sprint_status(){
 	$j('.size', $j(this).prev()).html(statusHTML);
 	});
 }
-
+function correct_placeholders_positions(tbody){
+	$j('tr.issue', tbody).each(function(){
+		var id = $j(this)[0].id.replace('issue-','');
+		$j(this).after($j('#placeholder-'+id));
+	});
+}
 function init_sortable(){
 	$j('tbody').sortable({
 		revert: true,
@@ -32,14 +37,17 @@ function init_sortable(){
 		tolerance: 'pointer',
 		items: '.issue',
 		connectWith: $j('tbody'),
+		dropOnEmpty: true,
 		update: function(event, ui){
+			if (this != ui.item.parent()[0])
+				return;
+				
 			// get the dragged row id (e.g. 'issue-5')
 			var id = ui.item[0].id;
 			
-			$j(ui.item).after($j('#placeholder-'+id.replace('issue-','')));
+			// $j(ui.item).after($j('#placeholder-'+id.replace('issue-','')));
 				
-			var index = ui.item.index();
-			
+			correct_placeholders_positions(this);
 			// update row actions to fit the new table.
 			var list_id = $j(ui.item)[0].parentNode.parentNode.parentNode.parentNode.id;
 			$j('.issue-actions > a', $j('#'+id)).each(function(){
@@ -47,7 +55,8 @@ function init_sortable(){
 				request = request.replace(/list_id=[^\']*/,"list_id="+list_id);
 				$j(this).attr('onclick',request);
 			});
-			
+			var index = ui.item.index() / 2;
+			console.log(index);
 			// alert ('ajax req'+value);
 			// // changing the fixed-version of the issue ussing AJAX request
 			// new Ajax.Request(url,{

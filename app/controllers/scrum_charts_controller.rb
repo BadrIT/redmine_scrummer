@@ -36,11 +36,12 @@ class ScrumChartsController < IssuesController
   def gather_information
     @lower = []
     @upper = []
-
+    
+    @issues = @project.issues.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
+    
     (1..10).each do |day|
       @p1 = @p2 = 0
-      
-      @project.issues.each do |issue|
+      @issues.each do |issue|
         if issue.time_trackable?
           history_entry = issue.history.find(:first, :conditions => ['date <= ?', @start_date + day])
           

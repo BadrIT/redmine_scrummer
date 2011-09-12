@@ -1,12 +1,13 @@
 class ScrumChartsController < IssuesController
   unloadable
+  
   include ScrumUserstoriesController::SharedScrumConstrollers
 
   prepend_before_filter :find_scrum_project, :only => [:index, :update_chart]
   before_filter :get_sprint, :only => [:index, :update_chart]
   
   
-  def index
+  def index    
     @start_date = @sprint.effective_date
     @sprints = @project.versions
     
@@ -40,19 +41,21 @@ class ScrumChartsController < IssuesController
     @issues = @project.issues.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
     
     (1..10).each do |day|
-      @p1 = @p2 = 0
+      @upperPoint = 0 # remaining + actual 
+      @lowerPoint = 0 # actual
+      
       @issues.each do |issue|
         if issue.time_trackable?
-          history_entry = issue.history.find(:first, :conditions => ['date <= ?', @start_date + day])
+          history_entry = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, @start_date + day])
           
           if history_entry && history_entry.actual && history_entry.remaining
-            @p1 += history_entry.actual
-            @p2 += history_entry.remaining + history_entry.actual
+            @lowerPoint += history_entry.actual
+            @upperPoint += history_entry.remaining + history_entry.actual
           end
         end
       end
-      @lower << [day, @p1]
-      @upper << [day, @p2]
+      @lower << [day, @lowerPoint]
+      @upper << [day, @upperPoint]
     end
   end
   

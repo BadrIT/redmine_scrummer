@@ -62,15 +62,19 @@ class ScrumUserstoriesController < IssuesController
 	  elsif params[:id] =~ /spent_hours/ && params[:value] =~ /^\+(.*)/
 	    # virtual fields like actual 
       matched_groups = params[:id].match(/issue-(\d+)-spent_hours/)
-      issue_id = matched_groups[1]
-      value = params[:value].match(/^\+(.*)/)[1]
+      issue_id       = matched_groups[1]
+      value          = params[:value].match(/^\+(.*)/)[1]
       
-      @issue = Issue.find(issue_id)
-      @time_entry = TimeEntry.new(:project => @issue.project, :issue => @issue, :user => User.current, :spent_on => User.current.today,
-                                  :activity_id => TimeEntryActivity.find_by_name('Development').id )
-      @time_entry.hours = value
-      if @time_entry.hours > 0 && @time_entry.save
-        @issue.check_history_entries
+      
+      @issue      = Issue.find(issue_id)
+      @time_entry = TimeEntry.new(:hours => value,
+                                  :issue => @issue, 
+                                  :user => User.current,
+                                  :project => @issue.project, 
+                                  :spent_on => User.current.today,
+                                  :activity_id => TimeEntryActivity.find_by_name('Development').id )                               
+      
+      if @time_entry.hours > 0 && @time_entry.save        
         render :text => @issue.spent_hours.to_s
       else
         render :text => 'Errors in saving'
@@ -79,8 +83,8 @@ class ScrumUserstoriesController < IssuesController
 		elsif params[:id] =~ /-field-/
 		  # fields like estimated hours
 			matched_groups = params[:id].match(/issue-(\d+)-field-(.+)/)
-			issue_id = matched_groups[1]
-			column_name = matched_groups[2].to_sym
+			issue_id       = matched_groups[1]
+			column_name    = matched_groups[2].to_sym
 			
 			@issue = Issue.find(issue_id)
 			@issue.update_attributes(column_name => new_value)
@@ -93,8 +97,8 @@ class ScrumUserstoriesController < IssuesController
     
     elsif params[:id] =~ /-status/
       matched_groups = params[:id].match(/issue-(\d+)-status/)
-      issue_id = matched_groups[1]
-      @issue = Issue.find(issue_id)
+      issue_id       = matched_groups[1]
+      @issue         = Issue.find(issue_id)
 
       status = if ["f", "F"].include? params[:value].to_s 
         @issue.is_test? ? IssueStatus.failed : IssueStatus.finished
@@ -117,8 +121,8 @@ class ScrumUserstoriesController < IssuesController
       
     elsif params[:id] =~ /-version/
       matched_groups = params[:id].match(/issue-(\d+)-version/)
-      issue_id = matched_groups[1]
-      @issue = Issue.find(issue_id)
+      issue_id       = matched_groups[1]
+      @issue         = Issue.find(issue_id)
       
       version_id = params[:value] == 'backlog' ? nil : params[:value].gsub('sprint-','').to_i
       

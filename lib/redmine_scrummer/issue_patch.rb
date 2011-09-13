@@ -47,6 +47,12 @@ module RedmineScrummer
         named_scope :active, lambda { |*args| {:conditions => ["status_id = ? OR status_id = ?",
                                                                 IssueStatus.status_in_progress.id,
                                                                 IssueStatus.status_defined.id]} }
+                                                                
+        named_scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
+                                                                Tracker.scrum_task_tracker.id,
+                                                                Tracker.scrum_defect_tracker.id,
+                                                                Tracker.scrum_refactor_tracker.id,
+                                                                Tracker.scrum_spark_tracker.id]} }
 			end
 			
 		end

@@ -8,14 +8,12 @@ class ScrumChartsController < IssuesController
   
   
   def index    
-    @start_date = @sprint.effective_date
     @sprints = @project.versions
     
     gather_information
   end
   
   def update_chart
-    @start_date = @sprint.effective_date
     gather_information
     
     render :update do |page|
@@ -35,18 +33,24 @@ class ScrumChartsController < IssuesController
   end
   
   def gather_information
+    @start_date = @sprint.start_date_custom_value
+    @end_date   = @sprint.effective_date
+    
     @lower = []
     @upper = []
     
+    return unless @start_date && @end_date
+    
     @issues = @project.issues.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
     
-    (1..10).each do |day|
+    day = 0
+    (@start_date..@end_date).each do |date|
       @upperPoint = 0 # remaining + actual 
       @lowerPoint = 0 # actual
       
       @issues.each do |issue|
         if issue.time_trackable?
-          history_entry = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, @start_date + day])
+          history_entry = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
           
           if history_entry && history_entry.actual && history_entry.remaining
             @lowerPoint += history_entry.actual
@@ -56,6 +60,7 @@ class ScrumChartsController < IssuesController
       end
       @lower << [day, @lowerPoint]
       @upper << [day, @upperPoint]
+      day += 1
     end
   end
   

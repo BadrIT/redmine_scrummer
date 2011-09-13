@@ -20,9 +20,14 @@ module RedmineScrummer
       end
       
       # returns the value of the start_date custom field
-      def start_date
+      # NOTE: Redmine defines 'start_date' function which return the least date of the all fixed issues
+      def start_date_custom_value
         start_date_field = VersionCustomField.find_by_scrummer_caption(:start_date)
-        self.custom_value_for(start_date_field).value.try(:to_date)
+        begin
+          self.custom_value_for(start_date_field).try(:value).try(:to_date)
+        rescue NoMethodError
+          return nil
+        end
       end
       
     end

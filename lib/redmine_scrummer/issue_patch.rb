@@ -44,6 +44,9 @@ module RedmineScrummer
         
         named_scope :backlog, :conditions => {:fixed_version_id => nil}
         
+        named_scope :active, lambda { |*args| {:conditions => ["status_id = ? OR status_id = ?",
+                                                                IssueStatus.status_in_progress.id,
+                                                                IssueStatus.status_defined.id]} }
 			end
 			
 		end

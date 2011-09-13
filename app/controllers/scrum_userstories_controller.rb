@@ -1,7 +1,4 @@
 class ScrumUserstoriesController < IssuesController
-  include ActionView::Helpers::ActiveRecordHelper
-  include ActionView::Helpers::TagHelper
-  
   unloadable
 
 	include ScrumUserstoriesHelper
@@ -19,13 +16,11 @@ class ScrumUserstoriesController < IssuesController
 	before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form, :inline_add ]	
 	before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
 	before_filter :set_default_values, :only => [:refresh_inline_add_form, :index]
-	
-	
-	include ActionView::Helpers::ActiveRecordHelper
-  include ActionView::Helpers::TagHelper
-
   
   module SharedScrumConstrollers
+    
+  	include ActionView::Helpers::ActiveRecordHelper
+    include ActionView::Helpers::TagHelper
     
     protected
     
@@ -34,6 +29,11 @@ class ScrumUserstoriesController < IssuesController
       @project = Project.find(project_id)
     rescue ActiveRecord::RecordNotFound
       render_404
+    end
+    
+    def initialize_sort
+      sort_init(@query.sort_criteria.empty? ? [['id', 'desc']] : @query.sort_criteria)
+      sort_update(@query.sortable_columns)
     end
     
   end
@@ -298,11 +298,6 @@ class ScrumUserstoriesController < IssuesController
     end
   end 
 
-	def initialize_sort
-		sort_init(@query.sort_criteria.empty? ? [['id', 'desc']] : @query.sort_criteria)
-    sort_update(@query.sortable_columns)
-	end
-	
   def check_for_default_scrum_issue_priority_for_inline
     if IssueStatus.default.nil?
      	render_error_html_for_inline_add content_tag('p', l(:error_no_default_scrum_issue_priority)) 	

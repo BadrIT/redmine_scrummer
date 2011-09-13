@@ -1,8 +1,9 @@
-class ScrumSprintsPlanningController < ScrumUserstoriesController
+class ScrumSprintsPlanningController < IssuesController
   unloadable
   
   include ScrumUserstoriesHelper
-  
+
+  include ScrumUserstoriesController::SharedScrumConstrollers  
   
   prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version]
   

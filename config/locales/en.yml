@@ -55,3 +55,9 @@ en:
   start_date: "Start date"
 
   default_description: "As a <role> I want to <goal> so that <reason>\nVerification Points:\n<Point1>\n<Point2>"
+  
+  field_release_date: "Release date"
+  field_state: "State"
+  
+  label_add_release_inline: "Inline add release"
+  field_release_state: "release state"

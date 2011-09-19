@@ -111,13 +111,14 @@ tr:hover .edit-placeholder{display:block; color: #BBBBBB; }
 td.cf_5 {width: 85px;}
 td.estimated_hours {width: 85px;}
 
-tr.us-issue{background-color:#EEEE9E}
-tr.task-issue{background-color:#FFFFFF}
-tr.epic-issue{background-color:#30be0E}
-tr.ds-issue{background-color:red}
-tr.de-issue{background-color:rgb(255,102,102)}
-tr.test-issue{background-color:#FFFFFF}
-tr.spark-issue{background-color:PaleTurquoise}
+.us-issue{background-color:#EEEE9E}
+.task-issue{background-color:#FFFFFF}
+.epic-issue{background-color:#30be0E}
+.ds-issue{background-color:red}
+.de-issue{background-color:rgb(255,102,102)}
+.test-issue{background-color:#FFFFFF}
+.spark-issue{background-color:PaleTurquoise}
+.re-issue{background-color:wheat}
 
 table#issue-table td.subject div.prefix{
   float: left;
@@ -217,4 +218,15 @@ table#issue-table td.subject div.subject-contents{
 
 .ui-sortable-helper{
 	border: inset;
+}
+
+.planning-issues{
+	border-right: 3px solid #336699;
+	width: 49%;
+	background-color: #DADADA;
+	min-height: 100px;
+}
+.release-header{
+	clear: both;
+	background-color: #BBFFBB;
 }

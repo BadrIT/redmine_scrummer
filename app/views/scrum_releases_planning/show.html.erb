@@ -1,0 +1,30 @@
+<h2>Show release</h2>
+
+<p>
+  <b>Name:</b>
+  <%=h @release.name %>
+</p>
+
+<p>
+  <b>Start date:</b>
+  <%=h @release.start_date %>
+</p>
+
+<p>
+  <b><%= l :field_release_date %></b>
+  <%=h @release.release_date %>
+</p>
+
+<p>
+  <b><%= l :field_state %></b>
+  <%=h @release.state %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @release.description %>
+</p>
+
+
+<%= link_to 'Edit', :action => 'edit', :id => @release.id, :project_id => @project %> |
+<%= link_to 'Back', :action => 'index', :project_id => @project %>

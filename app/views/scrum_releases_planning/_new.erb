@@ -1,0 +1,38 @@
+<% remote_form_for @release, :url => {:controller => :scrum_releases_planning, :action => :create, :project_id => @project} do |f| %>
+
+  <div id='release_errors'>
+  <%= f.error_messages %>
+  </div>
+  
+  <div>
+  <div >
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %>
+  </div>
+  
+  <div >
+    <%= f.label :state %><br/>
+  	<%= f.select :state, Release::RELEASE_STATUSES%>
+  </div>
+  </div>
+  
+  <div style="float: left">
+    <%= f.label :start_date %><br/>
+    <%= f.text_field :start_date, :size => 10 %><%= calendar_for('release_start_date') %>
+  </div>
+  
+  <div>
+    <%= f.label :release_date %><br/>
+    <%= f.text_field :release_date, :size => 10 %><%= calendar_for('release_release_date') %>
+  </div>
+  
+  <div>
+    <%= f.label :description %><br/>
+    <%= f.text_area :description, :style => 'height:40px'%>
+  </div>
+  
+  <div>
+    <%= f.submit 'Create' %>
+    <%= submit_tag 'Cancel', :type => 'button', :onclick =>'toggleFieldset(this);'%>
+  </div>
+<% end %>

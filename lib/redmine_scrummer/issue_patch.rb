@@ -32,6 +32,8 @@ module RedmineScrummer
 				has_many :direct_children, :foreign_key => :parent_id, :class_name => "Issue"
 				belongs_to :direct_parent, :foreign_key => :parent_id, :class_name => "Issue"
 				
+				belongs_to :release
+				
 				# backlog issues
 				named_scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
                                                                 Tracker.scrum_user_story_tracker.id,

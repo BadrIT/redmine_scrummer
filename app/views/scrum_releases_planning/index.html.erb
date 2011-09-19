@@ -1,1 +1,76 @@
-<h2>ScrumReleasesPlanning#index</h2>
+<h1>Releases Planning</h1>
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'general.css', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'sticky_notes.css', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
+    
+    <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
+    
+<% end %>
+<br/>
+<fieldset id="inline-add" class="collapsible collapsed">
+	<br />
+	<legend onclick="toggleFieldset(this);"><%= l(:label_add_release_inline) %></legend>
+	<div id='inline_add_container' style="display:none">
+		<%= render :partial => 'new'%>
+	</div>
+</fieldset>
+<br/>
+<h2>Releases</h2>
+<table>
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Start date</th>
+    <th>Release date</th>
+    <th>State</th>
+    <th>Description</th>
+    <th>Actions</th>
+  </tr>
+</thead>
+  <tbody id='releases'>
+  <%= render :partial => 'release', :collection => @releases%>
+  </tbody>
+</table>
+
+<br/>
+<h2>Plan</h2>
+<div id='backlog' class='list-parent planning-issues' style='float:left'>
+	<ul class='bachlog-list'>
+		<% @issues.each do |issue| %>
+		  	<%= issue_li_tag issue%>
+		<% end %>
+	</ul>
+</div>
+<div id="accordion" class='planning-issues' style='float:right;'>
+	<% @planning_releases.each do |release| %>
+	<h2 class='release-header'><%= release.name %></h2>
+	<div id='<%= release.id%>' class='list-parent' style='min-height:100px;'>
+		<ul class='bachlog-list'>
+			<% release.issues.all.to_a.each do |issue| %>
+				<%= issue_li_tag issue %>
+			<% end %>
+		</ul>
+	</div>
+	<%end%>
+</div>
+<script>
+	$j('#accordion').accordion({ autoHeight: true });
+
+	$j('li.issue').draggable({
+		appendTo: 'body',
+		revert: true,
+	});
+	$j('.list-parent').droppable({
+		accept: 'li.issue',
+		drop:function(event, ui){
+			$j('ul', this).append(ui.draggable);
+		}
+	});
+</script>
+	

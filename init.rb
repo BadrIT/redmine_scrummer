@@ -35,6 +35,9 @@ Dispatcher.to_prepare :redmine_scrummer do
     Version.send :include, RedmineScrummer::VersionPatch
   end
   
+  unless Project.included_modules.include? RedmineScrummer::ProjectPatch
+    Project.send :include, RedmineScrummer::ProjectPatch
+  end
 end
 
 Redmine::Plugin.register :redmine_scrummer do
@@ -54,7 +57,7 @@ Redmine::Plugin.register :redmine_scrummer do
   	
   	permission :scrum_sprint_planing, 									{ :scrum_sprints_planning  => [:index]}
   	
-  	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index]}
+  	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index, :create, :destroy_release, :show, :edit, :update_release]}
   	
   	permission :scrum_charts, 													{ :scrum_charts => [:index, :update_chart]}
   end
@@ -62,4 +65,5 @@ Redmine::Plugin.register :redmine_scrummer do
   menu :project_menu, :scrum_charts, { :controller => 'scrum_charts', :action => 'index' }, :after => :activity, :param => :project_id
   menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id 
   menu :project_menu, :scrum_sprint_planing, { :controller => 'scrum_sprints_planning', :action => 'index' }, :after => :activity, :param => :project_id 
+  menu :project_menu, :scrum_release_planing, { :controller => 'scrum_releases_planning', :action => 'index' }, :after => :scrum_charts, :param => :project_id 
 end

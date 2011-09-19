@@ -1,0 +1,10 @@
+  <tr id=<%= "release-#{release.id}"%>>
+    <td><%=h release.name %></td>
+    <td><%=h release.start_date %></td>
+    <td><%=h release.release_date %></td>
+    <td><%=h release.state %></td>
+    <td><%=h release.description %></td>
+    <td><%= link_to 'Show', :action => 'show', :id => release.id, :project_id => @project %>
+    <%= link_to 'Edit', :action => 'edit', :id => release.id, :project_id => @project %>
+    <%= link_to_remote 'Destroy', :url =>{:action => 'destroy_release', :id => release.id, :project_id => @project}, :confirm => 'Are you sure?' %></td>
+  </tr>

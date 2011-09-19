@@ -31,6 +31,8 @@
       <%= f.select :assigned_to_id, @project.members.map{|m| [m.name, m.user.id]}, :include_blank => l("field_assigned_to") %>
       
       <%= f.select :fixed_version_id, @issue.project.versions.map{|v| [v.name, v.id]}, :include_blank => l("field_fixed_version") %>
+      
+      <%= f.select :release_id, @project.releases.map{|r| [r.name, r.id]}, :include_blank => l("field_release_id") %>
 		</div>
 		<div class='scrum_issue_inline_field scrum_issue_row'>
 		  <div class='scrum_issue_inline_control'>

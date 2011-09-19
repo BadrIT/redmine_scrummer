@@ -1,4 +1,4 @@
-class ScrumReleasesPlanningController < ReleasesController
+class ScrumReleasesPlanningController < IssuesController
   unloadable
   # layout 'base'
   

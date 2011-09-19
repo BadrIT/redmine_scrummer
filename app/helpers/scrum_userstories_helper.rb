@@ -61,15 +61,16 @@ module ScrumUserstoriesHelper
           'F'
   	  end
   	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
-  	elsif column.name == :subject && issue.scrum_issue?
+  	elsif column.name == :subject
   	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
       else
         "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$j(this).addClass('hover')\" onmouseout=\"$j(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
-      end   
+      end
       
+      tracker_name = issue.tracker.short_name.empty? ?  issue.tracker.name : issue.tracker.short_name
   		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
-  		"#{issue.tracker.short_name}</b>:</div>" +
+  		"#{tracker_name}</b>:</div>" +
   		"<div >&nbsp;#{subject_content(column, issue)}</div>" 
   	elsif column.name == :spent_hours && issue.scrum_issue?
   		content = column_content(column, issue)

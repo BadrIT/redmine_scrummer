@@ -29,6 +29,10 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Trackers
           #############################################################################################
+          # removing Scrum-Spark as it's now deprecated
+          spark_tracker = Tracker.find_by_name('Scrum-Spark')
+          spark_tracker.update_attributes({:scrummer_caption => :spike}) if spark_tracker
+          
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
   
           scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   },
@@ -39,7 +43,7 @@ module RedmineScrummer
                              :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   },
                              :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   },
                              :test        => { :name => l(:scrum_test),        :short_name => 'Test' },
-                             :spark       => { :name => l(:scrum_spark),       :short_name => 'Spark'}}
+                             :spike       => { :name => l(:scrum_spike),       :short_name => 'Spike'}}
           
           scrum_trackers.each do |caption, options|
             options = options.merge(scrum_tracker_options)
@@ -95,7 +99,7 @@ module RedmineScrummer
           # trackers
           test_id = Tracker.find_by_scrummer_caption(:test).id
           task_id = Tracker.find_by_scrummer_caption(:task).id
-          spark_id = Tracker.find_by_scrummer_caption(:spark).id
+          spike_id = Tracker.find_by_scrummer_caption(:spike).id
           
           # statuses
           finished_id = IssueStatus.find_by_scrummer_caption(:finished).id
@@ -108,11 +112,11 @@ module RedmineScrummer
             Role.find_all_by_is_scrum(true).each do |role|
               IssueStatus.find_all_by_is_scrum(true).each do |old_status|
                 IssueStatus.find_all_by_is_scrum(true).each do |new_status|
-                  # exclude test, task and spark trackers
+                  # exclude test, task and spike trackers
                   # exclude failed, succeeded and finished statuses
                   if tracker.id != test_id && 
                       tracker.id != task_id && 
-                      tracker.id != spark_id &&
+                      tracker.id != spike_id &&
                       !limited_statuses.include?(old_status.id) && 
                       !limited_statuses.include?(new_status.id)
                     
@@ -144,7 +148,7 @@ module RedmineScrummer
           Role.find_all_by_is_scrum(true).each do |role|
             [:defined,:in_progress,:finished].each do |old_status|
               [:defined,:in_progress,:finished].each do |new_status|
-                [task_id, spark_id].each do |tracker_id|
+                [task_id, spike_id].each do |tracker_id|
                   conditions = {:role_id         => role.id, 
                                   :tracker_id    => tracker_id, 
                                   :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
@@ -332,7 +336,7 @@ module RedmineScrummer
                                      :task      => [:remaining_hours],
                                      :defect    => [:remaining_hours],
                                      :refactor  => [:remaining_hours],
-                                     :spark     => [:remaining_hours]}
+                                     :spike     => [:remaining_hours]}
                     
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|

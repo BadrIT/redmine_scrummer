@@ -58,8 +58,8 @@ module RedmineScrummer
         scrummer_caption == :refactor       
       end
       
-      def is_spark?
-        scrummer_caption == :spark
+      def is_spike?
+        scrummer_caption == :spike
       end
 		end
 	end

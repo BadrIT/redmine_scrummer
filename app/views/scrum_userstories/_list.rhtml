@@ -97,7 +97,7 @@
 	    
 	    <td class='issue-actions'>
 	    	<!--Remove 'add_child' form task and test trackers -->
-	    	<%if !(issue.is_task? || issue.is_test? || issue.is_spark?)%>
+	    	<%if !(issue.is_task? || issue.is_test? || issue.is_spike?)%>
 	    	<%= link_to_remote image_tag( scrummer_image_path('add_issue.gif') ), 
 	    										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id},
 	    										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",

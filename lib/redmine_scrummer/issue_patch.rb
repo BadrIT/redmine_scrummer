@@ -40,7 +40,7 @@ module RedmineScrummer
                                                                 Tracker.scrum_defect_tracker.id,
                                                                 Tracker.scrum_defectsuite_tracker.id,
                                                                 Tracker.scrum_refactor_tracker.id,
-                                                                Tracker.scrum_spark_tracker.id]} }
+                                                                Tracker.scrum_spike_tracker.id]} }
                                                                 
         named_scope :by_tracker, lambda { |*args| {:conditions => ['tracker_id = ?', args.first]} }
         
@@ -54,7 +54,7 @@ module RedmineScrummer
                                                                 Tracker.scrum_task_tracker.id,
                                                                 Tracker.scrum_defect_tracker.id,
                                                                 Tracker.scrum_refactor_tracker.id,
-                                                                Tracker.scrum_spark_tracker.id]} }
+                                                                Tracker.scrum_spike_tracker.id]} }
 			end
 			
 		end
@@ -84,8 +84,8 @@ module RedmineScrummer
 				tracker.try(:is_task?)
 			end
 			
-			def is_spark?
-        tracker.try(:is_spark?)
+			def is_spike?
+        tracker.try(:is_spike?)
       end
 			
 			def defect?
@@ -97,7 +97,7 @@ module RedmineScrummer
 			end
 			
 			def time_trackable?
-			 self.is_task? || self.defect? || self.is_refactor? || self.is_spark?
+			 self.is_task? || self.defect? || self.is_refactor? || self.is_spike?
 		  end
 			 
 			def remaining_hours
@@ -144,7 +144,7 @@ module RedmineScrummer
 			  # Completed if all children are completed, accepted OR finished
 			  # if user story is accepted don't move to completed, keep it accepted
 			  elsif !self.accepted? && self.children.all?{|c| c.completed? || c.accepted? || c.status_finished?} && !self.is_test?
-          self.is_task? || self.is_spark? ? IssueStatus.finished : IssueStatus.completed
+          self.is_task? || self.is_spike? ? IssueStatus.finished : IssueStatus.completed
 			  end
 			  
 			  self.save
@@ -196,7 +196,7 @@ module RedmineScrummer
 			    # when a story goes to completed OR accepted, all its children should be completed
 			    if self.completed? || self.accepted?
 			      self.children.each do |child|
-			        if (child.is_task? || child.is_spark?) && (child.status_defined? || child.in_progress?)
+			        if (child.is_task? || child.is_spike?) && (child.status_defined? || child.in_progress?)
 			          child.status = IssueStatus.finished
 			          child.save
 			        elsif child.is_user_story? && (child.status_defined? || child.in_progress? || child.completed?)

@@ -32,7 +32,7 @@ en:
   scrum_defectSuite: "Scrum-DefectSuite"
   scrum_refactor: "Scrum-Refactor"
   scrum_test: "Scrum-Test"
-  scrum_spark: "Scrum-Spark"
+  scrum_spike: "Scrum-Spike"
   
   scrum_projectMember: "Scrum-ProjectMember"
   scrum_scrumMaster: "Scrum-ScrumMaster"

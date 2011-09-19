@@ -117,7 +117,7 @@ td.estimated_hours {width: 85px;}
 .ds-issue{background-color:red}
 .de-issue{background-color:rgb(255,102,102)}
 .test-issue{background-color:#FFFFFF}
-.spark-issue{background-color:PaleTurquoise}
+.spike-issue{background-color:PaleTurquoise}
 .re-issue{background-color:wheat}
 
 table#issue-table td.subject div.prefix{

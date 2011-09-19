@@ -118,3 +118,8 @@ function clear_form_elements(ele) {
     });
 
 }
+function select_menu_item(scrum_label_class){
+	$j(function(){
+		$j('#main-menu ul li a.' + scrum_label_class).addClass('selected');
+	})
+}

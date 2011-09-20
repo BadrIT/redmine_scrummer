@@ -198,4 +198,8 @@ module ScrumUserstoriesHelper
     link_to(h(value), {:controller => 'issues', :action => 'show', :id => issue }, options)
   end
   
+  def build_params_for_context_menu
+    {:controller => params[:controller], :project_id => @project}
+  end
+  
 end

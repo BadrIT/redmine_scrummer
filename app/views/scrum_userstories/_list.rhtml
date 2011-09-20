@@ -52,7 +52,7 @@
 </script>
 
 <% form_tag('', {:id => 'context_menu_form'}) do -%>
-	<%= hidden_field_tag 'back_url', url_for(params) %>
+	<%= hidden_field_tag 'back_url', url_for(build_params_for_context_menu) %>
 <% end %>
 
 <%if hierarchy%>

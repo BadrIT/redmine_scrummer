@@ -234,8 +234,9 @@ class ScrumUserstoriesController < IssuesController
 	end
 	
 	def load_issues_ancestors
+	  ids = @issues.map(&:id)
 	  @issues.each do |issue|
-	    if !issue.direct_parent.nil? && !@issues.include?(issue.direct_parent)
+	    if !issue.direct_parent.nil? && !ids.include?(issue.direct_parent.id)
 	      @issues << issue.direct_parent
 	    end
 	  end

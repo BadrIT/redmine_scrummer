@@ -5,14 +5,14 @@ class ScrumReleasesPlanningController < IssuesController
   include ScrumUserstoriesController::SharedScrumConstrollers
   
   before_filter :find_scrum_project, :only => [:index, :destroy_release]
-  prepend_before_filter :find_project, :only => [:create, :destroy_release,:edit, :show, :update_release]
+  prepend_before_filter :find_project, :only => [:create, :destroy_release,:edit, :show, :update_release, :set_issue_release]
   
   # GET /releases
   # GET /releases.xml
   def index
     @release  = Release.new
     @releases = @project.releases
-    @issues   = @project.issues.sprint_planing
+    @issues   = @project.issues.sprint_planing.find(:all, :conditions => ['release_id is NULL'])
     @planning_releases = @project.releases.find_all_by_state('Planning') 
     
     respond_to do |format|
@@ -46,6 +46,7 @@ class ScrumReleasesPlanningController < IssuesController
     if @release.save
       render :update do |page|
         page.insert_html :bottom, 'releases', :partial => 'release', :object => @release
+        page.visual_effect :highlight, "release-#{@release.id}", :duration => 2
         page.toggle('#inline-add');
       end
     else
@@ -69,6 +70,18 @@ class ScrumReleasesPlanningController < IssuesController
         format.xml  { render :xml => @release.errors, :status => :unprocessable_entity }
       end
     end
+  end
+  
+  def set_issue_release
+    @issue = Issue.find params[:issue_id]
+    release_id = params[:release_id] != 'backlog' ? params[:release_id] : nil
+    @issue.release_id = release_id
+    @issue.save
+    
+    render :update do |page|
+      page.visual_effect :highlight, "header-#{release_id}", :duration => 3
+    end
+    
   end
 
   # DELETE /releases/1

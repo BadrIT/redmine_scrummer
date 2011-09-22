@@ -221,9 +221,8 @@ table#issue-table td.subject div.subject-contents{
 }
 
 .planning-issues{
-	border-right: 3px solid #336699;
 	width: 49%;
-	background-color: #DADADA;
+	background-color: whiteSmoke;
 	min-height: 100px;
 }
 .release-header{

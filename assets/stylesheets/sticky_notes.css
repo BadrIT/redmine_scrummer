@@ -19,11 +19,11 @@ ul.bachlog-list li a{
   -webkit-transition:-webkit-transform .15s linear;
 }
 ul.bachlog-list li{
-  margin:0.75em;
+  margin:0.65em;
   float:left;
 }
 ul.bachlog-list li h2{
-  font-size:90%;
+  font-size:100%;
   font-weight:bold;
 }
 ul.bachlog-list li p{

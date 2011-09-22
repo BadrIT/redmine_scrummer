@@ -10,6 +10,7 @@ module RedmineScrummer
 				after_create :initiate_remaining_hours
 				after_save :update_remaining_hours
 				after_save :update_children_target_versions
+				after_save :update_children_release
 				
 				after_save :update_parent_status
 				after_destroy :update_parent_status
@@ -228,6 +229,17 @@ module RedmineScrummer
 			    end
 			  end
 			end
+			
+      def update_children_release
+        if release_id_changed? && !self.release.nil?
+          children.each do |child|
+            if child.release.nil?
+             child.release_id = self.release_id
+             child.save
+            end
+          end
+        end
+      end
 			
 			def init_was_new
         @was_a_new_record = self.new_record? if @was_a_new_record.nil?

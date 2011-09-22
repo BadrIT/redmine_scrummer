@@ -64,8 +64,9 @@
 	$j('#accordion').accordion({ autoHeight: true });
 
 	$j('li.issue').draggable({
-		appendTo: 'body',
-		revert: true,
+		appendTo: 'parent',
+		helper: 'clone',
+		revert: true
 	});
 	$j('.list-parent').droppable({
 		accept: 'li.issue',
@@ -76,7 +77,8 @@
 			// prevent sending requet when droping in the same place
 			if(ui.draggable.parent().parent()[0].id == release_id)
 				return;
-			
+
+			$j('.ui-draggable-dragging').hide();
 			$j('ul', this).append(ui.draggable);
 			
 			

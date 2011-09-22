@@ -1,154 +1,219 @@
 /********* ISSUES LIST ID **********/
-.issues-list-issue-id{
-  color: #BBBBBB;
-  padding-right: 4px;
+.issues-list-issue-id {
+	color: #BBBBBB;
+	padding-right: 4px;
 }
-
 /********* Add INLINE-ISSUE **********/
-.inline-issue-add{
-  font-size: 11px;
+.inline-issue-add {
+	font-size: 11px;
 }
-
-.scrum_issue_inline_fields{
-  width: 100%;
-  height: 60px;
+.scrum_issue_inline_fields {
+	width: 100%;
+	height: 60px;
 }
-
-.scrum_issue_inline_field{
-  margin-left: 15px;
-  float: left;
+.scrum_issue_inline_field {
+	margin-left: 15px;
+	float: left;
 }
-
-.scrum_issue_inline_label{
-  padding-top: 4px;
-  float: left;
+.scrum_issue_inline_label {
+	padding-top: 4px;
+	float: left;
 }
-
-.scrum_issue_inline_field label, .scrum_issue_inline_label{ 
-  width: 70px;
+.scrum_issue_inline_field label, .scrum_issue_inline_label {
+	width: 70px;
 }
-
-.scrum_issue_inline_control{
-  float: left;
-  margin-left: 3px;
+.scrum_issue_inline_control {
+	float: left;
+	margin-left: 3px;
 }
-
-.scrum_issue_row{
-  clear: clear;
-  width: 100%;
-  padding-top: 5px;
+.scrum_issue_row {
+	clear: clear;
+	width: 100%;
+	padding-top: 5px;
 }
-
-.scrum_issue_inline_submit{
-  width: 100%;
-  float: none;
-  clear: both;
-  margin-left: 15px;
+.scrum_issue_inline_submit {
+	width: 100%;
+	float: none;
+	clear: both;
+	margin-left: 15px;
 }
-
-.scrum_issue_inline_submit input{
-  float: left;
-  margin-right: 20px;
+.scrum_issue_inline_submit input {
+	float: left;
+	margin-right: 20px;
 }
-
-.name_size_container{
-  width: 435px;
-  float: left;
+.name_size_container {
+	width: 435px;
+	float: left;
 }
-
-.name_size_container .scrum_issue_inline_label{
-  width: 50px;
+.name_size_container .scrum_issue_inline_label {
+	width: 50px;
 }
-
-.parent_issue_subject{
-  display: none;
+.parent_issue_subject {
+	display: none;
 }
-
-.inline_issue_field_float_type,
-.inline-issue-add .custom_field_float_type{
-  width: 40px;
+.inline_issue_field_float_type, .inline-issue-add .custom_field_float_type {
+	width: 40px;
 }
 /********* Add INLINE-CHILD **********/
-#add_inline_child_template{
-  visibility: hidden;
+#add_inline_child_template {
+	visibility: hidden;
 }
-
-.add_inline_child{
-  display:none;
+.add_inline_child {
+	display:none;
 }
-
 /********* ISSUE-LIST **********/
 
-table.list tbody tr.group td { padding: 2px; font-weight: normal; border-bottom: none; }
-
-tr.idnt-1 td.subject {padding-left: 2em !important;}
-tr.idnt-2 td.subject {padding-left: 4em !important;}
-tr.idnt-3 td.subject {padding-left: 6em !important;}
-tr.idnt-4 td.subject {padding-left: 8em !important;}
-tr.idnt-5 td.subject {padding-left: 10em !important;}
-tr.idnt-6 td.subject {padding-left: 12em !important;}
-tr.idnt-7 td.subject {padding-left: 14em !important;}
-tr.idnt-8 td.subject {padding-left: 16em !important;}
-tr.idnt-9 td.subject {padding-left: 18em !important;}
-
-tr.issue.idnt td.subject a {background: none; padding-left: 0px;}
-
-tr span.expander {background-size: 13px 13px; background-image: url('../images/row_collapsed_icon.png');}
-tr span.expander.hover { background-image: url('../images/row_collapsed_icon_over.png'); }
-
-tr.open span.expander { background-image: url('../images/row_expanded_icon.png'); }
-tr.open span.expander.hover { background-image: url('../images/row_expanded_icon_over.png'); }
-
-.edit{ float: left; width: 100%;}
-.edit.float input, .edit.list input{ width: 50px; }
-.edit.status input{ width: 30px; }
-.edit.status{ font-weight: bold }
-.accumelated-result{ font-weight: bolder; float: left; width: 100%;}
-
-.edit-placeholder{display:none; color: #BBBBBB; width:100%;}
-tr:hover .edit-placeholder{display:block; color: #BBBBBB; }
-
-td.cf_5 {width: 85px;}
-td.estimated_hours {width: 85px;}
-
-.us-issue{background-color:#EEEE9E}
-.task-issue{background-color:#FFFFFF}
-.epic-issue{background-color:#30be0E}
-.ds-issue{background-color:red}
-.de-issue{background-color:rgb(255,102,102)}
-.test-issue{background-color:#FFFFFF}
-.spike-issue{background-color:PaleTurquoise}
-.re-issue{background-color:wheat}
-
-table#issue-table td.subject div.prefix{
-  float: left;
+table.list tbody tr.group td {
+	padding: 2px;
+	font-weight: normal;
+	border-bottom: none;
 }
-table#issue-table td.subject div.subject-contents{
-  overflow:auto;
+tr.idnt-1 td.subject {
+	padding-left: 2em !important;
 }
-
+tr.idnt-2 td.subject {
+	padding-left: 4em !important;
+}
+tr.idnt-3 td.subject {
+	padding-left: 6em !important;
+}
+tr.idnt-4 td.subject {
+	padding-left: 8em !important;
+}
+tr.idnt-5 td.subject {
+	padding-left: 10em !important;
+}
+tr.idnt-6 td.subject {
+	padding-left: 12em !important;
+}
+tr.idnt-7 td.subject {
+	padding-left: 14em !important;
+}
+tr.idnt-8 td.subject {
+	padding-left: 16em !important;
+}
+tr.idnt-9 td.subject {
+	padding-left: 18em !important;
+}
+tr.issue.idnt td.subject a {
+	background: none;
+	padding-left: 0px;
+}
+tr span.expander {
+	background-size: 13px 13px;
+	background-image: url('../images/row_collapsed_icon.png');
+}
+tr span.expander.hover {
+	background-image: url('../images/row_collapsed_icon_over.png');
+}
+tr.open span.expander {
+	background-image: url('../images/row_expanded_icon.png');
+}
+tr.open span.expander.hover {
+	background-image: url('../images/row_expanded_icon_over.png');
+}
+.edit {
+	float: left;
+	width: 100%;
+}
+.edit.float input, .edit.list input {
+	width: 50px;
+}
+.edit.status input {
+	width: 30px;
+}
+.edit.status {
+	font-weight: bold
+}
+.accumelated-result {
+	font-weight: bolder;
+	float: left;
+	width: 100%;
+}
+.edit-placeholder {
+	display:none;
+	color: #BBBBBB;
+	width:100%;
+}
+tr:hover .edit-placeholder {
+	display:block;
+	color: #BBBBBB;
+}
+td.cf_5 {
+	width: 85px;
+}
+td.estimated_hours {
+	width: 85px;
+}
+.us-issue {
+	background-color:#EEEE9E
+}
+.task-issue {
+	background-color:#FFFFFF
+}
+.epic-issue {
+	background-color:#30be0E
+}
+.ds-issue {
+	background-color:red
+}
+.de-issue {
+	background-color:rgb(255,102,102)
+}
+.test-issue {
+	background-color:#FFFFFF
+}
+.spike-issue {
+	background-color:PaleTurquoise
+}
+.re-issue {
+	background-color:wheat
+}
+table#issue-table td.subject div.prefix {
+	float: left;
+}
+table#issue-table td.subject div.subject-contents {
+	overflow:auto;
+}
 #statistics .label {
-    width: 150px;
-    display: inline;
-    float: left;
+	width: 150px;
+	display: inline;
+	float: left;
 }
-
 #statistics .value {
-    float: left;
+	float: left;
 }
-
-.status.defined { background-color: gray; width:15px;}
-.status.in_progress { background-color: skyBlue; width:30px;}
-.status.completed { background-color: orange; width:45px;}
-.status.finished { background-color: green; width:45px;}
-.status.accepted { background-color: green; width:60px;}
-.status.succeeded { background-color: green; width:60px;}
-.status.failed { background-color: red; width:60px;}
-
+.status.defined {
+	background-color: gray;
+	width:15px;
+}
+.status.in_progress {
+	background-color: skyBlue;
+	width:30px;
+}
+.status.completed {
+	background-color: orange;
+	width:45px;
+}
+.status.finished {
+	background-color: green;
+	width:45px;
+}
+.status.accepted {
+	background-color: green;
+	width:60px;
+}
+.status.succeeded {
+	background-color: green;
+	width:60px;
+}
+.status.failed {
+	background-color: red;
+	width:60px;
+}
 #sidebar {
 	width: 300px;
 }
-
 #content {
 	width: 98%;
 	padding: 4px 4px 0 6px;
@@ -164,8 +229,8 @@ table#issue-table td.subject div.subject-contents{
 	background-color: ButtonFace;
 	padding-left: 5px;
 	height: 35px;
-    border-color: LightSlateGray;
-    border-style: outset;
+	border-color: LightSlateGray;
+	border-style: outset;
 }
 .sprint-info > div.date {
 	float: right;
@@ -179,25 +244,22 @@ table#issue-table td.subject div.subject-contents{
 .sprint {
 	margin-bottom: -17px;
 }
-
-#backlog{
+#backlog {
 	float: left;
 	background-color: WhiteSmoke;
 	width: 49.5%
 }
-
 .issue-actions {
 	float: right;
 	margin-right: 10px;
 }
-
 .scrum_version_inline_label , .version_custon_field_label > label {
-    float: left;
-    font-weight: bold;
-    margin-left: -87px;
-    text-align: right;
-    width: 175px;
-    margin-right: 10px;
+	float: left;
+	font-weight: bold;
+	margin-left: -87px;
+	text-align: right;
+	width: 175px;
+	margin-right: 10px;
 }
 .box > p {
 	margin-top: -5px;
@@ -215,17 +277,39 @@ table#issue-table td.subject div.subject-contents{
 .sprint-info > .size {
 	float: right;
 }
-
-.ui-sortable-helper{
+.ui-sortable-helper {
 	border: inset;
 }
-
-.planning-issues{
+.planning-issues {
 	width: 49%;
 	background-color: whiteSmoke;
 	min-height: 100px;
 }
-.release-header{
+.release-header {
 	clear: both;
 	background-color: #BBFFBB;
+}
+.feedback {
+	font-size: 1.4em;
+}
+.selectable .ui-selecting {
+	background: #009999;
+}
+.selectable .ui-selected {
+	background: PowderBlue;
+	color: white;
+}
+.selectable {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 60%;
+}
+.selectable li {
+	margin: 3px;
+	padding: 0.4em;
+	font-size: 1.4em;
+	height: 18px;
+	width:150px;
+	border-radius: 30px;
 }

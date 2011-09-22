@@ -20,11 +20,17 @@ module RedmineScrummer
 				before_save :init_was_new
 				
 				after_save :check_history_entries
+				after_save :check_points_history
 				
 				has_many :history,
 				         :class_name => 'IssueHistory',
 				         :table_name => 'issue_histories',
-				         :order => 'date DESC'
+				         :order      => 'date DESC',
+				         :dependent  => :destroy
+        
+        has_many :points_histories,
+                 :order     => 'date DESC',
+                 :dependent => :destroy
 				
 				acts_as_list :scope => :fixed_version
 				# the same as .children but it is an association
@@ -255,6 +261,30 @@ module RedmineScrummer
 			                   :actual => self.spent_hours,
 		                     :remaining => self.remaining_hours
 			end
+
+      def check_points_history
+        # User_Stories issues only have points_histories
+        return unless self.is_user_story?
+        
+        # get the newest points_history entry
+        points_entry = self.points_histories.first
+        
+        # there is no history entries for this issue
+        if points_entry.nil?
+          self.build_points_history_entry.save
+        # it was today's entry just update it
+        elsif points_entry.date == Time.now.to_date
+          points_entry.update_attributes :points => self.story_size
+        # create a new one just in case of new changes occurred
+        elsif points_entry.points != self.story_size
+          self.build_points_history_entry.save
+        end
+      end
+      
+      def build_points_history_entry
+        PointsHistory.new :issue_id => self.id,
+                          :points   => self.story_size || 0.0
+      end      
 			
 		end
 	end

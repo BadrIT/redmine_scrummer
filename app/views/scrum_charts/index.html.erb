@@ -9,18 +9,45 @@
     <%= javascript_include_tag 'jquery.flot.js', :plugin => 'redmine_scrummer' %>   
 <% end %>
 
-<h2>ScrumCharts#index</h2>
-<div id="chart" style="width:700px;height:400px;float:left"></div>
+<h2>Sprint Burnup Chart</h2>
+<div id="sprints-chart" style="width:1000px;height:400px;float:left"></div>
+<div id="chart-actions" style='float:left'>
+<ul class='selectable'>
+  <% @sprints.each do |sprint|%>
+  <li class='ui-widget-content'>
+  <%= link_to_remote sprint.name,
+                :url => {:action => 'update_chart', :project_id => @project, :chart => 'sprint',  :id => sprint.id},
+                :success => "eval(data);",
+                :method => 'GET' %>
+  </li>
+  <%end%>
+</ul>
+</div>
+
+<h2 style='clear:both;'>Release Burnup Chart</h2>
+<div id="release-chart" style="width:1000px;height:400px;float:left"></div>
+<div id="release-actions" style='float:left'>
+<ul style='float:left;' class='selectable'>
+  <% @releases.each do |release|%>
+  <li class='ui-widget-content'>
+  <%= link_to_remote release.name,
+                :url => {:action => 'update_chart', :project_id => @project, :chart => 'release', :id => release.id},
+                :success => "eval(data);",
+                :method => 'GET' %>
+  </li>
+  <%end%>
+</ul>
+</div>
 
 <script type="text/javascript">
-function draw(d1, d2){
+function draw(chart_id, d1, d2){
  	var options = {
    	 series: {
     	  lines: { show: true },
     	  points: { show: true }
     	}
   	};
-	$j.plot($j("#chart"),[
+	$j.plot($j(chart_id),[
 	{
 		data: d2,
 		label: "Actual + TODO"
@@ -32,20 +59,15 @@ function draw(d1, d2){
 	}
 	], options);
 }
-var d1 = <%= @lower.inspect%>;
-var d2 = <%= @upper.inspect%>;
-draw(d1, d2);
+var d1 = <%= @lower_sprint.inspect%>;
+var d2 = <%= @upper_sprint.inspect%>;
+draw("#sprints-chart", d1, d2);
+var d1 = <%= @lower_release.inspect%>;
+var d2 = <%= @upper_release.inspect%>;
+draw("#release-chart", d1, d2);
+$j('.selectable').selectable().each(function(){
+	$j($j('li', this)[0]).addClass('ui-selected');
+});
+
 </script>
 
-<div id="chart-actions" style='float:left'>
-<ul>
-  <% @sprints.each do |sprint|%>
-  <li>
-  <%= link_to_remote sprint.name,
-                :url => {:action => 'update_chart', :project_id =>@project, :sprint => sprint.id},
-                :success => "eval(data);",
-                :method => 'GET' %>
-  </li>
-  <%end%>
-</ul>
-</div>

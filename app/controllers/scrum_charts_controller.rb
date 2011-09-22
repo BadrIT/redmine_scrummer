@@ -4,63 +4,111 @@ class ScrumChartsController < IssuesController
   include ScrumUserstoriesController::SharedScrumConstrollers
 
   prepend_before_filter :find_scrum_project, :only => [:index, :update_chart]
-  before_filter :get_sprint, :only => [:index, :update_chart]
-  
+  before_filter :get_sprint, :only => [:index]
+  before_filter :get_release, :only => [:index]
   
   def index    
-    @sprints = @project.versions
+    @sprints  = @project.versions
+    @releases = @project.releases
     
-    gather_information
+    gather_sprint_data
+    gather_release_data
+    
   end
   
   def update_chart
-    gather_information
-    
-    render :update do |page|
-      page.replace_html 'chart', ''
-      page << "draw(#{@lower.inspect}, #{@upper.inspect});"
+    if params[:chart] == 'sprint'
+      get_sprint
+      gather_sprint_data
+      
+      render :update do |page|
+        page.replace_html 'sprints-chart', ''
+        page << "draw('#sprints-chart',#{@lower_sprint.inspect}, #{@upper_sprint.inspect});"
+      end
+    else
+      get_release
+      gather_release_data
+      
+      render :update do |page|
+        page.replace_html 'release-chart', ''
+        page <<  "draw('#release-chart',#{@lower_release.inspect}, #{@upper_release.inspect});"
+      end
     end
   end
 
   protected 
 
   def get_sprint
-    if params[:sprint]
-      @sprint = Version.find params[:sprint]
+    @sprint = if params[:id]
+      Version.find params[:id]
     else
-      @sprint = @project.versions.find(:first, :order => 'effective_date DESC')
+      @project.versions.find(:first, :order => 'effective_date DESC')
     end
   end
   
-  def gather_information
+  def get_release
+    @release = if params[:id]
+      Release.find params[:id]
+    else
+      @project.releases.first
+    end
+  end
+  
+  def gather_sprint_data
     @start_date = @sprint.start_date_custom_value
     @end_date   = @sprint.effective_date
+    @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]  
     
-    @lower = []
-    @upper = []
+    gather_information(@lower_sprint = [], @upper_sprint = []) do |issue, date|
+      issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
+    end
+  end
+
+  def gather_release_data
+    @start_date = @release.start_date
+    @end_date   = @release.release_date
+    @issues     = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]
     
-    return unless @start_date && @end_date
+    gather_information(@lower_release = [], @upper_release = []) do |issue, date|
+      issue.points_histories.find(:first, :conditions => ['date <= ?', date])
+    end
+  end
     
-    @issues = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
+    
+#   
+  # @issues = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
+  # history_entry = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
+#   
+  # @issues = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]
+  # points_history_entry = issue.points_histories.find(:first, :conditions => ['date <= ?', date])
+#   
+  
+  
+  def gather_information(lower, upper, &block)
+    start_date = @start_date
+    end_date   = @end_date
+    issues     = @issues
+    
+    return unless start_date && end_date
     
     day = 0
-    (@start_date..@end_date).each do |date|
-      @upperPoint = 0 # remaining + actual 
-      @lowerPoint = 0 # actual
+    (start_date..end_date).each do |date|
+      upperPoint = 0.0 # remaining + actual 
+      lowerPoint = 0.0 # actual
       
-      @issues.each do |issue|
-        history_entry = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
+      issues.each do |issue|
+        history_entry = block.call(issue, date)
         
-        if history_entry && history_entry.actual && history_entry.remaining
-          @lowerPoint += history_entry.actual
-          @upperPoint += history_entry.remaining + history_entry.actual
+        if history_entry && !history_entry.nil_attributes?
+          lowerPoint += history_entry.lower_point
+          upperPoint += history_entry.upper_point
         end
       end
-      @lower << [day, @lowerPoint]
-      @upper << [day, @upperPoint]
+      
+      lower << [day, lowerPoint]
+      upper << [day, upperPoint]
       day += 1
     end
   end
   
-
 end

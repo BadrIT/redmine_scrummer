@@ -313,3 +313,9 @@ table#issue-table td.subject div.subject-contents {
 	width:150px;
 	border-radius: 30px;
 }
+.filter-icon {
+	border: 2px solid;
+	border-radius: 10px 10px 10px 10px;
+	height: 30px;
+	width: 30px;
+}

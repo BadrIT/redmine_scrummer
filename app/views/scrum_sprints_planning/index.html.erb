@@ -38,12 +38,12 @@
 </div>
 <!--backlog filters-->
 <div class='filters'>
-	<%= backlog_filter nil, "All"%>
-	<%= backlog_filter Tracker.scrum_user_story_tracker.id, l(:scrum_userStory) %> 
-	<%= backlog_filter Tracker.scrum_defect_tracker.id, l(:scrum_defect) %> 
-	<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, l(:scrum_defectSuite)  %>
-	<%= backlog_filter Tracker.scrum_refactor_tracker.id, l(:scrum_refactor)  %>
-	<%= backlog_filter Tracker.scrum_spike_tracker.id, l(:scrum_spike)  %>
+	<%= backlog_filter nil, "All", "All"%>
+	<%= backlog_filter Tracker.scrum_user_story_tracker.id, 'us.png', l(:scrum_userStory) %>
+	<%= backlog_filter Tracker.scrum_defect_tracker.id, 'de.png', l(:scrum_defect) %> 
+	<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, 'ds.GIF', l(:scrum_defectSuite) %>
+	<%= backlog_filter Tracker.scrum_refactor_tracker.id, 'ref.png', l(:scrum_refactor) %>
+	<%= backlog_filter Tracker.scrum_spike_tracker.id, 'sp.png', l(:scrum_spike) %>
 </div>
 <%= link_to "Sort by rank",
 			 :controller => :scrum_sprints_planning,

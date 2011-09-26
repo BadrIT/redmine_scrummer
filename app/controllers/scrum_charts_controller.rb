@@ -23,7 +23,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'sprints-chart', ''
-        page << "draw('#sprints-chart',#{@lower_sprint.inspect}, #{@upper_sprint.inspect});"
+        page << "draw('#sprints-chart',#{@lower_sprint.inspect}, #{@upper_sprint.inspect}, sprint_chart_l1, sprint_chart_l2);"
       end
     else
       get_release
@@ -31,7 +31,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'release-chart', ''
-        page <<  "draw('#release-chart',#{@lower_release.inspect}, #{@upper_release.inspect});"
+        page <<  "draw('#release-chart',#{@lower_release.inspect}, #{@upper_release.inspect}, release_chart_l1, release_chart_l2);"
       end
     end
   end
@@ -73,16 +73,6 @@ class ScrumChartsController < IssuesController
       issue.points_histories.find(:first, :conditions => ['date <= ?', date])
     end
   end
-    
-    
-#   
-  # @issues = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
-  # history_entry = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
-#   
-  # @issues = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]
-  # points_history_entry = issue.points_histories.find(:first, :conditions => ['date <= ?', date])
-#   
-  
   
   def gather_information(lower, upper, &block)
     start_date = @start_date
@@ -105,8 +95,8 @@ class ScrumChartsController < IssuesController
         end
       end
       
-      lower << [day, lowerPoint]
-      upper << [day, upperPoint]
+      lower << [(date.to_time + Time.now.utc_offset).to_i * 1000 , lowerPoint]
+      upper << [(date.to_time + Time.now.utc_offset).to_i * 1000 , upperPoint]
       day += 1
     end
   end

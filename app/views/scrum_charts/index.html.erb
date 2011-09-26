@@ -1,73 +1,83 @@
 <%= context_menu issues_context_menu_path %>
 <% content_for :header_tags do %>
-    <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
-    <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
-    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
-    
-    <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
-    <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
-    <%= javascript_include_tag 'jquery.flot.js', :plugin => 'redmine_scrummer' %>   
+<%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
+<%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
+<%= javascript_tag "$.noConflict(); $j = jQuery;"%>
+
+<%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
+<%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
+<%= javascript_include_tag 'jquery.flot.js', :plugin => 'redmine_scrummer' %>
 <% end %>
 
 <h2>Sprint Burnup Chart</h2>
-<div id="sprints-chart" style="width:1000px;height:400px;float:left"></div>
+<div id="sprints-chart" style="width:1000px;height:400px;float:left">
+</div>
 <div id="chart-actions" style='float:left'>
-<ul class='selectable'>
-  <% @sprints.each do |sprint|%>
-  <li class='ui-widget-content'>
-  <%= link_to_remote sprint.name,
-                :url => {:action => 'update_chart', :project_id => @project, :chart => 'sprint',  :id => sprint.id},
-                :success => "eval(data);",
-                :method => 'GET' %>
-  </li>
-  <%end%>
-</ul>
+	<ul class='selectable'>
+		<% @sprints.each do |sprint|%>
+		<li class='ui-widget-content'>
+			<%= link_to_remote sprint.name,
+			:url => {:action => 'update_chart', :project_id => @project, :chart => 'sprint',  :id => sprint.id},
+			:success => "eval(data);",
+			:method => 'GET' %>
+		</li>
+		<%end%>
+	</ul>
 </div>
 
 <h2 style='clear:both;'>Release Burnup Chart</h2>
-<div id="release-chart" style="width:1000px;height:400px;float:left"></div>
+<div id="release-chart" style="width:1000px;height:400px;float:left">
+</div>
 <div id="release-actions" style='float:left'>
-<ul style='float:left;' class='selectable'>
-  <% @releases.each do |release|%>
-  <li class='ui-widget-content'>
-  <%= link_to_remote release.name,
-                :url => {:action => 'update_chart', :project_id => @project, :chart => 'release', :id => release.id},
-                :success => "eval(data);",
-                :method => 'GET' %>
-  </li>
-  <%end%>
-</ul>
+	<ul style='float:left;' class='selectable'>
+		<% @releases.each do |release|%>
+		<li class='ui-widget-content'>
+			<%= link_to_remote release.name,
+			:url => {:action => 'update_chart', :project_id => @project, :chart => 'release', :id => release.id},
+			:success => "eval(data);",
+			:method => 'GET' %>
+		</li>
+		<%end%>
+	</ul>
 </div>
 
 <script type="text/javascript">
-function draw(chart_id, d1, d2){
- 	var options = {
-   	 series: {
-    	  lines: { show: true },
-    	  points: { show: true }
-    	}
-  	};
-	$j.plot($j(chart_id),[
-	{
-		data: d2,
-		label: "Actual + TODO"
-	}
-	,
-	{
-		data: d1,
-		label: "Actual"
-	}
-	], options);
-}
-var d1 = <%= @lower_sprint.inspect%>;
-var d2 = <%= @upper_sprint.inspect%>;
-draw("#sprints-chart", d1, d2);
-var d1 = <%= @lower_release.inspect%>;
-var d2 = <%= @upper_release.inspect%>;
-draw("#release-chart", d1, d2);
-$j('.selectable').selectable().each(function(){
-	$j($j('li', this)[0]).addClass('ui-selected');
-});
+var release_chart_l1 = 'Total points'
+var release_chart_l2 = 'Accepted points'
+var sprint_chart_l1  = 'Actual + TODO'
+var sprint_chart_l2  =  'Actual'
 
+function draw(chart_id, d1, d2,l1,l2){
+	var options = {
+				series: {
+					lines: { show: true },
+					points: { show: true }
+					},
+				xaxis: {
+					mode: "time",
+					timeformat: "%y/%m/%d"
+					}
+				};
+	$j.plot($j(chart_id),[
+		{
+		data: d2,
+		label: l1,
+		}
+		,
+		{
+		data: d1,
+		label: l2
+		}
+		], options);
+	}
+	var d1 = <%= @lower_sprint.inspect%>;
+	var d2 = <%= @upper_sprint.inspect%>;
+	draw("#sprints-chart", d1, d2, sprint_chart_l1, sprint_chart_l2);
+	var d1 = <%= @lower_release.inspect%>;
+	var d2 = <%= @upper_release.inspect%>;
+	draw("#release-chart", d1, d2, release_chart_l1, release_chart_l2);
+	$j('.selectable').selectable().each( function() {
+		$j($j('li', this)[0]).addClass('ui-selected');
+	});
 </script>
 

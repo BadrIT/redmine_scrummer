@@ -62,3 +62,7 @@ en:
   
   label_add_release_inline: "Inline add release"
   field_release_state: "release state"
+  
+  name: "Name"
+  description: "Description"
+  actions: "Actions"

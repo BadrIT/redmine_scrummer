@@ -13,7 +13,9 @@ function update_sprint_status() {
 		var size = 0;
 		var cf_1 = $j('.autoscroll > table > tbody > tr.issue .cf_1', this);
 		$j('span , div',cf_1).each( function() {
-			size += parseInt($j(this).html());
+			if (!isNaN(parseInt($j(this).html()))){
+				size += parseInt($j(this).html());
+			}
 		});
 		var buffer_size = parseInt($j(this).prev().attr('buffer-size'))
 		var status = Math.round((size / buffer_size) * 1000) / 10;

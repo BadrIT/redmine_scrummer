@@ -38,7 +38,7 @@
 </div>
 <!--backlog filters-->
 <div class='filters'>
-	<%= backlog_filter nil, "All", "All"%>
+	<%= backlog_filter nil, "all.png", "All"%>
 	<%= backlog_filter Tracker.scrum_user_story_tracker.id, 'us.png', l(:scrum_userStory) %>
 	<%= backlog_filter Tracker.scrum_defect_tracker.id, 'de.png', l(:scrum_defect) %> 
 	<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, 'ds.GIF', l(:scrum_defectSuite) %>

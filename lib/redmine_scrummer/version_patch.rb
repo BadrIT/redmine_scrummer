@@ -13,10 +13,10 @@ module RedmineScrummer
     
     module InstanceMethods
       
-      # returns the value of the buffer_size custom field
+      # returns the value of the buffer_size custom field or zero if nil
       def buffer_size
         buffer_size_field = VersionCustomField.find_by_scrummer_caption(:buffer_size)
-        self.custom_value_for(buffer_size_field).try(:value).try(:to_i)
+        self.custom_value_for(buffer_size_field).try(:value).try(:to_i) || 0
       end
       
       # returns the value of the start_date custom field

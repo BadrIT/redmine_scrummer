@@ -47,7 +47,12 @@ class ScrumReleasesPlanningController < IssuesController
       render :update do |page|
         page.insert_html :bottom, 'releases', :partial => 'release', :object => @release
         page.visual_effect :highlight, "release-#{@release.id}", :duration => 2
-        page.toggle('#inline-add');
+        if @release.state == 'Planning'
+          page.insert_html :bottom, 'accordion', :partial => 'release_as_list', :object => @release
+          page.visual_effect :highlight, "header-#{@release.id}", :duration => 2
+          page.call 'init_release_planning'
+          page.call 'add_last_element_to_accordion'
+        end
       end
     else
       render :update do |page|
@@ -92,6 +97,8 @@ class ScrumReleasesPlanningController < IssuesController
 
     render :update do |page|
       page.remove "release-#{params[:id]}"
+      page.remove "header-#{params[:id]}"
+      page.remove "#{params[:id]}"
     end
   end
 end

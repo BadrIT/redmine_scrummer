@@ -49,25 +49,28 @@
 	</ul>
 </div>
 <div id="accordion" class='planning-issues' style='float:right;'>
-	<% @planning_releases.each do |release| %>
-	<h2 id='header-<%= release.id%>' class='release-header'><%= release.name %></h2>
-	<div id='<%= release.id%>' class='list-parent' style='min-height:100px;'>
-		<ul class='bachlog-list'>
-			<% release.issues.all.to_a.each do |issue| %>
-				<%= issue_li_tag issue %>
-			<% end %>
-		</ul>
-	</div>
-	<%end%>
+	<%= render :partial => 'release_as_list', :collection => @planning_releases%>
 </div>
 <script>
-	$j('#accordion').accordion({ autoHeight: true });
-
-	$j('li.issue').draggable({
-		appendTo: 'parent',
-		helper: 'clone',
-		revert: true
-	});
+$j('li.issue').draggable({
+	appendTo: 'parent',
+	helper: 'clone',
+	revert: true
+});
+function init_accordion(){
+	$j('.release-header').click( function() {
+		$(this).next().toggle();
+		return true;
+	}).next().hide();
+	$j('.release-header')[0].next().show();
+}
+function add_last_element_to_accordion(){
+	$j('.release-header').last().click( function() {
+		$(this).next().toggle();
+		return true;
+	}).next().hide();
+}
+function init_release_planning(){
 	$j('.list-parent').droppable({
 		accept: 'li.issue',
 		drop:function(event, ui){
@@ -94,5 +97,8 @@
 			});
 		}
 	});
+}
+init_accordion();
+init_release_planning();
 </script>
 	

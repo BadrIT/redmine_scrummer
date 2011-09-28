@@ -1,0 +1,8 @@
+<h2 id='header-<%= release_as_list.id%>' class='release-header'><%= release_as_list.name %></h2>
+<div id='<%= release_as_list.id%>' class='list-parent' style='min-height:100px;'>
+	<ul class='bachlog-list'>
+		<% release_as_list.issues.all.to_a.each do |issue| %>
+			<%= issue_li_tag issue %>
+		<% end %>
+	</ul>
+</div>

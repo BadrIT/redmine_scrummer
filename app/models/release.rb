@@ -9,7 +9,9 @@ class Release < ActiveRecord::Base
   validates_inclusion_of :state, :in => RELEASE_STATUSES
   
   belongs_to :project
-  has_many   :issues
+  
+  has_many   :issues,
+             :dependent => :nullify
   protected
 
   def dates_overlapping

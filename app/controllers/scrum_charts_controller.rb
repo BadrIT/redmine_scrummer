@@ -55,6 +55,11 @@ class ScrumChartsController < IssuesController
   end
   
   def gather_sprint_data
+    if @sprint.nil?
+      @lower_sprint = []
+      @upper_sprint = []
+      return
+    end
     @start_date = @sprint.start_date_custom_value
     @end_date   = @sprint.effective_date
     @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]  
@@ -65,6 +70,11 @@ class ScrumChartsController < IssuesController
   end
 
   def gather_release_data
+    if @release.nil?
+      @lower_release = []
+      @upper_release = []
+      return
+    end
     @start_date = @release.start_date
     @end_date   = @release.release_date
     @issues     = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]

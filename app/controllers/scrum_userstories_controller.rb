@@ -190,6 +190,7 @@ class ScrumUserstoriesController < IssuesController
 		end
 	end
 
+  # inline add action
   def inline_add
   	initialize_sort  	  	
   	div_name = get_inline_issue_div_id

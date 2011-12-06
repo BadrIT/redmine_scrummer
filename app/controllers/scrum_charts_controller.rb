@@ -40,7 +40,7 @@ class ScrumChartsController < IssuesController
 
   def get_sprint
     @sprint = if params[:id]
-      Version.find params[:id]
+      Version.find(params[:id])
     else
       @project.versions.find(:first, :order => 'effective_date DESC')
     end

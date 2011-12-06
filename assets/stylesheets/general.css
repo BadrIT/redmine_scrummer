@@ -319,3 +319,31 @@ table#issue-table td.subject div.subject-contents {
 	height: 30px;
 	width: 30px;
 }
+
+/*-------- By Mohamed Magdy --------*/
+/*------- For PDF Printing --------*/
+@media print {
+  body {
+    background-color: #FFF;
+  }
+
+  #container {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+  
+  #line_items {
+    page-break-before: always;
+  }
+  
+  #chart_pdf_download {
+    display: none;
+  }
+  
+  #chart-actions {
+  	display: none;
+  }
+}
+

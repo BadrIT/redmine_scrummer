@@ -383,6 +383,22 @@ module RedmineScrummer
           Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
             issue.build_points_history_entry.save
           end
+          
+          # By Mohamed Magdy
+          # Intializing the issues' project_issue_number
+          Issue.all.each do |issue|
+            issue.update_attribute(:project_issue_number, 0)
+          end
+          
+          
+          # Setting the nil values of the old projects which 
+          # are created before adding the project_issue_number
+          Issue.all.each do |issue|
+            issue.update_attribute(:project_issue_number, issue.project.issues.maximum(:project_issue_number).to_i + 1)
+          end
+          
+          # End Mohamed Magdy
+          
           true
         end
       end

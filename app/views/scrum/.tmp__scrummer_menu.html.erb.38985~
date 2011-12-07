@@ -1,0 +1,9 @@
+<div id="scrummer_menu">
+	<p id="scrummer_menu_item"><%= link_to "User Stories", scrum_user_stories_path(:project_id => @project.identifier) %></p>
+	
+	<p id="scrummer_menu_item"><%= link_to "Charts", scrum_charts_path(:project_id => @project.identifier) %></p>
+	
+	<p id="scrummer_menu_item"><%= link_to "Sprint Planning", scrum_sprint_planing_path(:project_id => @project.identifier) %></p>
+	
+	<p id="scrummer_menu_item"><%= link_to "Release Planning", scrum_release_planing_path(:project_id => @project.identifier) %></p>
+</div>

@@ -1,0 +1,32 @@
+<h1>Editing release</h1>
+
+<% form_for @release, :url => {:action => 'update_release',:id => @release.id, :project_id => @project}   do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :start_date %><br/>
+    <%= f.text_field :start_date, :size => 10 %><%= calendar_for('release_start_date') %>
+  </p>
+  <p>
+    <%= f.label :release_date %><br/>
+    <%= f.text_field :release_date, :size => 10 %><%= calendar_for('release_release_date') %>
+  </p>
+  <p>
+    <%= f.label :state %><br/>
+  	<%= f.select :state, Release::RELEASE_STATUSES%>
+  </p>
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_area :description, :style => 'height:100px;width:500px'%>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', :action => 'show', :id => @release.id, :project_id => @project %>|
+<%= link_to 'Back', :action => 'index', :project_id => @project %>

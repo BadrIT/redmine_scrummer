@@ -1,0 +1,104 @@
+<h1>Releases Planning</h1>
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'general.css', :plugin => 'redmine_scrummer' %>
+    <%= stylesheet_link_tag 'sticky_notes.css', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
+    
+    <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.cluetip.min.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
+    <%= javascript_tag "select_menu_item('scrum-release-planing');"%>
+    
+<% end %>
+<br/>
+<fieldset id="inline-add" class="collapsible collapsed">
+	<br />
+	<legend onclick="toggleFieldset(this);"><%= l(:label_add_release_inline) %></legend>
+	<div id='inline_add_container' style="display:none">
+		<%= render :partial => 'new'%>
+	</div>
+</fieldset>
+<br/>
+<h2>Releases</h2>
+<table>
+<thead>
+  <tr>
+    <th><%= l :name%></th>
+    <th><%= l :start_date%></th>
+    <th><%= l :field_release_date%></th>
+    <th><%= l :field_state%></th>
+    <th><%= l :description%></th>
+    <th><%= l :actions%></th>
+  </tr>
+</thead>
+  <tbody id='releases'>
+  <%= render :partial => 'release', :collection => @releases%>
+  </tbody>
+</table>
+
+<br/>
+<h2>Plan</h2>
+<div id='backlog' class='list-parent planning-issues' style='float:left'>
+	<ul class='bachlog-list'>
+		<% @issues.each do |issue| %>
+		  	<%= issue_li_tag issue%>
+		<% end %>
+	</ul>
+</div>
+<div id="accordion" class='planning-issues' style='float:right;'>
+	<%= render :partial => 'release_as_list', :collection => @planning_releases%>
+</div>
+<script>
+$j('li.issue').draggable({
+	appendTo: 'parent',
+	helper: 'clone',
+	revert: true
+});
+function init_accordion(){
+	$j('.release-header').click( function() {
+		$(this).next().toggle();
+		return true;
+	}).next().hide();
+	$j('.release-header')[0].next().show();
+}
+function add_last_element_to_accordion(){
+	$j('.release-header').last().click( function() {
+		$(this).next().toggle();
+		return true;
+	}).next().hide();
+}
+function init_release_planning(){
+	$j('.list-parent').droppable({
+		accept: 'li.issue',
+		drop:function(event, ui){
+			var release_id = $j(this)[0].id;
+			var issue_id = ui.draggable[0].id;
+			
+			// prevent sending requet when droping in the same place
+			if(ui.draggable.parent().parent()[0].id == release_id)
+				return;
+
+			$j('.ui-draggable-dragging').hide();
+			$j('ul', this).append(ui.draggable);
+			
+			
+			var url = '<%= url_for :action => 'set_issue_release', :project_id => @project%>'
+			
+			new Ajax.Request(url, {
+				parameters: {
+					issue_id: issue_id,
+					release_id: release_id
+				},
+				method: 'post',
+				asynchronous:true
+			});
+		}
+	});
+}
+init_accordion();
+init_release_planning();
+</script>
+	

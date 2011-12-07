@@ -62,8 +62,13 @@ Redmine::Plugin.register :redmine_scrummer do
   	permission :scrum_charts, 													{ :scrum_charts => [:index, :update_chart]}
   end
   
-  menu :project_menu, :scrum_charts, { :controller => 'scrum_charts', :action => 'index' }, :after => :activity, :param => :project_id
-  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id 
-  menu :project_menu, :scrum_sprint_planing, { :controller => 'scrum_sprints_planning', :action => 'index' }, :after => :activity, :param => :project_id 
-  menu :project_menu, :scrum_release_planing, { :controller => 'scrum_releases_planning', :action => 'index' }, :after => :scrum_charts, :param => :project_id 
+  # By Mohamed Magdy
+  # Adjusting the Scrummer Menu "Scrummer Tab"
+  menu :project_menu, :scrummer, {:controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id
+  # End Mohamed Magdy
+  
+#  menu :project_menu, :scrum_charts, { :controller => 'scrum_charts', :action => 'index' }, :after => :activity, :param => :project_id
+#  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id 
+#  menu :project_menu, :scrum_sprint_planing, { :controller => 'scrum_sprints_planning', :action => 'index' }, :after => :activity, :param => :project_id 
+#  menu :project_menu, :scrum_release_planing, { :controller => 'scrum_releases_planning', :action => 'index' }, :after => :scrum_charts, :param => :project_id 
 end

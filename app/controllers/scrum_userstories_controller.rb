@@ -17,6 +17,11 @@ class ScrumUserstoriesController < IssuesController
 	before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
 	before_filter :set_default_values, :only => [:refresh_inline_add_form, :index]
   
+  # By Mohamed Magdy
+  # Filter before entering the index action to highlight the scrummer
+  # menu tab
+  before_filter :current_page_setter, :only => [:index]
+  
   module SharedScrumConstrollers
     
   	include ActionView::Helpers::ActiveRecordHelper
@@ -334,6 +339,14 @@ class ScrumUserstoriesController < IssuesController
       render_error l(:error_no_default_scrum_issue_priority)
       return false
     end
+  end
+  
+  protected
+  # By Mohamed Magdy
+  # This methods sets the curret_page attribute to be used in the view 
+  # and mark the current page in the scrummer menu
+  def current_page_setter
+    @current_page = 3
   end
   
   def scrum_issues_list(issues, &block)

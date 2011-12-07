@@ -6,6 +6,10 @@ class ScrumReleasesPlanningController < IssuesController
   
   before_filter :find_scrum_project, :only => [:index, :destroy_release]
   prepend_before_filter :find_project, :only => [:create, :destroy_release,:edit, :show, :update_release, :set_issue_release]
+  # By Mohamed Magdy
+  # Filter before entering the index action to highlight the scrummer
+  # menu tab
+  before_filter :current_page_setter, :only => [:index]
   
   # GET /releases
   # GET /releases.xml
@@ -100,5 +104,13 @@ class ScrumReleasesPlanningController < IssuesController
       page.remove "header-#{params[:id]}"
       page.remove "#{params[:id]}"
     end
+  end
+  
+  protected
+  # By Mohamed Magdy
+  # This methods sets the curret_page attribute to be used in the view 
+  # and mark the current page in the scrummer menu
+  def current_page_setter
+    @current_page = 1
   end
 end

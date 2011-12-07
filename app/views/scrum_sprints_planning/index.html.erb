@@ -21,6 +21,12 @@
     <%= javascript_tag "select_menu_item('scrum-sprint-planing');"%>
     
 <% end %>
+
+<!-- By Mohamed Magdy -->
+<!-- Rendering the scrummer menu --> 
+<%= render(:partial => "./scrum/scrummer_menu", :object => @project) %>
+<!-- End by Mohamed Magdy -->
+
 <h2>Sprint Planning</h2>
 <!--Sprints stacked vertically-->
 <div id='right-side-panel' >

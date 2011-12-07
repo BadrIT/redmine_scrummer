@@ -9,6 +9,11 @@
 <%= javascript_include_tag 'jquery.flot.js', :plugin => 'redmine_scrummer' %>
 <% end %>
 
+<!-- By Mohamed Magdy -->
+<!-- Rendering the scrummer menu --> 
+<%= render(:partial => "./scrum/scrummer_menu", :object => @project) %>
+<!-- End by Mohamed Magdy -->
+
 <p id="chart_pdf_download"><%= link_to "Download PDF charts", scrum_charts_path(:project_id => @project.identifier, :format => "pdf") %></p>
 
 <h2>Sprint Burnup Chart</h2>

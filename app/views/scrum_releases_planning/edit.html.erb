@@ -1,3 +1,8 @@
+<!-- By Mohamed Magdy -->
+<!-- Rendering the scrummer menu --> 
+<%= render(:partial => "./scrum/scrummer_menu", :object => @project) %>
+<!-- End by Mohamed Magdy -->
+
 <h1>Editing release</h1>
 
 <% form_for @release, :url => {:action => 'update_release',:id => @release.id, :project_id => @project}   do |f| %>

@@ -6,6 +6,10 @@ class ScrumSprintsPlanningController < IssuesController
   include ScrumUserstoriesController::SharedScrumConstrollers  
   
   prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version]
+  # By Mohamed Magdy
+  # Filter before entering the index action to highlight the scrummer
+  # menu tab
+  before_filter :current_page_setter, :only => [:index]
   
   def index
     @query = Query.find_by_scrummer_caption("Sprint-Planning")
@@ -41,6 +45,14 @@ class ScrumSprintsPlanningController < IssuesController
         page.replace_html 'version_errors', errors 
       end
     end
+  end
+  
+  protected
+  # By Mohamed Magdy
+  # This methods sets the curret_page attribute to be used in the view 
+  # and mark the current page in the scrummer menu
+  def current_page_setter
+    @current_page = 2
   end
   
 end

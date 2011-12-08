@@ -22,9 +22,8 @@
     
 <% end %>
 
-<!-- By Mohamed Magdy -->
 <!-- Rendering the scrummer menu --> 
-<%= render(:partial => "./scrum/scrummer_menu", :object => @project) %>
+<%= render :partial => "scrum/scrummer_menu" %>
 <!-- End by Mohamed Magdy -->
 
 <h2>Sprint Planning</h2>
@@ -51,11 +50,11 @@
 	<%= backlog_filter Tracker.scrum_refactor_tracker.id, 'ref.png', l(:scrum_refactor) %>
 	<%= backlog_filter Tracker.scrum_spike_tracker.id, 'sp.png', l(:scrum_spike) %>
 </div>
-<%= link_to "Sort by priority " + @priority_sort ,
-			 {:controller => :scrum_sprints_planning,
-			 :project_id => @project,
-			 :sort => "position_" + @priority_sort} %>
-			 
+
+<br/>
+	<%= content_tag('a', sort_link("position", "Sort by priorit", "asc"), nil) %>
+<br/>
+
 <!--listing nil-version issues-->
 <div id= 'backlog'>
 	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false, :list_id => 'backlog'} %>
@@ -66,16 +65,4 @@
 	update_sprint_status();
 	init_planning();
 	init_sortable();
-	
-	$j(function(){
-  		$j('#sorter').click(function(){
-    		var old_text = $j("#sorter").text();
-			if(old_text == "Sort by rank"){
-				$j("#sorter").text("Sort by business value");	
-			}else {
-				$j("#sorter").text("Sort by rank");
-			}
-	  	});
-	});
-	
 </script>

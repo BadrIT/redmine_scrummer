@@ -346,7 +346,7 @@ class ScrumUserstoriesController < IssuesController
   # This methods sets the curret_page attribute to be used in the view 
   # and mark the current page in the scrummer menu
   def current_page_setter
-    @current_page = 3
+    @current_page = :user_stories
   end
   
   def scrum_issues_list(issues, &block)

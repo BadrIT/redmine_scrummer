@@ -27,9 +27,8 @@
 <% end %>
 </div>
 
-<!-- By Mohamed Magdy -->
 <!-- Rendering the scrummer menu --> 
-<%= render(:partial => "./scrum/scrummer_menu", :object => @project) %>
+<%= render :partial => "scrum/scrummer_menu" %>
 <!-- End by Mohamed Magdy -->
 
 <h2><%= @query.new_record? ? l(:label_issue_plural) : h(@query.name) %></h2>

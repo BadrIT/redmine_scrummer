@@ -120,7 +120,7 @@ class ScrumChartsController < IssuesController
   # This methods sets the curret_page attribute to be used in the view 
   # and mark the current page in the scrummer menu
   def current_page_setter
-    @current_page = 5
+    @current_page = :charts
   end
   
 end

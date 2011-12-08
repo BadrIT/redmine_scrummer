@@ -7,6 +7,11 @@ class ScrumChartsController < IssuesController
   before_filter :get_sprint, :only => [:index]
   before_filter :get_release, :only => [:index]
   
+  # By Mohamed Magdy
+  # Filter before entering the index action to highlight the scrummer
+  # menu tab
+  before_filter :current_page_setter, :only => [:index]
+  
   def index    
     @sprints  = @project.versions
     @releases = @project.releases
@@ -40,7 +45,7 @@ class ScrumChartsController < IssuesController
 
   def get_sprint
     @sprint = if params[:id]
-      Version.find params[:id]
+      Version.find(params[:id])
     else
       @project.versions.find(:first, :order => 'effective_date DESC')
     end
@@ -109,6 +114,13 @@ class ScrumChartsController < IssuesController
       upper << [(date.to_time + Time.now.utc_offset).to_i * 1000 , upperPoint]
       day += 1
     end
+  end
+  
+  # By Mohamed Magdy
+  # This methods sets the curret_page attribute to be used in the view 
+  # and mark the current page in the scrummer menu
+  def current_page_setter
+    @current_page = 5
   end
   
 end

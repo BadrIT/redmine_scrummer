@@ -1,6 +1,6 @@
 <%= context_menu issues_context_menu_path %>
 <% content_for :header_tags do %>
-<%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
+<%= stylesheet_link_tag 'general', :media => "all", :plugin => 'redmine_scrummer' %>
 <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
 <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
 
@@ -8,6 +8,13 @@
 <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
 <%= javascript_include_tag 'jquery.flot.js', :plugin => 'redmine_scrummer' %>
 <% end %>
+
+<!-- By Mohamed Magdy -->
+<!-- Rendering the scrummer menu --> 
+<%= render(:partial => "./scrum/scrummer_menu", :object => @project) %>
+<!-- End by Mohamed Magdy -->
+
+<p id="chart_pdf_download"><%= link_to "Download PDF charts", scrum_charts_path(:project_id => @project.identifier, :format => "pdf") %></p>
 
 <h2>Sprint Burnup Chart</h2>
 <div id="sprints-chart" style="width:1000px;height:400px;float:left">

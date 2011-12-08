@@ -1,0 +1,44 @@
+<ol id="scrummer_menu">
+	
+	<% if @current_page == 1 %>
+		<li class="current">
+	<% else %>
+		<li>
+	<% end%>
+	<%= link_to "Release Planning", scrum_release_planing_path(:project_id => @project.identifier) %></li>
+	
+	<% if @current_page == 2 %>
+		<li class="current">
+	<% else %>
+		<li>
+	<% end%>
+	<%= link_to "Sprint Planning", scrum_sprint_planing_path(:project_id => @project.identifier) %></li>
+	
+	<% if @current_page == 3 %>
+		<li class="current">
+	<% else %>
+		<li>
+	<% end%>
+	<%= link_to "User Stories", scrum_user_stories_path(:project_id => @project.identifier) %></li>
+	
+	<% if @current_page == 4 %>
+		<li class="current">
+	<% else %>
+		<li>
+	<% end%>
+	<%= link_to "Board", "#" %></li>
+	
+	<% if @current_page == 5 %>
+		<li class="current">
+	<% else %>
+		<li>
+	<% end%>
+	<%= link_to "Charts", scrum_charts_path(:project_id => @project.identifier) %></li>
+	
+	<% if @current_page == 6 %>
+		<li class="current">
+	<% else %>
+		<li>
+	<% end%>
+	<%= link_to "Scrum Admin", "#" %></li>
+</ol>

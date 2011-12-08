@@ -1,10 +1,10 @@
 module RedmineScrummer
   module DefaultData
     class DataAlreadyLoaded < Exception; end
-
+    
     module Loader
       include Redmine::I18n
-    
+      
       class << self
         # Loads the default data
         def load(lang=nil)
@@ -18,14 +18,14 @@ module RedmineScrummer
                                                    :name             => l(:label_scrum_user_stories),
                                                    :filters          => filters, 
                                                    :is_public        => true)
-                                                   
+          
           columns =  [:subject, :assigned_to, :cf_1, :status, :estimated_hours, :cf_3] 
           Query.find_or_create_by_scrummer_caption(:scrummer_caption => "Sprint-Planning", 
                                                    :sort_criteria    => [[:cf_3, 'desc']],
                                                    :column_names     => columns,                                                   
                                                    :name             => l(:label_scrum_sprint_planing),
                                                    :is_public        => true)
-        
+          
           #############################################################################################
           # Create/Update Trackers
           #############################################################################################
@@ -34,7 +34,7 @@ module RedmineScrummer
           spark_tracker.update_attributes({:scrummer_caption => :spike}) if spark_tracker
           
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
-  
+          
           scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   },
                              :task        => { :name => l(:scrum_task),        :short_name => 'Task' },
                              :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' },
@@ -51,29 +51,29 @@ module RedmineScrummer
             tracker = Tracker.find_or_create_by_scrummer_caption(caption)            
             tracker.update_attributes(options)
           end
-    
+          
           #############################################################################################
           # Create/Update Roles
           #############################################################################################
           scrum_roles = { :project_member => l(:scrum_projectMember),
                           :scrum_master   => l(:scrum_scrumMaster),
                           :product_owner  => l(:scrum_productOwner)}
-                             
+          
           scrum_roles.each do |caption, name|
             role = Role.find_or_create_by_scrummer_caption(caption);
             role.update_attributes(:is_scrum => true, :scrummer_caption => caption, :name => name)
           end
-                                                   
+          
           #############################################################################################
           # Create/Update Statuses
           #############################################################################################
           statuses = [{:scrummer_caption => :defined,     :is_scrum => true,     :name => l(:scrum_defined),     :short_name => 'D', :is_default => true},
-                      {:scrummer_caption => :in_progress, :is_scrum => true,     :name => l(:scrum_inProgress),  :short_name => 'P'}, 
-                      {:scrummer_caption => :completed,   :is_scrum => true,     :name => l(:scrum_completed),   :short_name => 'C'}, 
-                      {:scrummer_caption => :accepted,    :is_scrum => true,     :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true},
-                      {:scrummer_caption => :succeeded,   :is_scrum => true,     :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true},
-                      {:scrummer_caption => :failed,      :is_scrum => true,     :name => l(:scrum_failed),      :short_name => 'F'},
-                      {:scrummer_caption => :finished,    :is_scrum => true,     :name => l(:scrum_finished),    :short_name => 'F', :is_closed => true}]
+          {:scrummer_caption => :in_progress, :is_scrum => true,     :name => l(:scrum_inProgress),  :short_name => 'P'}, 
+          {:scrummer_caption => :completed,   :is_scrum => true,     :name => l(:scrum_completed),   :short_name => 'C'}, 
+          {:scrummer_caption => :accepted,    :is_scrum => true,     :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true},
+          {:scrummer_caption => :succeeded,   :is_scrum => true,     :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true},
+          {:scrummer_caption => :failed,      :is_scrum => true,     :name => l(:scrum_failed),      :short_name => 'F'},
+          {:scrummer_caption => :finished,    :is_scrum => true,     :name => l(:scrum_finished),    :short_name => 'F', :is_closed => true}]
           
           statuses.each do |options|
             caption = options[:scrummer_caption]
@@ -90,7 +90,7 @@ module RedmineScrummer
             task.status = IssueStatus.finished
             task.save            
           end
-            
+          
           #############################################################################################
           # Create/Update Workflow
           #############################################################################################                    
@@ -115,10 +115,10 @@ module RedmineScrummer
                   # exclude test, task and spike trackers
                   # exclude failed, succeeded and finished statuses
                   if tracker.id != test_id && 
-                      tracker.id != task_id && 
-                      tracker.id != spike_id &&
-                      !limited_statuses.include?(old_status.id) && 
-                      !limited_statuses.include?(new_status.id)
+                    tracker.id != task_id && 
+                    tracker.id != spike_id &&
+                    !limited_statuses.include?(old_status.id) && 
+                    !limited_statuses.include?(new_status.id)
                     
                     conditions = {:role_id         => role.id, 
                                     :tracker_id    => tracker.id, 
@@ -158,7 +158,7 @@ module RedmineScrummer
               end
             end
           end
-    
+          
           #############################################################################################  
           # seed scrum roles permissions
           #############################################################################################  
@@ -222,7 +222,7 @@ module RedmineScrummer
                                   :view_time_entries,
                                   :view_wiki_edits,
                                   :view_wiki_pages]
-                                  
+          
           Role.find_all_by_is_scrum(true).each do |role|
             if(role.name == l(:scrum_projectMember))
               project_member_permissions = all_default_permissions - [:add_project,
@@ -276,7 +276,7 @@ module RedmineScrummer
               role.save!        
             end
           end 
-    
+          
           #############################################################################################  
           # Seed Scrum Permissions
           #############################################################################################        
@@ -286,10 +286,10 @@ module RedmineScrummer
                                    :scrum_sprint_planing,
                                    :scrum_release_planing,
                                    :scrum_charts]
-    
+          
           # seed scrum roles scrum perissions
           Role.find_all_by_is_scrum(true).each do |role|
-          
+            
             if(role.name == l(:scrum_projectMember))
               project_member_permissions = all_scrum_permissions
               role.permissions += project_member_permissions
@@ -315,21 +315,21 @@ module RedmineScrummer
                                     :possible_values  => Scrummer::Constants::StorySizes.map{|size| size.to_s},
                                     :is_required      => false,
                                     :default_value    => "0")
-
+          
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
                                     :name             => l(:remaining_hours),
                                     :field_format     => 'float',
                                     :default_value    => "0")
-                                    
+          
           # add business value custom field
           business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
           business_value_custom_field.update_attributes(
                                     :name             => l(:business_value),
                                     :field_format     => 'float',
                                     :default_value    => "0")
-
+          
           trackers_custom_fields = { :userstory => [:story_size, :business_value],
                                      :epic      => [:story_size, :business_value],
                                      :theme     => [:story_size, :business_value],
@@ -337,7 +337,7 @@ module RedmineScrummer
                                      :defect    => [:remaining_hours],
                                      :refactor  => [:remaining_hours],
                                      :spike     => [:remaining_hours]}
-                    
+          
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption)
@@ -357,12 +357,48 @@ module RedmineScrummer
           start_date_custom_field.update_attributes(
                               :name          => l(:start_date),
                               :field_format  => 'date')
-                              
+          
           Issue.all.each{|i| i.update_attribute(:story_size, 0.0) if i.story_size.nil?}
-    
+          
           custom_field = CustomField.find_by_scrummer_caption(:story_size)
           Issue.all.each{|i| i.update_story_size(custom_field)}
-                              
+          
+          # Create points history entry for all the issues as a strat point
+          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
+            issue.build_points_history_entry.save
+          end
+          
+          
+          # Create points history entry for all the issues as a strat point
+          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
+            issue.build_points_history_entry.save
+          end    
+          
+          # Create points history entry for all the issues as a strat point
+          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
+            issue.build_points_history_entry.save
+          end    
+          
+          # Create points history entry for all the issues as a strat point
+          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
+            issue.build_points_history_entry.save
+          end
+          
+          # By Mohamed Magdy
+          # Intializing the issues' project_issue_number
+          Issue.all.each do |issue|
+            issue.update_attribute(:project_issue_number, 0)
+          end
+          
+          
+          # Setting the nil values of the old projects which 
+          # are created before adding the project_issue_number
+          Issue.all.each do |issue|
+            issue.update_attribute(:project_issue_number, issue.project.issues.maximum(:project_issue_number).to_i + 1)
+          end
+          
+          # End Mohamed Magdy
+          
           true
         end
       end

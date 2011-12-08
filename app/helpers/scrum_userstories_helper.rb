@@ -69,7 +69,7 @@ module ScrumUserstoriesHelper
       end
       
       tracker_name = issue.tracker.short_name.empty? ?  issue.tracker.name : issue.tracker.short_name
-  		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
+  		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.project_issue_number.to_s}</span>" +
   		"#{tracker_name}</b>:</div>" +
   		"<div >&nbsp;#{subject_content(column, issue)}</div>" 
   	elsif column.name == :spent_hours && issue.scrum_issue?

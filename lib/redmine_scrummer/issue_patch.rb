@@ -8,6 +8,9 @@ module RedmineScrummer
 				include InstanceMethods
 				
 				after_create :initiate_remaining_hours
+        # By Mohamed Magdy
+        after_create :project_issue_number_incrementer
+        
 				after_save :update_remaining_hours
 				after_save :update_children_target_versions
 				after_save :update_children_release
@@ -198,6 +201,13 @@ module RedmineScrummer
         end
       end
       
+      # By Mohamed Magdy
+      # This method sets teh project's issue number independent from other projects
+      # (each project has its own issue numbering starting from 1)
+      def project_issue_number_incrementer
+        self.update_attribute(:project_issue_number, self.project.issues.maximum(:project_issue_number).to_i + 1)
+      end
+    
 			def update_parent_status
 			  if self.status_id_changed? || @was_a_new_record
 			    # when a story goes to completed OR accepted, all its children should be completed

@@ -16,8 +16,15 @@ class ScrumSprintsPlanningController < IssuesController
     initialize_sort
     # retrive the sprints ordered by its date
     @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
-    @backlog_issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
     
+    
+    if params[:sort].nil? || params[:sort] == "position_ascendingly"
+      @backlog_issues = @project.issues.backlog.sprint_planing.find(:all, :order => "position ASC")
+      @priority_sort = "descendingly"
+    else
+      @backlog_issues = @project.issues.backlog.sprint_planing.find(:all, :order => "position DESC")
+      @priority_sort = "ascendingly"
+    end
   end
   
   def inline_add_version

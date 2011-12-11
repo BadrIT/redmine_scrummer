@@ -274,11 +274,6 @@ class ScrumUserstoriesController < IssuesController
     
     load_issues_ancestors
     
-    p "sssssssssssssssssssssSSS"
-    @issues.each do |issue|
-      p issue.subject
-    end
-    
     #build tree heirarachy
     @issues = scrum_issues_list(@issues)
     

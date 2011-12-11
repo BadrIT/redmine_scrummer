@@ -22,12 +22,18 @@
     
 <% end %>
 
-<!-- Rendering the scrummer menu --> 
 <%= render :partial => "scrum/scrummer_menu" %>
-<!-- End by Mohamed Magdy -->
 
 <h2>Sprint Planning</h2>
 <!--Sprints stacked vertically-->
+
+<fieldset id="inline-add" class="collapsible collapsed">
+	<legend onclick="toggleFieldset(this);"><%= l(:label_scrum_stories_inline_add) %></legend>
+	<div id='inline_add_container' style="display:none">
+		<%= render :partial => 'scrum_userstories/inline_add', :locals => {:hide_cancel => true} %>
+	</div>
+</fieldset>
+
 <div id='right-side-panel' >
 	
 	<fieldset id="inline-add" class="collapsible collapsed">

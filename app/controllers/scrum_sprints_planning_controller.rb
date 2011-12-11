@@ -17,7 +17,8 @@ class ScrumSprintsPlanningController < IssuesController
     # retrive the sprints ordered by its date
     @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
     @backlog_issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
-    
+    @issue = Issue.new
+    set_default_values
   end
   
   def inline_add_version
@@ -53,6 +54,17 @@ class ScrumSprintsPlanningController < IssuesController
   # and mark the current page in the scrummer menu
   def current_page_setter
     @current_page = :sprint_planning
+  end
+  
+  def set_default_values
+    @issue.description = @issue.is_user_story? ? l(:default_description):""
+    @issue.project_id = @project
+    if @issue.fixed_version.nil? && !@query.filters['fixed_version_id'].nil? && 
+      @query.filters['fixed_version_id'][:operator] == '='&& 
+      (params[:issue].nil? || params[:issue][:parent_issue_id].empty?)
+       
+        @issue.fixed_version =  Version.find(@query.filters['fixed_version_id'][:values][0].to_i)
+    end
   end
   
 end

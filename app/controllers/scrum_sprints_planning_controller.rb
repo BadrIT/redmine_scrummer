@@ -17,6 +17,7 @@ class ScrumSprintsPlanningController < IssuesController
     # retrive the sprints ordered by its date
     @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
     @backlog_issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
+    
   end
   
   def inline_add_version

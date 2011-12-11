@@ -239,10 +239,10 @@ class ScrumUserstoriesController < IssuesController
 	  retrieve_query
 	end
 	
+  # Edited by Mohamed Magdy
 	def load_issues_ancestors
-	  ids = @issues.map(&:id)
 	  @issues.each do |issue|
-	    if !issue.direct_parent.nil? && !ids.include?(issue.direct_parent.id)
+	    if !issue.direct_parent.nil? && !@issues.include?(Issue.find(issue.direct_parent.id)) 
 	      @issues << issue.direct_parent
 	    end
 	  end
@@ -274,6 +274,11 @@ class ScrumUserstoriesController < IssuesController
     
     load_issues_ancestors
     
+    p "sssssssssssssssssssssSSS"
+    @issues.each do |issue|
+      p issue.subject
+    end
+    
     #build tree heirarachy
     @issues = scrum_issues_list(@issues)
     
@@ -281,6 +286,7 @@ class ScrumUserstoriesController < IssuesController
     @issues = @issues[(@offst.to_i)..(@offset.to_i+@limit.to_i-1)]
     
     @issue_count_by_group = @query.issue_count_by_group
+    
 	end
 	
   def set_default_values_from_parent

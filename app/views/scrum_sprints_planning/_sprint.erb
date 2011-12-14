@@ -3,6 +3,14 @@
 	<div class='date'><%= sprint.effective_date %></div>
 	<div class="status-bar"></div>
 	<div class="size"></div>
+	
+	<%= link_to_remote image_tag(scrummer_image_path('edit.png')), 
+							 :url => { :controller => :scrum_sprints_planning,
+							 :action => :sprint_info, 
+							 :id => sprint.id,
+							 :project_id => @project.identifier},
+							 :html => {:id =>"edit-sprint-#{sprint.id}"}, :success => 'populate_version_data(request)' %>
+
 </div>
 <div id=<%="sprint-#{sprint.id}"%> class='sprint'>
 	<% issues = sprint.fixed_issues.sprint_planing.find(:all, :order => sort_clause)%>
@@ -75,3 +83,31 @@
 		</table>
 	</div>
 </div>
+<script>
+  	$j('#edit-sprint-<%= sprint.id %>').click(function() {
+		var fieldset = $j('#inline-version-add');
+		fieldset.children('div').slideDown("slow");
+		$j('#version-control-label').text('<%= l(:label_version_edit) %>');
+	});
+
+	$j('#version-control-label').click(function(event){
+		$j('#version-control-label').text('<%= l(:label_version_new) %>');
+		$j('#version-form').find(':input').each(function() { 
+			if (this.type != 'submit') {
+				$j(this).val('');
+			}
+		});
+		$j("#version-name").attr('disabled', false);
+	});
+	
+	function hide_field(){
+		var fieldset = $j('#inline-version-add');
+		fieldset.toggleClass('collapsed');
+		fieldset.children('div').slideUp("slow");
+		$j('#version-control-label').text('<%= l(:label_version_new) %>');
+	}
+	
+	function populate_version_data(request){
+		$j('#version-form').replaceWith(request.responseText);
+	}
+</script>

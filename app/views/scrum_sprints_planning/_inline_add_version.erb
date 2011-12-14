@@ -1,6 +1,13 @@
-<% version ||= @project.versions.build %>
+<% if @version %>
+	<% version = @version %>
+	<% disabled = true %>
+<% else %>
+	<% version ||= @project.versions.build %>
+<% end %>
 
-<% remote_form_for :version, :url => {:controller => :scrum_sprints_planning, :action => :inline_add_version, :project_id => @project} do |f| %>
+<% remote_form_for :version, :url => {:controller => :scrum_sprints_planning, 
+									  :action => :inline_add_version, :project_id => @project},
+									  :html => {:id => 'version-form'}, :success => 'hide_field()' do |f| %>
 
 	<div id='version_errors'></div>
 	<!--%= error_messages_for 'version' %-->
@@ -8,12 +15,21 @@
 	<div class="box">
 	<p>
 	<%= f.label :name, l("field_name"), :class => "scrum_version_inline_label" %>
-	<%= f.text_field :name, :size => 55, :required => true %>
+	<%= f.text_field :name, :size => 55, :required => true, :disabled => disabled, :id => 'version-name' %>
 	</p>
+	
+	<% if @version %>
+		<%= hidden_field_tag :version_id, version.id %>
+	<%- end -%>
 	
 	<p>
 	<%= f.label :description, l("field_description"), :class => "scrum_version_inline_label" %>
 	<%= f.text_field :description, :size => 55 %>
+	</p>
+	
+	<p>
+	<%= f.label :release_id, l("field_release_id"), :class => "scrum_version_inline_label" %>
+	<%= f.select :release_id, available_releases(@project), {:include_blank => l("field_fixed_release")} %>
 	</p>
 	
 	<p>

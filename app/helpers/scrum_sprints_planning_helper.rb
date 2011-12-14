@@ -9,4 +9,10 @@ module ScrumSprintsPlanningHelper
                     :method => 'GET'},
                     :title  => label
   end
+  
+  # By Mohamed Magdy
+  # Collects all releases to populate them in a combobox
+  def available_releases(project)
+    project.releases.collect {|release| [release.name, release.id]}
+  end
 end

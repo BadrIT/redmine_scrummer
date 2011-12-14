@@ -335,15 +335,11 @@ table#issue-table td.subject div.subject-contents {
     border: none;
   }
   
-  #line_items {
+  #release_chart {
     page-break-before: always;
   }
   
-  #chart_pdf_download {
-    display: none;
-  }
-  
-  #chart-actions {
+  #chart-actions,  #scrum_menu, #chart_pdf_download  {
   	display: none;
   }
 }

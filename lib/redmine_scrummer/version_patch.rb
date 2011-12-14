@@ -7,6 +7,10 @@ module RedmineScrummer
         
         include InstanceMethods   
         
+        # Each version (sprint) belongs to only one release
+        belongs_to :release
+        
+        after_update :alter_issues_release
       end
       
     end
@@ -26,6 +30,17 @@ module RedmineScrummer
         self.custom_value_for(start_date_field).try(:value).try(:to_date)
       end
       
+      protected
+      # By Mohamed Magdy
+      # This method is called after updating the the version (sprint).
+      # The aim of this method is to alter the release id of the issues that belongs to
+      # the updated version
+      def alter_issues_release
+        self.fixed_issues.each do |issue|
+          issue.update_attribute(:release_id, self.release_id)
+        end
+      end
+    
     end
     
   end

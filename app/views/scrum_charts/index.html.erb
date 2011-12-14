@@ -9,9 +9,10 @@
 <%= javascript_include_tag 'jquery.flot.js', :plugin => 'redmine_scrummer' %>
 <% end %>
 
-<!-- Rendering the scrummer menu --> 
-<%= render :partial => "scrum/scrummer_menu" %>
-<!-- End by Mohamed Magdy -->
+<div id="scrum_menu">
+	<!-- Rendering the scrummer menu --> 
+	<%= render :partial => "scrum/scrummer_menu" %>
+</div>
 
 <p id="chart_pdf_download"><%= link_to "Download PDF charts", scrum_charts_path(:project_id => @project.identifier, :format => "pdf") %></p>
 
@@ -31,7 +32,7 @@
 	</ul>
 </div>
 
-<h2 style='clear:both;'>Release Burnup Chart</h2>
+<h2 id= "release_chart" style='clear:both;'>Release Burnup Chart</h2>
 <div id="release-chart" style="width:1000px;height:400px;float:left">
 </div>
 <div id="release-actions" style='float:left'>

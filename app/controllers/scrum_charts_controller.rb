@@ -19,6 +19,10 @@ class ScrumChartsController < IssuesController
     gather_sprint_data
     gather_release_data
     
+    respond_to do |format| 
+      format.html # show.html.erb 
+      format.pdf { render scrum_charts_path, :format=> :pdf } 
+    end
   end
   
   def update_chart

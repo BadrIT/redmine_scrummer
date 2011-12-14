@@ -12,6 +12,11 @@ class Release < ActiveRecord::Base
   
   has_many   :issues,
              :dependent => :nullify
+  
+  # By Mohamed Magdy
+  # Each release has many versions (sprints)
+  has_many :versions, :dependent => :nullify
+  
   protected
 
   def dates_overlapping

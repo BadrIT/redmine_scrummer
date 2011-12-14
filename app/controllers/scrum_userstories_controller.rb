@@ -200,13 +200,12 @@ class ScrumUserstoriesController < IssuesController
   	initialize_sort  	  	
   	div_name = get_inline_issue_div_id
   	call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
-  	
-  	@issue.release_id = params[:issue][:release_id] if params[:issue] && params[:issue][:release_id]
+    
+    @issue.release_id = params[:issue][:release_id] if params[:issue] && params[:issue][:release_id]
+
     if @query.valid? && @issue.save
     	load_issues_for_query 	
-      
       flash[:notice] = l(:notice_successful_create)
-   
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})   		
  			if @issues.length > 0
  			  set_issues_and_query_for_list unless params[:list_id] == 'issues_list'

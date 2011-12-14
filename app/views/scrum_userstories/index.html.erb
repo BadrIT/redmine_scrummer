@@ -27,9 +27,10 @@
 <% end %>
 </div>
 
-<!-- Rendering the scrummer menu --> 
-<%= render :partial => "scrum/scrummer_menu" %>
-<!-- End by Mohamed Magdy -->
+<div id="scrum_menu">
+	<!-- Rendering the scrummer menu --> 
+	<%= render :partial => "scrum/scrummer_menu" %>
+</div>
 
 <h2><%= @query.new_record? ? l(:label_issue_plural) : h(@query.name) %></h2>
 <% html_title(l(:label_stories_plural)) %>

@@ -22,7 +22,10 @@
     
 <% end %>
 
-<%= render :partial => "scrum/scrummer_menu" %>
+<div id="scrum_menu">
+	<!-- Rendering the scrummer menu --> 
+	<%= render :partial => "scrum/scrummer_menu" %>
+</div>
 
 <h2>Sprint Planning</h2>
 <!--Sprints stacked vertically-->
@@ -36,8 +39,8 @@
 
 <div id='right-side-panel' >
 	
-	<fieldset id="inline-add" class="collapsible collapsed">
-		<legend onclick="toggleFieldset(this);"><%= l(:label_version_new) %></legend>
+	<fieldset id="inline-version-add" class="collapsible collapsed">
+		<legend onclick="toggleFieldset(this);" id="version-control-label"><%= l(:label_version_new) %></legend>
 		<div id='inline_add_container' style="display:none">
 			<%= render :partial => 'inline_add_version'%>
 		</div>

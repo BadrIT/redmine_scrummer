@@ -20,10 +20,11 @@ function update_sprint_status() {
 		var buffer_size = parseInt($j(this).prev().attr('buffer-size'))
 		var status = Math.round((size / buffer_size) * 1000) / 10;
 		var statusHTML = "" + size + "/" + buffer_size;
-
-		$j('.status-bar', $j(this).prev()).progressbar({
-			value:  status
-		});
+		if (size > 0) {
+			$j('.status-bar', $j(this).prev()).progressbar({
+				value: status
+			});
+		}
 		$j('.size', $j(this).prev()).html(statusHTML);
 	});
 }

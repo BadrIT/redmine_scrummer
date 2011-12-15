@@ -317,24 +317,28 @@ module RedmineScrummer
         unless @blocked
           @blocked = true
           
-          # if the release ID of the issue is
-          # not set, set it to the sprint id
-          unless self.release
-            self.release = self.fixed_version.release
+          if self.fixed_version
+            # if the release ID of the issue is
+            # not set, set it to the sprint id
+            unless self.release && self.fixed_version
+              self.release = self.fixed_version.release
+            end
+            
+            # The case that the sprint ID is changed,
+            # change the issue release ID to match 
+            # the sprint release 
+            if self.fixed_version_id_changed?
+              self.release = self.fixed_version.release
+            end
           end
           
-          # The case that the sprint ID is changed,
-          # change the issue release ID to match 
-          # the sprint release 
-          if self.fixed_version_id_changed?
-            self.release = self.fixed_version.release
-          end
-          
-          # The case that the release ID is changed
-          # and the issue sprint is not included in the release
-          # set the release ID to nill
-          if self.release_id_changed? && !self.release.versions.include?(self.fixed_version)
-            self.fixed_version = nil
+          if self.release
+            # The case that the release ID is changed
+            # and the issue sprint is not included in the release
+            # set the release ID to nill
+            if self.release_id_changed? && !self.release.versions.include?(self.fixed_version)
+              self.fixed_version = nil
+            end
           end
           
           self.save

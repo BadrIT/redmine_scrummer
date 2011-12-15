@@ -3,6 +3,10 @@ class ScrumUserstoriesController < IssuesController
 
 	include ScrumUserstoriesHelper
 	
+  # By Mohamed Magdy
+  # This method sets the issue ID from it's project_issue_number
+  prepend_before_filter :parent_issue_setter, :only => [:inline_add]
+  
 	prepend_before_filter :check_for_default_scrum_issue_status_for_inline, :only => [:inline_add]
 	prepend_before_filter :check_for_default_scrum_issue_priority_for_inline, :only => [:inline_add]
 	
@@ -197,14 +201,14 @@ class ScrumUserstoriesController < IssuesController
 
   # inline add action
   def inline_add
-  	initialize_sort  	  	
+    initialize_sort  	  	
   	div_name = get_inline_issue_div_id
-  	call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
+    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
     
     @issue.release_id = params[:issue][:release_id] if params[:issue] && params[:issue][:release_id]
-
+    
     if @query.valid? && @issue.save
-    	load_issues_for_query 	
+      load_issues_for_query 	
       flash[:notice] = l(:notice_successful_create)
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})   		
  			if @issues.length > 0
@@ -347,6 +351,16 @@ class ScrumUserstoriesController < IssuesController
   # and mark the current page in the scrummer menu
   def current_page_setter
     @current_page = :user_stories
+  end
+  
+  # By Mohamed Magdy
+  # Finds the parent issue ID from its project_issue_number
+  def parent_issue_setter
+    parent = @project.issues.find(:first, 
+      :conditions => ['project_issue_number = ?', params[:issue][:parent_issue_id]])
+    if parent
+      params[:issue][:parent_issue_id] =  @parent_found.id
+    end
   end
   
   def scrum_issues_list(issues, &block)

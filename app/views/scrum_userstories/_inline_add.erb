@@ -42,12 +42,12 @@
 				</div>
 		  </div>
 			
-			<div class='scrum_issue_inline_control'>
-				<%= f.label :parent_issue_id, l("field_parent_issue"), :class => "scrum_issue_inline_label", :style=>"padding-left:5px;" %>
-        <div class='scrum_issue_inline_control'> 
-          <%= f.text_field :parent_issue_id, :size => 5 %>
-        </div>
-      </div>
+		  <div class='scrum_issue_inline_control'>
+		    <%= f.label :parent_issue_id, l("field_parent_issue"), :class => "scrum_issue_inline_label", :style=>"padding-left:5px;" %>
+		    <div class='scrum_issue_inline_control'> 
+			  <%= f.text_field :parent_issue_id, :size => 5 %>
+		    </div>
+      	  </div>
 		</div>
 	  <div class='scrum_issue_inline_field scrum_issue_row'>
 		<% if @issue.time_trackable? %>

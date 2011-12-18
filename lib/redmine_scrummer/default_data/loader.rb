@@ -374,30 +374,19 @@ module RedmineScrummer
           
           # Create points history entry for all the issues as a strat point
           Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
-            issue.build_points_history_entry.save
-          end    
-          
-          # Create points history entry for all the issues as a strat point
-          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
-            issue.build_points_history_entry.save
-          end    
-          
-          # Create points history entry for all the issues as a strat point
-          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
-            issue.build_points_history_entry.save
+            if issue.points_histories.blank?
+              issue.build_points_history_entry.save
+            end
           end
           
           # By Mohamed Magdy
           # Intializing the issues' project_issue_number
-          Issue.all.each do |issue|
-            issue.update_attribute(:project_issue_number, 0)
-          end
-          
-          
           # Setting the nil values of the old projects which 
           # are created before adding the project_issue_number
           Issue.all.each do |issue|
-            issue.update_attribute(:project_issue_number, issue.project.issues.maximum(:project_issue_number).to_i + 1)
+            unless issue.project_issue_number
+              issue.update_attribute(:project_issue_number, issue.project.issues.maximum(:project_issue_number).to_i + 1)
+            end
           end
           
           # End Mohamed Magdy

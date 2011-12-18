@@ -201,7 +201,6 @@ class ScrumUserstoriesController < IssuesController
 
   # inline add action
   def inline_add
-    p "AAAAAAAAAAAAAAAAAAAAAAAAA", params[:parent_issue_id]
     initialize_sort  	  	
   	div_name = get_inline_issue_div_id
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
@@ -246,7 +245,7 @@ class ScrumUserstoriesController < IssuesController
   # Edited by Mohamed Magdy
 	def load_issues_ancestors
 	  @issues.each do |issue|
-	    if !issue.direct_parent.nil? && !@issues.include?(Issue.find(issue.direct_parent.id)) 
+	    if !issue.direct_parent.nil? && !@issues.include?(issue.direct_parent) 
 	      @issues << issue.direct_parent
 	    end
 	  end
@@ -358,7 +357,7 @@ class ScrumUserstoriesController < IssuesController
   # Finds the parent issue ID from its project_issue_number
   def parent_issue_setter
     params[:issue][:parent_issue_id] = @project.issues.find(:first, 
-      :conditions => ['project_issue_number = ?', params[:issue][:parent_issue_id]]).id.to_s 
+      :conditions => ['project_issue_number = ?', params[:issue][:parent_issue_id]]).try(:id).to_s
   end
   
   def scrum_issues_list(issues, &block)

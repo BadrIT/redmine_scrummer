@@ -109,7 +109,7 @@
 	    										 :update => "issue-#{issue.id}-inline-child" %>
 	    	<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list) %>
 	    	<%= link_to_remote image_tag( scrummer_image_path('remove_issue.gif') ), 
-	    										 :url => (issue_path issue.id),
+	    										 :url => (issue_path issue.id, :todo => 'destroy'),
 	    										 :method => :delete,
 											     :confirm => "Are you sure?",
 	    										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ query.id }&project_id=#{@project.identifier}&list_id=#{list_id}')",

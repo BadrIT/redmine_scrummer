@@ -3,10 +3,6 @@ class ScrumUserstoriesController < IssuesController
 
 	include ScrumUserstoriesHelper
 	
-  # By Mohamed Magdy
-  # This method sets the issue ID from it's project_issue_number
-  prepend_before_filter :parent_issue_setter, :only => [:inline_add]
-  
 	prepend_before_filter :check_for_default_scrum_issue_status_for_inline, :only => [:inline_add]
 	prepend_before_filter :check_for_default_scrum_issue_priority_for_inline, :only => [:inline_add]
 	

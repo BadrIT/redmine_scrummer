@@ -74,7 +74,7 @@ function init_sortable() {
 			});
 			// dividing by two, because each issue take 2 rows (issue & placeholder)
 			var index = ui.item.index() / 2;
-
+			
 			// changing the fixed-version of the issue ussing AJAX request
 			new Ajax.Request(url, {
 				parameters: {
@@ -87,5 +87,4 @@ function init_sortable() {
 			});
 		}
 	});
-
 }

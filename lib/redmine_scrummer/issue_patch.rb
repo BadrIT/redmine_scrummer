@@ -8,8 +8,6 @@ module RedmineScrummer
         include InstanceMethods
         
         after_create :initiate_remaining_hours
-        # By Mohamed Magdy
-        after_create :project_issue_number_incrementer
         
         after_save :update_remaining_hours
         after_save :update_children_target_versions

@@ -75,16 +75,39 @@ function init_sortable() {
 			// dividing by two, because each issue take 2 rows (issue & placeholder)
 			var index = ui.item.index() / 2;
 			
+			ui.item			
 			// changing the fixed-version of the issue ussing AJAX request
 			new Ajax.Request(url, {
 				parameters: {
 					id: id +"-version",
 					index: index,
-					value:list_id
+					value:list_id,
+					first_index: $$("#first_index").first().value
 				},
+				onSuccess: function(){
+					$$("#position-" + id).first().value = index;
+					$$("#first_index").first().value = index;
+			    },
 				method: 'post',
 				asynchronous:true
 			});
 		}
 	});
+	
+	function checkSortParameter()
+	{
+	    var vars = [], hash;
+	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+	    for(var i = 0; i < hashes.length; i++)
+	    {
+	        hash = hashes[i].split('=');
+	        vars.push(hash[0]);
+	        vars[hash[0]] = hash[1];
+	    }
+	    if(vars[parameterName].indexOf("position%3Adesc")){
+			return "desc";
+		} else{
+			return "asc";
+		}
+	}
 }

@@ -327,20 +327,14 @@ table#issue-table td.subject div.subject-contents {
   body {
     background-color: #FFF;
   }
-
-  #container {
-    width: auto;
-    margin: 0;
-    padding: 0;
-    border: none;
+  
+  #chart-actions, #scrum_menu, #chart_pdf_download, #release-actions
+  #top-menu, #header, #footer {
+  	display: none;
   }
   
   #release_chart {
     page-break-before: always;
-  }
-  
-  #chart-actions,  #scrum_menu, #chart_pdf_download  {
-  	display: none;
   }
 }
 

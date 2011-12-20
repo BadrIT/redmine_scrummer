@@ -38,6 +38,10 @@ function correct_placeholders_positions(tbody) {
 		var id = $j(this)[0].id.replace('issue-','');
 		$j(this).after($j('#placeholder-'+id));
 	});
+
+	if($j('tr.issue', tbody).length > 0){
+		$j('#empty_issues').remove();
+	}
 }
 
 function init_sortable() {
@@ -75,7 +79,6 @@ function init_sortable() {
 			// dividing by two, because each issue take 2 rows (issue & placeholder)
 			var index = ui.item.index() / 2;
 			
-			ui.item			
 			// changing the fixed-version of the issue ussing AJAX request
 			new Ajax.Request(url, {
 				parameters: {
@@ -93,21 +96,4 @@ function init_sortable() {
 			});
 		}
 	});
-	
-	function checkSortParameter()
-	{
-	    var vars = [], hash;
-	    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-	    for(var i = 0; i < hashes.length; i++)
-	    {
-	        hash = hashes[i].split('=');
-	        vars.push(hash[0]);
-	        vars[hash[0]] = hash[1];
-	    }
-	    if(vars[parameterName].indexOf("position%3Adesc")){
-			return "desc";
-		} else{
-			return "asc";
-		}
-	}
 }

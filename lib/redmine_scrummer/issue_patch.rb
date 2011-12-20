@@ -31,11 +31,11 @@ module RedmineScrummer
 				         :class_name => 'IssueHistory',
 				         :table_name => 'issue_histories',
 				         :order      => 'date DESC',
-				         :dependent  => :destroy
+				         :dependent  => :delete_all
         
         has_many :points_histories,
                  :order     => 'date DESC',
-                 :dependent => :destroy
+                 :dependent => :delete_all
         
         acts_as_list :scope => :fixed_version
         # the same as .children but it is an association

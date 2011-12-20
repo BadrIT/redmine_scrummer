@@ -17,7 +17,7 @@ class ScrumChartsController < IssuesController
     @releases = @project.releases
     
     if params[:sprint_id]
-      @sprint = Version.find(:first, :conditions => ['id = ?', params[:sprint_id]])
+      @sprint = @project.versions.find(:first, :conditions => ['id = ?', params[:sprint_id]])
     end
     
     gather_sprint_data

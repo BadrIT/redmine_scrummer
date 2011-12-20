@@ -15,7 +15,7 @@
 </div>
 
 <div id="chart_pdf_download">
-	<p><%= link_to "Download PDF charts", scrum_charts_path(:project_id => @project.identifier, :format => "pdf", :sprint_id => @sprints.first.id, :chart => "sprint"), :id => "pdf_link" %></p>
+	<p><%= link_to image_tag(scrummer_image_path("pdf.png"), :size => "45x50"), scrum_charts_path(:project_id => @project.identifier, :format => "pdf", :sprint_id => @sprints.first.id, :chart => "sprint"), :id => "pdf_link" %></p>
 </div>
 
 <h2>Sprint Burnup Chart</h2>

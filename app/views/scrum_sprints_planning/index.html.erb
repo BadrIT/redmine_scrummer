@@ -33,7 +33,7 @@
 <fieldset id="inline-add" class="collapsible collapsed">
 	<legend onclick="toggleFieldset(this);"><%= l(:label_scrum_stories_inline_add) %></legend>
 	<div id='inline_add_container' style="display:none">
-		<%= render :partial => 'scrum_userstories/inline_add', :locals => {:hide_cancel => true} %>
+		<%= render :partial => 'scrum_userstories/inline_add', :locals => {:hide_cancel => true, :list_id => "backlog"} %>
 	</div>
 </fieldset>
 
@@ -66,7 +66,7 @@
 
 <!--listing nil-version issues-->
 <div id= 'backlog'>
-	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false, :list_id => 'backlog'} %>
+	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false} %>
 </div>
 
 <script>

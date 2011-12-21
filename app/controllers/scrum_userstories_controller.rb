@@ -209,7 +209,8 @@ class ScrumUserstoriesController < IssuesController
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})   		
  			if @issues.length > 0
  			  set_issues_and_query_for_list unless params[:list_id] == 'issues_list'
-	 			render :update do |page|
+        
+        render :update do |page|
 				  page.replace_html params[:list_id], :partial => "list", :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id]}
 				  page.replace_html "errors_for_#{div_name}", ""
 				end
@@ -410,18 +411,20 @@ class ScrumUserstoriesController < IssuesController
   def set_issues_and_query_for_list
     # set the query to sprint-planning query
     @query = Query.find_by_scrummer_caption("Sprint-Planning")
-
-    if params[:list_id] == 'backlog'
-      if params[:tracker_id]
-        # if filtering by only userstories, defects, ..etc
-        @issues = @project.issues.backlog.by_tracker(params[:tracker_id]).find(:all, :order => sort_clause)
-      else
-        @issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
+    
+    if params[:selected_sprint]
+      params[:list_id] = params[:selected_sprint]
+    else
+      if params[:list_id] == 'backlog'
+        if params[:tracker_id]
+          # if filtering by only userstories, defects, ..etc
+          @issues = @project.issues.backlog.by_tracker(params[:tracker_id]).find(:all, :order => sort_clause)
+        else
+          @issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
+        end
+      elsif params[:list_id].to_s =~ /sprint-(\d*)/
+        @issues = Version.find($1).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
       end
-      
-    elsif params[:list_id].to_s =~ /sprint-(\d*)/
-      @issues = Version.find($1).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
     end
   end
-  
 end

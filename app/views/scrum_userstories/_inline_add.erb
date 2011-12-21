@@ -9,12 +9,12 @@
 <% issue_id      			 = @issue ? @issue.id : nil %>
 <% hide_cancel 				||= false %>
 
-<% list_id = params[:list_id] || 'issues_list' %>
+<% list_id ||= 'issues_list' %>
 
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id= <%="errors_for_#{inline_issue_div_id}"%> ></div>
 	<% remote_form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add, :list_id => list_id},
-														 :html => {:id => inline_form_id} do |f|%>
+														 :html => {:id => inline_form_id}, :oncomplete => "$j('#selected_sprint').remove();" do |f|%>
 	
 	<%= hidden_field_tag :id, @issue.id unless @issue.new_record? %>
 	<%= f.hidden_field :project_id, :value => @project.id %>
@@ -30,7 +30,7 @@
 			                                     :with => "Form.serialize('#{inline_form_id}')" %>
       <%= f.select :assigned_to_id, @project.members.map{|m| [m.name, m.user.id]}, :include_blank => l("field_assigned_to") %>
       
-      <%= f.select :fixed_version_id, @issue.project.versions.map{|v| [v.name, v.id]}, :include_blank => l("field_fixed_version") %>
+      <%= f.select :fixed_version_id, @issue.project.versions.map{|v| [v.name, v.id]}, {:include_blank => l("field_fixed_version")}, :onchange => "insert_sprint_id()" %>
       
       <%= f.select :release_id, @project.releases.map{|r| [r.name, r.id]}, :include_blank => l("field_release_id") %>
 		</div>
@@ -88,3 +88,13 @@
 	
 	<%end%>
 </div>
+<script>
+	function insert_sprint_id(){
+		if($j("#issue_fixed_version_id option:selected").text() == "Target version"){
+			$j('#selected_sprint').remove();
+		} else {
+			var hiddenField = '<input type="hidden" id= "selected_sprint" name="selected_sprint" value="sprint-' + $j("#issue_fixed_version_id option:selected").val()+ '" />';
+			$j('#issue-form').append(hiddenField);
+		}
+	}
+</script>

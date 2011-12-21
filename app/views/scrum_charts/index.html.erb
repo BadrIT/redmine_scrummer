@@ -14,8 +14,11 @@
 	<%= render :partial => "scrum/scrummer_menu" %>
 </div>
 
+<% release_id = @releases.first.id if @releases.first %>
+<% sprint_id = @sprints.first.id if @sprints.first %>
+
 <div id="chart_pdf_download">
-	<p><%= link_to image_tag(scrummer_image_path("pdf.png"), :size => "45x50"), scrum_charts_path(:project_id => @project.identifier, :format => "pdf", :sprint_id => @sprints.first.id, :chart => "sprint"), :id => "pdf_link" %></p>
+	<p><%= link_to image_tag(scrummer_image_path("pdf.png"), :size => "45x50"), scrum_charts_path(:project_id => @project.identifier, :format => "pdf", :release_id => release_id, :sprint_id => sprint_id, :chart => "sprint"), :id => "pdf_link" %></p>
 </div>
 
 <h2>Sprint Burnup Chart</h2>
@@ -27,7 +30,7 @@
 		<li class='ui-widget-content'>
 			<%= link_to_remote sprint.name,
 			:url => {:action => 'update_chart', :project_id => @project, :chart => 'sprint',  :id => sprint.id},
-			:success => "alterPDFLink(#{sprint.id}); eval(data);",
+			:success => "alterPDFLink(#{sprint.id}, null); eval(data);",
 			:method => 'GET'%>
 		</li>
 		<%end%>
@@ -43,7 +46,7 @@
 		<li class='ui-widget-content'>
 			<%= link_to_remote release.name,
 			:url => {:action => 'update_chart', :project_id => @project, :chart => 'release', :id => release.id},
-			:success => "eval(data);",
+			:success => "alterPDFLink(null, #{release.id}); eval(data);",
 			:method => 'GET' %>
 		</li>
 		<%end%>
@@ -88,9 +91,18 @@ function draw(chart_id, d1, d2,l1,l2){
 		$j($j('li', this)[0]).addClass('ui-selected');
 	});
 	
-	function alterPDFLink(sprintID){
-		var url = "<%= scrum_charts_path(:project_id => @project.identifier, :format => 'pdf', :chart => 'sprint')%>";
+	function alterPDFLink(sprintID, releaseID){
+		//var url = "<%= scrum_charts_path(:project_id => @project.identifier, :format => 'pdf', :chart => 'sprint')%>";
+		var url = $j("#pdf_link").attr("href");
 		
-		$j("#pdf_link").attr("href", url + "&sprint_id=" + sprintID);
+		if(releaseID != null){
+			var sprint = url.split("sprint_id=")[1];
+			url = url.split("release_id=")[0] + "release_id=" + releaseID + "&sprint_id=" + sprint;
+		} else {
+			var release = url.split("release_id=")[1].split("&sprint_id=")[0];
+			url = url.split("release_id=")[0] + "release_id=" + release + "&sprint_id=" + sprintID;
+		}
+		
+		$j("#pdf_link").attr("href", url);
 	}
 </script>

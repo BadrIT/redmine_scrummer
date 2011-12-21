@@ -328,8 +328,7 @@ table#issue-table td.subject div.subject-contents {
     background-color: #FFF;
   }
   
-  #chart-actions, #scrum_menu, #chart_pdf_download, #release-actions
-  #top-menu, #header, #footer {
+  #chart-actions, #scrum_menu, #chart_pdf_download, #release-actions, #top-menu, #header, #footer {
   	display: none;
   }
   

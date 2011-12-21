@@ -39,9 +39,18 @@ function correct_placeholders_positions(tbody) {
 		$j(this).after($j('#placeholder-'+id));
 	});
 
-	if($j('tr.issue', tbody).length > 0){
-		$j('#empty_issues').remove();
+	if($j(tbody).find("tr").length > 0){
+		$j(tbody).find("#empty_issues").remove();
 	}
+	fix_sprints(); // adding the "No issues in this sprint" row for the empty sprints
+}
+
+function fix_sprints(){
+	$j(".ui-sortable").each(function() {
+		if($j(this).find("tr").length == 0){
+			$j(this).append("<tr id='empty_issues'> <td>No issues in this sprint</td> </tr>");
+		}
+	});	
 }
 
 function init_sortable() {
@@ -68,7 +77,7 @@ function init_sortable() {
 
 			// check for any placeholders positions errors
 			correct_placeholders_positions(this);
-
+			
 			// update row actions to fit the new table.
 			var list_id = $j(ui.item)[0].parentNode.parentNode.parentNode.parentNode.id;
 			$j('.issue-actions > a', $j('#'+id)).each( function() {

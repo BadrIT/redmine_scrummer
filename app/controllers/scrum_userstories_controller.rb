@@ -151,7 +151,7 @@ class ScrumUserstoriesController < IssuesController
 		@issue = Issue.find(issue_id) if issue_id
 		
 		respond_to do |format|
-			format.js { render :partial => 'inline_add' }
+			format.js { render :partial => 'inline_add',  :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint]}}
 		end
 	end
 
@@ -206,12 +206,14 @@ class ScrumUserstoriesController < IssuesController
     if @query.valid? && @issue.save
     	load_issues_for_query 	
       flash[:notice] = l(:notice_successful_create)
-      call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})   		
+      call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue}) 
+      
  			if @issues.length > 0
  			  set_issues_and_query_for_list unless params[:list_id] == 'issues_list'
         
         render :update do |page|
-				  page.replace_html params[:list_id], :partial => "list", :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id]}
+          page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
+          page.replace_html params[:list_id], :partial => "list", :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
 				  page.replace_html "errors_for_#{div_name}", ""
 				end
 			end
@@ -412,8 +414,18 @@ class ScrumUserstoriesController < IssuesController
     # set the query to sprint-planning query
     @query = Query.find_by_scrummer_caption("Sprint-Planning")
     
+    if params[:from_sprint]
+      unless params[:from_sprint].split("sprint-")[1]
+        @old_sprint_issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
+      else
+        @old_sprint_issues = @project.versions.find(params[:from_sprint].split("sprint-")[1]).fixed_issues.sprint_planing.find(:all, :order => sort_clause)        
+      end
+    end
     if params[:selected_sprint]
       params[:list_id] = params[:selected_sprint]
+      p "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", @issue.fixed_version
+      
+      @issues = @project.versions.find(@issue.fixed_version).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
     else
       if params[:list_id] == 'backlog'
         if params[:tracker_id]

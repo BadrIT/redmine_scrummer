@@ -62,7 +62,7 @@
 						  		<% end %>
 		    					
 								<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
-		    										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id},
+		    										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id, :from_sprint => "sprint-" + sprint.id.to_s},
 		    										 :with => "'issue_id=#{issue.id}&project_id=#{@project.id}'",
 		    										 :update => "issue-#{issue.id}-inline-child" %>
 						    	

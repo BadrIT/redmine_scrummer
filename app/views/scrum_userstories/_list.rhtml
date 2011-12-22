@@ -2,6 +2,8 @@
 <% issues ||= @issues %>
 
 <% list_id ||= 'issues_list' %>
+<% from_sprint ||= 'backlog' %>
+
 <% hierarchy = (list_id == 'issues_list') %>
 
 <script type='text/javascript'>
@@ -113,7 +115,7 @@
 		    										 :update => "issue-#{issue.id}-inline-child" %>
 		  		<%end%>
 		    	<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
-		    										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id},
+		    										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id, :from_sprint => from_sprint},
 		    										 :with => "'issue_id=#{issue.id}&project_id=#{@project.id}'",
 		    										 :update => "issue-#{issue.id}-inline-child" %>
 													 

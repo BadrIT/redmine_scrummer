@@ -1,8 +1,21 @@
 <h2 id='header-<%= release_as_list.id%>' class='release-header'><%= release_as_list.name %></h2>
-<div id='<%= release_as_list.id%>' class='list-parent' style='min-height:100px;'>
+<div id='<%= release_as_list.id%>' class='list-parent' style="<%= release_as_list.issues.count > 0 ? 'float: left;' : 'min-height:100px; min-width: 657px;'%>">
 	<ul class='bachlog-list'>
 		<% release_as_list.issues.all.to_a.each do |issue| %>
 			<%= issue_li_tag issue %>
 		<% end %>
 	</ul>
 </div>
+<script>
+	$j("#<%= release_as_list.id%>").bind("DOMSubtreeModified", function() {
+	   	var issuesCount = $j(this).children().children().length;
+		if(issuesCount > 0){
+			$j('#<%= release_as_list.id%>').css('min-height', '');
+			$j('#<%= release_as_list.id%>').css('float', 'left');
+		} else {
+			$j('#<%= release_as_list.id%>').css('min-height', '100px'); 
+			$j('#<%= release_as_list.id%>').css('min-width', '657px');
+			$j('#<%= release_as_list.id%>').css('float', '');
+		}
+	});
+</script>

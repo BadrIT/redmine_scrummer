@@ -6,6 +6,7 @@ More details can be found at in the doc directory or on the official website htt
 
 = Installation
 
+gem install wkhtmltopdf-binary
 rake db:create
 rake db:migrate
 rake redmine:load_default_data

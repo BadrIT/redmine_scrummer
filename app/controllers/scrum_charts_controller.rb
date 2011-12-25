@@ -16,7 +16,10 @@ class ScrumChartsController < IssuesController
     @sprints  = @project.versions
     @releases = @project.releases
     
+    #TODO REV: 
+    # @release = @project.releases.find(params[:release_id]) if params[:release_id]
     @release = @project.releases.find(:first, :conditions => ['id = ?', params[:release_id]]) if params[:release_id]
+    # @sprint = @project.versions.find(params[:sprint_id]) if params[:sprint_id]
     @sprint = @project.versions.find(:first, :conditions => ['id = ?', params[:sprint_id]]) if params[:sprint_id]
     
     gather_sprint_data

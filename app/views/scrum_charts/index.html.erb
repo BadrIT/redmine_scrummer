@@ -14,7 +14,10 @@
 	<%= render :partial => "scrum/scrummer_menu" %>
 </div>
 
+<%- #TODO REV: %>
+<% #release_id = @releases.first.try(:id) %>
 <% release_id = @releases.first.id if @releases.first %>
+<% #sprint_id = @sprints.first.try(:id) %>
 <% sprint_id = @sprints.first.id if @sprints.first %>
 
 <div id="chart_pdf_download">

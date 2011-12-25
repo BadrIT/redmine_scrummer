@@ -423,8 +423,6 @@ class ScrumUserstoriesController < IssuesController
     end
     if params[:selected_sprint]
       params[:list_id] = params[:selected_sprint]
-      p "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", @issue.fixed_version
-      
       @issues = @project.versions.find(@issue.fixed_version).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
     else
       if params[:list_id] == 'backlog'

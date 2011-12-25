@@ -1,8 +1,5 @@
 <h2 id='header-<%= release_as_list.id%>' class='release-header'><%= release_as_list.name %></h2>
-<%- #TODO REV: % %>
-<!-- <div id='<%= release_as_list.id%>' class='list-parent' style="<%= release_as_list.issues.any? ? 'float: left;' : 'min-height:100px; min-width: 657px;'%>"> -->
-<% # change 657px to be 100% OR make it a js variable   %>
-<div id='<%= release_as_list.id%>' class='list-parent' style="<%= release_as_list.issues.count > 0 ? 'float: left;' : 'min-height:100px; min-width: 657px;'%>">
+<div id='<%= release_as_list.id%>' class='list-parent' style="<%= release_as_list.issues.any? ? 'float: left;' : 'min-height:100px; min-width: 100%;'%>">
 	<ul class='bachlog-list'>
 		<% release_as_list.issues.all.to_a.each do |issue| %>
 			<%= issue_li_tag issue %>
@@ -17,7 +14,7 @@
 			$j('#<%= release_as_list.id%>').css('float', 'left');
 		} else {
 			$j('#<%= release_as_list.id%>').css('min-height', '100px'); 
-			$j('#<%= release_as_list.id%>').css('min-width', '657px');
+			$j('#<%= release_as_list.id%>').css('min-width', '100%');
 			$j('#<%= release_as_list.id%>').css('float', '');
 		}
 	});

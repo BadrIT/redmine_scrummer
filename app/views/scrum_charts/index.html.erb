@@ -14,11 +14,8 @@
 	<%= render :partial => "scrum/scrummer_menu" %>
 </div>
 
-<%- #TODO REV: %>
-<% #release_id = @releases.first.try(:id) %>
-<% release_id = @releases.first.id if @releases.first %>
-<% #sprint_id = @sprints.first.try(:id) %>
-<% sprint_id = @sprints.first.id if @sprints.first %>
+<% release_id = @releases.first.try(:id) %>
+<% sprint_id = @sprints.first.try(:id) %>
 
 <div id="chart_pdf_download">
 	<p><%= link_to image_tag(scrummer_image_path("pdf.png"), :size => "45x50"), scrum_charts_path(:project_id => @project.identifier, :format => "pdf", :release_id => release_id, :sprint_id => sprint_id, :chart => "sprint"), :id => "pdf_link" %></p>

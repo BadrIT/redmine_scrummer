@@ -18,7 +18,7 @@
 <% sprint_id = @sprints.first.try(:id) %>
 
 <div id="chart_pdf_download">
-	<p><%= link_to image_tag(scrummer_image_path("pdf.png"), :size => "45x50"), scrum_charts_path(:project_id => @project.identifier, :format => "pdf", :release_id => release_id, :sprint_id => sprint_id, :chart => "sprint"), :id => "pdf_link" %></p>
+	<p><%= link_to image_tag(scrummer_image_path("pdf.png"), :size => "45x50"), scrum_charts_path(:project_id => @project.identifier, :format => "pdf", :release_id => release_id, :sprint_id => sprint_id, :chart => "sprint"), :id => "pdf_link", :target => "_blank" %></p>
 </div>
 
 <h2>Sprint Burnup Chart</h2>

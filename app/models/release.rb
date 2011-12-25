@@ -4,7 +4,7 @@ class Release < ActiveRecord::Base
   RELEASE_STATUSES = %w(Planning Committed Closed)
   
   validate :dates_overlapping
-  validates_uniqueness_of :name
+  validates_uniqueness_of :name, :scope => :project_id
   validates_presence_of :name, :start_date, :release_date, :project_id
   validates_inclusion_of :state, :in => RELEASE_STATUSES
   

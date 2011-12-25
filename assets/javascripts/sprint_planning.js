@@ -82,7 +82,7 @@ function init_sortable() {
 			var list_id = $j(ui.item)[0].parentNode.parentNode.parentNode.parentNode.id;
 			$j('.issue-actions > a', $j('#'+id)).each( function() {
 				var request = $j(this).attr('onclick');
-				request = request.replace(/list_id=[^\']*/,"list_id="+list_id);
+				request = request.replace(/from_sprint=[^\']*&list_id=[^\']*/, "from_sprint=" + list_id +"&list_id=" + list_id);
 				$j(this).attr('onclick',request);
 			});
 			// dividing by two, because each issue take 2 rows (issue & placeholder)

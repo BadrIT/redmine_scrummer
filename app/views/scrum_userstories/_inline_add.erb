@@ -10,7 +10,7 @@
 <% hide_cancel 				||= false %>
 
 <% list_id ||= 'issues_list' %>
-<% from_sprint ||= 'backlog' %>
+<% from_sprint ||= 'issues_list' %>
 
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id= <%="errors_for_#{inline_issue_div_id}"%> ></div>
@@ -92,10 +92,10 @@
 	$j(".sprint_select").change(function(){
 		$j('#selected_sprint').remove();
 		var hiddenField;
-		if($j(this).find(":selected").text() == "Target version"){
+		if($j(this).find(":selected").text() == "Target version" && $j("#backlog").length > 0){
 			hiddenField = '<input type="hidden" id= "selected_sprint" name="selected_sprint" value="backlog" />';
 			$j(this).parent().parent().parent().append(hiddenField);
-		} else {
+		} else{
 			hiddenField = '<input type="hidden" id= "selected_sprint" name="selected_sprint" value="sprint-' + $j(this).val() + '" />';
 		}
 		$j(this).parent().parent().parent().append(hiddenField);

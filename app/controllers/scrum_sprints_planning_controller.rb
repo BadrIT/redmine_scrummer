@@ -34,6 +34,7 @@ class ScrumSprintsPlanningController < IssuesController
       initialize_sort
       @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
       @list_id = "backlog"
+      @from_sprint = "backlog" 
       render :update do |page|
         page.replace_html 'sprints', :partial => "sprint", :collection => @sprints
         page.replace_html 'version_errors', ""

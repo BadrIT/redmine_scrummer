@@ -415,26 +415,27 @@ class ScrumUserstoriesController < IssuesController
     @query = Query.find_by_scrummer_caption("Sprint-Planning")
     
     if params[:from_sprint]
-      unless params[:from_sprint].split("sprint-")[1]
+      sprint_id = params[:from_sprint].split("sprint-")[1]
+      unless sprint_id
         @old_sprint_issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
       else
-        @old_sprint_issues = @project.versions.find(params[:from_sprint].split("sprint-")[1]).fixed_issues.sprint_planing.find(:all, :order => sort_clause)        
+        @old_sprint_issues = @project.versions.find(sprint_id).fixed_issues.sprint_planing.find(:all, :order => sort_clause)        
       end
     end
+    
     if params[:selected_sprint]
       params[:list_id] = params[:selected_sprint]
-      @issues = @project.versions.find(@issue.fixed_version).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
-    else
-      if params[:list_id] == 'backlog'
-        if params[:tracker_id]
-          # if filtering by only userstories, defects, ..etc
-          @issues = @project.issues.backlog.by_tracker(params[:tracker_id]).find(:all, :order => sort_clause)
-        else
-          @issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
-        end
-      elsif params[:list_id].to_s =~ /sprint-(\d*)/
-        @issues = Version.find($1).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
+    end
+    
+    if params[:list_id] == 'backlog'
+      if params[:tracker_id]
+        # if filtering by only userstories, defects, ..etc
+        @issues = @project.issues.backlog.by_tracker(params[:tracker_id]).find(:all, :order => sort_clause)
+      else
+        @issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
       end
+    elsif params[:list_id].to_s =~ /sprint-(\d*)/
+        @issues = Version.find($1).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
     end
   end
 end

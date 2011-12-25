@@ -2,6 +2,9 @@ require 'redmine'
 require 'dispatcher'
 require "scrummer_constants"
 
+Rails.configuration.gem "pdfkit"
+Rails.configuration.middleware.use "PDFKit::Middleware", :print_media_type => true
+
 Dispatcher.to_prepare :redmine_scrummer do
 	require_dependency 'issue'
 	require_dependency 'query'

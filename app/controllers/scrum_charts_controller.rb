@@ -16,8 +16,8 @@ class ScrumChartsController < IssuesController
     @sprints  = @project.versions
     @releases = @project.releases
     
-    @release = @project.releases.find(params[:release_id]) if params[:release_id]
-    @sprint = @project.versions.find(params[:sprint_id]) if params[:sprint_id]
+    @release = @releases.find(params[:release_id]) if params[:release_id]
+    @sprint = @sprints.find(params[:sprint_id]) if params[:sprint_id]
     
     gather_sprint_data
     gather_release_data

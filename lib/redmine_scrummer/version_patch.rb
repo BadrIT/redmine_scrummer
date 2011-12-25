@@ -11,6 +11,8 @@ module RedmineScrummer
         belongs_to :release
         
         after_update :alter_issues_release
+        
+        after_create :add_to_side_bar
       end
       
     end
@@ -39,6 +41,19 @@ module RedmineScrummer
         self.fixed_issues.each do |issue|
           issue.update_attribute(:release_id, self.release_id)
         end
+      end
+      
+      def add_to_side_bar
+        filters = {"status_id"=> {:values => ["1"], :operator => "o"}}
+        columns =  [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2]      
+        
+        @query = Query.new(:name => self.name, :group_by =>"", :sort_criteria => [], :is_public => false, 
+          :column_names => columns, :filters => filters)
+          
+        @query.user = User.current
+        @query.project = @project
+          
+        @query.save
       end
     
     end

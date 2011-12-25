@@ -56,11 +56,12 @@ class ScrumReleasesPlanningController < IssuesController
           page.visual_effect :highlight, "header-#{@release.id}", :duration => 2
           page.call 'init_release_planning'
           page.call 'add_last_element_to_accordion'
+          page.replace_html "release_errors", ""
         end
       end
     else
       render :update do |page|
-        page.remove 'release_errors', error_messages_for('release')
+        page.replace_html 'release_errors', error_messages_for('release')
       end
     end
   end

@@ -141,10 +141,10 @@ class ScrumUserstoriesController < IssuesController
     else
       render :text => 'Errors in saving'
 		end
-		
-	rescue Exception => e
-		render :text => 'Exception Occured'
-	end
+    
+    rescue Exception => e
+      render :text => 'Exception Occured'
+    end
 	
 	def get_inline_issue_form
 		issue_id = params[:issue_id] if params[:issue_id]

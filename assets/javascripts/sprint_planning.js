@@ -48,7 +48,7 @@ function correct_placeholders_positions(tbody) {
 function fix_sprints(){
 	$j(".ui-sortable").each(function() {
 		if($j(this).find("tr").length == 0){
-			$j(this).append("<tr id='empty_issues'> <td>No issues in this sprint</td> </tr>");
+			$j(this).append("<td height='30' colspan='20' align='center'><b>No issues in this sprint</b></td>");
 		}
 	});	
 }

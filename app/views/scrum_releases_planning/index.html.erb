@@ -26,6 +26,14 @@
 		<%= render :partial => 'new'%>
 	</div>
 </fieldset>
+
+<fieldset id="inline-add" class="collapsible collapsed">
+	<legend onclick="toggleFieldset(this);"><%= l(:label_scrum_stories_inline_add) %></legend>
+	<div id='inline_add_container' style="display:none">
+		<%= render :partial => 'scrum_userstories/inline_add', :locals => {:hide_cancel => true, :list_id => "release-backlog", :from_sprint => "release-backlog"} %>
+	</div>
+</fieldset>
+
 <br/>
 <h2>Releases</h2>
 <table>
@@ -46,16 +54,15 @@
 
 <br/>
 <h2>Plan</h2>
-<div id='backlog' class='list-parent planning-issues' style='float:left'>
-	<ul class='bachlog-list'>
-		<% @issues.each do |issue| %>
-		  	<%= issue_li_tag issue%>
-		<% end %>
-	</ul>
+
+<div id='release-backlog' class='list-parent planning-issues' style='float:left'>
+	<%= render :partial => 'release_backlog' %>
 </div>
+
 <div id="accordion" class='planning-issues' style='float:right;'>
 	<%= render :partial => 'release_as_list', :collection => @planning_releases%>
 </div>
+
 <script>
 $j('li.issue').draggable({
 	appendTo: 'parent',

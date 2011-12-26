@@ -210,10 +210,11 @@ class ScrumUserstoriesController < IssuesController
       
  			if @issues.length > 0
  			  set_issues_and_query_for_list unless params[:list_id] == 'issues_list'
-        
+        @partial_list ||= "list"
+
         render :update do |page|
           page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
-          page.replace_html params[:list_id], :partial => "list", :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
+          page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
 				  page.replace_html "errors_for_#{div_name}", ""
 				end
 			end
@@ -436,6 +437,14 @@ class ScrumUserstoriesController < IssuesController
       end
     elsif params[:list_id].to_s =~ /sprint-(\d*)/
         @issues = Version.find($1).fixed_issues.sprint_planing.find(:all, :order => sort_clause)
+    elsif params[:list_id] == 'release-backlog'
+      if @issue.release
+        @issues = @issue.release.issues
+        params[:list_id] = params[:from_sprint] = @issue.release_id.to_s
+      else
+        @issues = @project.issues.sprint_planing.find(:all, :conditions => ['release_id is NULL'])
+      end
+      @partial_list = 'scrum_releases_planning/release_backlog'  
     end
   end
 end

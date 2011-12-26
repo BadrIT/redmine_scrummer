@@ -1,7 +1,8 @@
 <h2 id='header-<%= release_as_list.id %>' class='release-header'><%= release_as_list.name %></h2>
 <div id='<%= release_as_list.id%>' class='list-parent' style="<%= release_as_list.issues.any? ? 'float: left;' : 'min-height:100px; min-width: 100%;'%>">
 	<ul class='bachlog-list'>
-		<% release_as_list.issues.all.to_a.each do |issue| %>
+		<% issues = release_as_list.issues.find(:all, :order => sort_clause) %>
+		<% issues.each do |issue| %>
 			<%= issue_li_tag issue  unless issue.is_test? || issue.is_task? %>
 		<% end %>
 	</ul>

@@ -55,6 +55,10 @@
 <br/>
 <h2>Plan</h2>
 
+<br/>
+	<%= content_tag('a', sort_link("position", "Sort by priority", "asc"), nil) %>
+<br/>
+
 <div id='release-backlog' class='list-parent planning-issues' style='float:left'>
 	<%= render :partial => 'release_backlog' %>
 </div>

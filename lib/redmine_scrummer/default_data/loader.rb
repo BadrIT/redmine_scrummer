@@ -29,6 +29,14 @@ module RedmineScrummer
           sprint_query.sort_criteria = []
           sprint_query.save
           
+          release_query = Query.find_or_create_by_scrummer_caption(:scrummer_caption => "Release-Planning", 
+                                                   :sort_criteria    => [],
+                                                   :column_names     => nil,                                                   
+                                                   :name             => l(:label_scrum_release_planing),
+                                                   :is_public        => true)
+          release_query.sort_criteria = []
+          release_query.save
+          
           #############################################################################################
           # Create/Update Trackers
           #############################################################################################

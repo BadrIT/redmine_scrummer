@@ -15,9 +15,12 @@ class ScrumReleasesPlanningController < IssuesController
   # GET /releases
   # GET /releases.xml
   def index
+    @query = Query.find_by_scrummer_caption("Release-Planning")
+    initialize_sort
+    
     @release  = Release.new
     @releases = @project.releases
-    @issues   = @project.issues.sprint_planing.find(:all, :conditions => ['release_id is NULL'])
+    @issues   = @project.issues.sprint_planing.find(:all, :conditions => ['release_id is NULL'], :order => sort_clause)
     @planning_releases = @project.releases.find_all_by_state('Planning') 
     
     respond_to do |format|

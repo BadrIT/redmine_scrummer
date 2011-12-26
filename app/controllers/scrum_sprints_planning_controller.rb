@@ -66,7 +66,6 @@ class ScrumSprintsPlanningController < IssuesController
   end
   
   def set_default_values
-    @issue.description = @issue.is_user_story? ? l(:default_description):""
     @issue.project_id = @project
     if @issue.fixed_version.nil? && !@query.filters['fixed_version_id'].nil? && 
       @query.filters['fixed_version_id'][:operator] == '='&& 

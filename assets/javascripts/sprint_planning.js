@@ -13,8 +13,8 @@ function update_sprint_status() {
 		var size = 0;
 		var cf_1 = $j('.autoscroll > table > tbody > tr.issue .cf_1', this);
 		$j('span , div',cf_1).each( function() {
-			if (!isNaN(parseInt($j(this).html()))){
-				size += parseInt($j(this).html());
+			if (!isNaN(parseFloat($j(this).html()))){
+				size += parseFloat($j(this).html());
 			}
 		});
 		var buffer_size = parseInt($j(this).prev().attr('buffer-size'))
@@ -53,6 +53,10 @@ function fix_sprints(){
 	});	
 }
 
+function sprint_size_fixer(){
+	update_sprint_status();
+}
+
 function init_sortable() {
 	$j('tbody').sortable({
 		revert: true,
@@ -80,6 +84,9 @@ function init_sortable() {
 			
 			// update row actions to fit the new table.
 			var list_id = $j(ui.item)[0].parentNode.parentNode.parentNode.parentNode.id;
+			
+			sprint_size_fixer();
+			
 			$j('.issue-actions > a', $j('#'+id)).each( function() {
 				var request = $j(this).attr('onclick');
 				request = request.replace(/from_sprint=[^\']*&list_id=[^\']*/, "from_sprint=" + list_id +"&list_id=" + list_id);

@@ -54,8 +54,8 @@ class ScrumUserstoriesController < IssuesController
 			issue_id = matched_groups[1]
 			
 			custom_field_id = matched_groups[2]			
-			
-			@issue = Issue.find(issue_id)
+
+      @issue = Issue.find(issue_id)
 			@issue.custom_field_values = {custom_field_id => new_value}
 	  
 	    if @issue.save
@@ -188,10 +188,10 @@ class ScrumUserstoriesController < IssuesController
   	render :partial => 'list', :locals=>{:list_id => params[:list_id]}
   end
 
-	def refresh_inline_add_form
-	  
-	  respond_to do |format|
-			format.js {render :partial => 'inline_add'}
+  def refresh_inline_add_form
+    
+    respond_to do |format|
+			format.js {render :partial => 'inline_add', :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint]}}
 		end
 	end
 

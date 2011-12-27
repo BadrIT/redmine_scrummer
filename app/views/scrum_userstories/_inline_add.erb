@@ -26,11 +26,13 @@
 			
 			
 			<%= select_tag "issue[tracker_id]", options_from_collection_for_select(@project.trackers, 'id', 'name', @issue.tracker.try(:id)), :id => tracker_field_id %>
-
+			<%= observe_field tracker_field_id, :url => {:controller => :scrum_userstories, :action => :refresh_inline_add_form, :project_id => @project, :id => @issue, :list_id => list_id, :from_sprint => from_sprint}, 
+											   :update => inline_issue_div_id,
+											   :with => "Form.serialize('#{inline_form_id}')" %>
       <%= f.select :assigned_to_id, @project.members.map{|m| [m.name, m.user.id]}, :include_blank => l("field_assigned_to") %>
       
       <%= f.select :fixed_version_id, @issue.project.versions.map{|v| [v.name, v.id]}, {:include_blank => l("field_fixed_version")}, :class => "sprint_select" %>
-      
+	  
       <%= f.select :release_id, @project.releases.map{|r| [r.name, r.id]}, :include_blank => l("field_release_id") %>
 		</div>
 		<div class='scrum_issue_inline_field scrum_issue_row'>
@@ -97,5 +99,11 @@
 			hiddenField = '<input type="hidden" id= "selected_sprint" name="selected_sprint" value="sprint-' + $j(this).val() + '" />';
 		}
 		$j(this).parent().parent().parent().append(hiddenField);
+	});
+	
+	$j(document).ready(function () {
+		if($j("#backlog").length > 0){
+			$j("#<%= inline_form_id %>").append('<input type="hidden" id= "selected_sprint" name="selected_sprint" value="backlog" />')
+		}
 	});
 </script>

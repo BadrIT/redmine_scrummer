@@ -13,6 +13,8 @@ module RedmineScrummer
         after_save :update_children_target_versions
         after_save :update_children_release
         
+        before_save :adjust_todo_custom_field
+          
         after_save :update_parent_status
         after_destroy :update_parent_status
         
@@ -249,6 +251,12 @@ module RedmineScrummer
               child.save
             end
           end
+        end
+      end
+      
+      def adjust_todo_custom_field
+        if self.estimated_hours_changed? && self.status_defined?
+          self.custom_field_values = {"2" => self.estimated_hours}
         end
       end
       

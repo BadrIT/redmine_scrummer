@@ -10,8 +10,8 @@ module RedmineScrummer
         after_create :initiate_remaining_hours
         
         after_save :update_remaining_hours
-        after_save :update_children_target_versions
-        after_save :update_children_release
+        before_save :update_children_target_versions
+        before_save :update_children_release
         
         before_save :adjust_todo_custom_field
           
@@ -326,7 +326,7 @@ module RedmineScrummer
           if self.fixed_version
             # if the release ID of the issue is
             # not set, set it to the sprint id
-            unless self.release && self.fixed_version
+            unless self.release
               self.release = self.fixed_version.release
             end
             

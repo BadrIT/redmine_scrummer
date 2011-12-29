@@ -191,7 +191,7 @@ class ScrumUserstoriesController < IssuesController
   def refresh_inline_add_form
     
     respond_to do |format|
-			format.js {render :partial => 'inline_add', :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint]}}
+			format.js {render :partial => 'inline_add', :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint], :hide_cancel => params[:hide_cancel]}}
 		end
 	end
 

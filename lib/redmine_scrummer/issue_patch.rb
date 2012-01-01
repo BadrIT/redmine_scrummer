@@ -256,7 +256,7 @@ module RedmineScrummer
       
       def adjust_todo_custom_field
         if self.estimated_hours_changed? && self.status_defined?
-          self.custom_field_values = {"2" => self.estimated_hours}
+          self.remaining_hours =  self.estimated_hours
         end
       end
       

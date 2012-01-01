@@ -347,7 +347,8 @@ module RedmineScrummer
                                      :task      => [:remaining_hours],
                                      :defect    => [:remaining_hours],
                                      :refactor  => [:remaining_hours],
-                                     :spike     => [:remaining_hours]}
+                                     :spike     => [:remaining_hours],
+                                     :defectsuite => [:story_size, :business_value]}
           
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|

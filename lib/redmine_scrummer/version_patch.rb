@@ -45,9 +45,10 @@ module RedmineScrummer
       
       def add_to_side_bar
         filters = {:fixed_version_id => {:operator => "=", :values=>[self.id.to_s]}}
+        columns =  [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2] 
         
-        @query = Query.new(:name => self.name, :group_by =>"", :sort_criteria => [], :is_public => true, 
-          :column_names => nil, :filters => filters)
+        @query = Query.new(:name => self.name, :group_by =>"", :sort_criteria => ['id', 'asc'], :is_public => true, 
+          :column_names => columns, :filters => filters)
         
         @query.user = User.current
         @query.project = @project

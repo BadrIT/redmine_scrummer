@@ -75,3 +75,9 @@ Redmine::Plugin.register :redmine_scrummer do
 #  menu :project_menu, :scrum_sprint_planing, { :controller => 'scrum_sprints_planning', :action => 'index' }, :after => :activity, :param => :project_id 
 #  menu :project_menu, :scrum_release_planing, { :controller => 'scrum_releases_planning', :action => 'index' }, :after => :scrum_charts, :param => :project_id 
 end
+
+Float.class_eval do
+  def empty?
+  end
+end
+

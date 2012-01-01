@@ -84,9 +84,11 @@ function draw(chart_id, d1, d2,l1,l2){
 	var d1 = <%= @lower_sprint.inspect%>;
 	var d2 = <%= @upper_sprint.inspect%>;
 	draw("#sprints-chart", d1, d2, sprint_chart_l1, sprint_chart_l2);
-	var d1 = <%= @lower_release.inspect%>;
-	var d2 = <%= @upper_release.inspect%>;
+	
+	d1 = <%= @lower_release.inspect%>;
+	d2 = <%= @upper_release.inspect%>;
 	draw("#release-chart", d1, d2, release_chart_l1, release_chart_l2);
+	
 	$j('.selectable').selectable().each( function() {
 		$j($j('li', this)[0]).addClass('ui-selected');
 	});

@@ -204,11 +204,18 @@ module ScrumUserstoriesHelper
   
   def issue_li_tag(issue)
     unit = issue.has_custom_field?(:story_size) ? "pt":"hr"
+    
+    if issue.has_custom_field?(:story_size)
+      value = issue.story_size
+    else 
+      value = issue.remaining_hours
+    end
+    
     "<li class='issue' id='#{issue.id}'> 
       <a target='_blank' class='issue #{issue.tracker.short_name.downcase}-issue' href='issues/#{issue.id}'> 
       <h2>##{issue.id}: #{issue.tracker.short_name}</h2>
-      <p>#{truncate(issue.subject, 40, "...")}</p> 
-      <p><span style='color: #444; float: right;'>#{issue.story_size} #{unit}</span></p> 
+      <p>#{truncate(issue.subject, 30)}</p> 
+      <p><span style='color: #444; float: right;'>#{pluralize(value, unit)}</span></p> 
       </a> 
      </li>"
   end

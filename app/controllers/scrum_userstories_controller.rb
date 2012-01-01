@@ -212,7 +212,7 @@ class ScrumUserstoriesController < IssuesController
  			if @issues.length > 0
  			  set_issues_and_query_for_list unless params[:list_id] == 'issues_list'
         @partial_list ||= "list"
-
+        
         render :update do |page|
           page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
           page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}

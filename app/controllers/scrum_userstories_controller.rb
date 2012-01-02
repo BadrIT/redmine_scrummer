@@ -47,7 +47,7 @@ class ScrumUserstoriesController < IssuesController
 
 	def update_single_field
 		new_value = params[:value]
-
+    
     # custom field for todo
 		if params[:id] =~ /custom/
 			matched_groups = params[:id].match(/issue-(\d+)-custom-field-cf_(\d+)/)

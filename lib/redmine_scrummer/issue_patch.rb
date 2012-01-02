@@ -256,7 +256,8 @@ module RedmineScrummer
       
       def adjust_todo_custom_field
         if self.estimated_hours_changed? && self.status_defined?
-          self.remaining_hours =  self.estimated_hours
+          remaining_hours_cf_id = IssueCustomField.find_by_scrummer_caption(:remaining_hours).id
+          self.custom_field_values = {remaining_hours_cf_id => self.estimated_hours}
         end
       end
       

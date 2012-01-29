@@ -29,16 +29,16 @@ class ScrumChartsController < IssuesController
       gather_sprint_data
       
       render :update do |page|
-        page.replace_html 'sprints-chart', ''
-        page << "draw('#sprints-chart',#{@lower_sprint.inspect}, #{@upper_sprint.inspect}, sprint_chart_l1, sprint_chart_l2);"
+        page.replace_html 'sprint_container', ''
+        page << "set_data('sprint_container', #{@lower_sprint.inspect}, #{@upper_sprint.inspect}, 'Sprint Burnup Chart', 'Time (hrs)', 'Actual', 'Actual + Todo');"
       end
     else
       get_release
       gather_release_data
       
       render :update do |page|
-        page.replace_html 'release-chart', ''
-        page <<  "draw('#release-chart',#{@lower_release.inspect}, #{@upper_release.inspect}, release_chart_l1, release_chart_l2);"
+        page.replace_html 'release_container', ''
+        page << "set_data('release_container', #{@lower_release.inspect}, #{@upper_release.inspect}, 'Release Burnup Chart', 'Points (pts)', 'Accepted Points', 'Total Points');"
       end
     end
   end
@@ -62,10 +62,9 @@ class ScrumChartsController < IssuesController
   end
   
   def gather_sprint_data
+    p "sssssssssssssssssss", @sprint.id
     if @sprint.nil?
-      @lower_sprint = []
-      @upper_sprint = []
-      return
+      @sprint = @sprints.last
     end
     @start_date = @sprint.start_date_custom_value
     @end_date   = @sprint.effective_date
@@ -95,7 +94,6 @@ class ScrumChartsController < IssuesController
     start_date = @start_date
     end_date   = @end_date
     issues     = @issues
-    
     return unless start_date && end_date
     
     day = 0

@@ -322,22 +322,6 @@ table#issue-table td.subject div.subject-contents {
 }
 
 /*-------- By Mohamed Magdy --------*/
-/*------- For PDF Printing --------*/
-@media print {
-  body {
-    background-color: #FFF;
-  }
-  
-  #chart-actions, #scrum_menu, #chart_pdf_download, #release-actions, #top-menu, #header, #footer {
-  	display: none;
-  }
-  
-  #release_chart {
-    page-break-before: always;
-  }
-}
-
-/*-------- By Mohamed Magdy --------*/
 /*-------- Animated Scrummer Menu---------*/
 ol#scrummer_menu {
     height: 2em;

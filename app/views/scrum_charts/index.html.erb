@@ -7,6 +7,7 @@
 <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
 <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
 <%= javascript_include_tag 'jquery.flot.js', :plugin => 'redmine_scrummer' %>
+<%= javascript_include_tag 'highcharts', 'exporting', 'grid', :plugin => 'redmine_scrummer'  %>
 <% end %>
 
 <div id="scrum_menu">
@@ -16,15 +17,9 @@
 
 <% release_id = @releases.first.try(:id) %>
 <% sprint_id = @sprints.first.try(:id) %>
-
-<div id="chart_pdf_download">
-	<p><%= link_to image_tag(scrummer_image_path("pdf.png"), :size => "45x50"), scrum_charts_path(:project_id => @project.identifier, :format => "pdf", :release_id => release_id, :sprint_id => sprint_id, :chart => "sprint"), :id => "pdf_link", :target => "_blank" %></p>
-</div>
-
-<h2>Sprint Burnup Chart</h2>
-<div id="sprints-chart" style="width:1000px;height:400px;float:left">
-</div>
-<div id="chart-actions" style='float:left'>
+<br/>
+<div id="sprint_container" style="width:80%;height:30%;float:left;"></div>
+<div id="chart-actions" style='float:right;'>
 	<ul class='selectable'>
 		<% @sprints.each do |sprint|%>
 		<li class='ui-widget-content'>
@@ -37,10 +32,9 @@
 	</ul>
 </div>
 
-<h2 id="release_chart" style='clear:both;'>Release Burnup Chart</h2>
-<div id="release-chart" style="width:1000px;height:400px;float:left">
-</div>
-<div id="release-actions" style='float:left'>
+
+<div id="release_container" style="width:80%;height:30%;float:left;margin-top: 20px;"></div>
+<div id="release-actions" style='float:right;margin-top: 20px;'>
 	<ul style='float:left;' class='selectable'>
 		<% @releases.each do |release|%>
 		<li class='ui-widget-content'>
@@ -53,58 +47,87 @@
 	</ul>
 </div>
 <script type="text/javascript">
-var release_chart_l1 = 'Total points'
-var release_chart_l2 = 'Accepted points'
-var sprint_chart_l1  = 'Actual + TODO'
-var sprint_chart_l2  =  'Actual'
-
-function draw(chart_id, d1, d2,l1,l2){
-	var options = {
-				series: {
-					lines: { show: true },
-					points: { show: true }
-					},
-				xaxis: {
-					mode: "time",
-					timeformat: "%y/%m/%d"
-					}
-				};
-	$j.plot($j(chart_id),[
-		{
-		data: d2,
-		label: l1,
-		}
-		,
-		{
-		data: d1,
-		label: l2
-		}
-		], options);
-	}
-	var d1 = <%= @lower_sprint.inspect%>;
-	var d2 = <%= @upper_sprint.inspect%>;
-	draw("#sprints-chart", d1, d2, sprint_chart_l1, sprint_chart_l2);
-	
-	d1 = <%= @lower_release.inspect%>;
-	d2 = <%= @upper_release.inspect%>;
-	draw("#release-chart", d1, d2, release_chart_l1, release_chart_l2);
+	$j(document).ready(function() {
+		var chart;
+		d1 = <%= @lower_sprint.inspect%>;
+		d2 = <%= @lower_sprint.inspect%>;
+		set_data("sprint_container", d1, d2, "Sprint Burnup Chart", "Time (hrs)", "Actual", "Actual + Todo");
+		
+		d1 = <%= @lower_release.inspect%>;
+		d2 = <%= @lower_release.inspect%>;
+		set_data("release_container", d1, d2, "Release Burnup Chart", "Points (pt)", "Accepted Points", "Total Points");
+	});
 	
 	$j('.selectable').selectable().each( function() {
 		$j($j('li', this)[0]).addClass('ui-selected');
 	});
 	
-	function alterPDFLink(sprintID, releaseID){
-		//var url = "<%= scrum_charts_path(:project_id => @project.identifier, :format => 'pdf', :chart => 'sprint')%>";
-		var url = $j("#pdf_link").attr("href");
-		
-		if(releaseID != null){
-			var sprint = url.split("sprint_id=")[1];
-			url = url.split("release_id=")[0] + "release_id=" + releaseID + "&sprint_id=" + sprint;
-		} else {
-			var release = url.split("release_id=")[1].split("&sprint_id=")[0];
-			url = url.split("release_id=")[0] + "release_id=" + release + "&sprint_id=" + sprintID;
+	function set_data(div_id, d1, d2, chart_title, y_label, legend_1, legend_2) {
+		options = {
+			chart : {
+				renderTo : div_id,
+				defaultSeriesType : 'line'
+			},
+			title : {
+				text : chart_title,
+				x : -20 //center
+			},
+			xAxis : {
+				title : {
+					text : 'Date'
+				},
+				type: 'datetime',
+				dateTimeLabelFormats: {
+					second: '%e-%b-%Y',
+					minute: '%e-%b-%Y',
+					hour: '%e-%b-%Y',
+            		day: '%e-%b-%Y',
+            		week: '%b-%Y',
+					month: '%b-%Y',
+					year: '%Y'
+        		},
+        	 	labels: {
+            		rotation: -45,
+            		align: 'right',
+		            style: {
+		                font: 'normal 13px Verdana, sans-serif'
+		            }
+         	}
+			},
+			yAxis : {
+				title : {
+					text : y_label
+				},
+				plotLines: [{
+		            value: 0,
+		            width: 1,
+		            color: '#808080'
+		         }],
+				min: 0,
+        		startOnTick: false
+			},
+			tooltip : {
+				formatter : function() {
+					point_date = Highcharts.dateFormat('%e-%b-%Y', this.x);
+					return '<b>' + this.series.name + '</b><br/>' + point_date + ': ' + this.y + 'pt';
+				}
+			},
+			legend : {
+				layout : 'vertical',
+				align : 'right',
+				verticalAlign : 'top',
+				x : -10,
+				y : 100,
+				borderWidth : 0
+			},
+			series : [{
+				name : legend_1,
+				data : d1
+			}, {
+				name : legend_2,
+				data : d2
+			}]
 		}
-		
-		$j("#pdf_link").attr("href", url);
+		chart = new Highcharts.Chart(options);
 	}
 </script>

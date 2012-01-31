@@ -62,7 +62,6 @@ class ScrumChartsController < IssuesController
   end
   
   def gather_sprint_data
-    p "sssssssssssssssssss", @sprint.id
     if @sprint.nil?
       @sprint = @sprints.last
     end
@@ -71,7 +70,7 @@ class ScrumChartsController < IssuesController
     @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]  
     
     gather_information(@lower_sprint = [], @upper_sprint = []) do |issue, date|
-      issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
+      issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date], :order => "date DESC")
     end
   end
 
@@ -86,7 +85,7 @@ class ScrumChartsController < IssuesController
     @issues     = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]
     
     gather_information(@lower_release = [], @upper_release = []) do |issue, date|
-      issue.points_histories.find(:first, :conditions => ['date <= ?', date])
+      issue.points_histories.find(:first, :conditions => ['date <= ?', date], :order => "date DESC")
     end
   end
   

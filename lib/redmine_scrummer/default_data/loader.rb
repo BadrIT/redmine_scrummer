@@ -341,14 +341,14 @@ module RedmineScrummer
                                     :field_format     => 'float',
                                     :default_value    => "0")
           
-          trackers_custom_fields = { :userstory => [:story_size, :business_value],
-                                     :epic      => [:story_size, :business_value],
-                                     :theme     => [:story_size, :business_value],
+          trackers_custom_fields = { :userstory => [:story_size, :business_value, :remaining_hours],
+                                     :epic      => [:story_size, :business_value, :remaining_hours],
+                                     :theme     => [:story_size, :business_value, :remaining_hours],
                                      :task      => [:remaining_hours],
                                      :defect    => [:remaining_hours],
                                      :refactor  => [:remaining_hours],
                                      :spike     => [:remaining_hours],
-                                     :defectsuite => [:story_size, :business_value]}
+                                     :defectsuite => [:story_size, :business_value, :remaining_hours]}
           
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|

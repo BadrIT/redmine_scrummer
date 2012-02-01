@@ -269,9 +269,6 @@ module RedmineScrummer
       public
       
       def check_history_entries
-        # Time-Untrackable issues have no history entry
-        return unless self.time_trackable?
-        
         # get the newest history entry
         history_entry = self.history.first
         

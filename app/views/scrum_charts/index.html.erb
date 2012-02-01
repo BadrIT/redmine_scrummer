@@ -46,6 +46,7 @@
 		<%end%>
 	</ul>
 </div>
+
 <script type="text/javascript">
 	$j(document).ready(function() {
 		actual = <%= @axes[:actual_hrs].inspect %>;
@@ -128,7 +129,10 @@
 				data : d2
 			}]
 		}
-		return new Highcharts.Chart(options);
+		// removing the chart if it has no data
+		if(d1.length > 0 || d2.length > 0){
+			return new Highcharts.Chart(options);
+		}
 	}
 	
 	function add_series(name, data, chart){

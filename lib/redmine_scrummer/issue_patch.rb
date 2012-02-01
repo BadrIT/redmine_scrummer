@@ -283,7 +283,7 @@ module RedmineScrummer
           history_entry.update_attributes :actual => self.spent_hours,
                                           :remaining => self.remaining_hours
           # create a new one just in case of new changes occurred
-        elsif history_entry.actual != self.spent_hours && history_entry.remaining != self.remaining_hours
+        elsif history_entry.actual != self.spent_hours || history_entry.remaining != self.remaining_hours
           self.build_history_entry.save
         end
       end
@@ -304,10 +304,10 @@ module RedmineScrummer
         # there is no history entries for this issue
         if points_entry.nil?
           self.build_points_history_entry.save
-          # it was today's entry just update it
+        # it was today's entry just update it
         elsif points_entry.date == Time.now.to_date
           points_entry.update_attributes :points => self.story_size
-          # create a new one just in case of new changes occurred
+        # create a new one just in case of new changes occurred
         elsif points_entry.points != self.story_size
           self.build_points_history_entry.save
         end

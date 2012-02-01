@@ -19,7 +19,7 @@ class ScrumChartsController < IssuesController
     @release = @releases.find(params[:release_id]) if params[:release_id]
     @sprint = @sprints.find(params[:sprint_id]) if params[:sprint_id]
     
-    @axes = {}
+    @axes = {:accepted_pts => [], :total_pts => [], :actual_hrs => [], :actual_and_remaining_hrs => [], :remaining_hrs => []}
     
     gather_sprint_data
     gather_release_data
@@ -66,9 +66,7 @@ class ScrumChartsController < IssuesController
   end
   
   def gather_sprint_data
-    if @sprint.nil?
-      @sprint = @sprints.last
-    end
+    @sprint = @sprints.last if @sprint.nil?
     @start_date = @sprint.start_date_custom_value
     @end_date   = @sprint.effective_date
     @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]  
@@ -89,10 +87,7 @@ class ScrumChartsController < IssuesController
   end
 
   def gather_release_data
-    if @release.nil?
-      @axes = {:accepted_pts => [], :total_pts => []}
-      return
-    end
+    return if @release.nil?
     @start_date = @release.start_date
     @end_date   = @release.release_date
     @issues     = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]

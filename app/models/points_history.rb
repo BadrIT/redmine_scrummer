@@ -8,15 +8,6 @@ class PointsHistory < ActiveRecord::Base
   before_save :check_nil_attributes
              
   
-  def lower_point
-    self.points
-  end
-  
-  def upper_point
-    accepted_id =  IssueStatus.find_by_scrummer_caption(:accepted).id
-    self.issue.status_id == accepted_id ? self.points : 0.0
-  end 
-  
   def nil_attributes?
     self.points.nil?
   end

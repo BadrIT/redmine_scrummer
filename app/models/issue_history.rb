@@ -4,19 +4,8 @@ class IssueHistory < ActiveRecord::Base
   belongs_to :issue
   before_save :check_nil_attributes
   
-  
   def nil_attributes?
     self.actual.nil? || self.remaining.nil?
-  end
-  
-  # actual
-  def lower_point
-    self.actual
-  end
-  
-  # remaining + actual 
-  def upper_point
-    self.remaining + self.actual
   end
   
   protected

@@ -19,18 +19,22 @@ class ScrumChartsController < IssuesController
     @release = @releases.find(params[:release_id]) if params[:release_id]
     @sprint = @sprints.find(params[:sprint_id]) if params[:sprint_id]
     
+    @axes = {}
+    
     gather_sprint_data
     gather_release_data
   end
   
   def update_chart
+    @axes = {}
     if params[:chart] == 'sprint'
       get_sprint
       gather_sprint_data
       
       render :update do |page|
         page.replace_html 'sprint_container', ''
-        page << "set_data('sprint_container', #{@lower_sprint.inspect}, #{@upper_sprint.inspect}, 'Sprint Burnup Chart', 'Time (hrs)', 'Actual', 'Actual + Todo');"
+        page << "sprint_chart = set_data('sprint_container', #{@axes[:actual_hrs].inspect}, #{@axes[:actual_and_remaining_hrs].inspect}, 'Sprint Burn Chart', 'Time (hrs)', 'Actual', 'Actual + Remaining', 'hrs');"
+        page << "add_series('Remaining', #{@axes[:remaining_hrs].inspect}, sprint_chart)"
       end
     else
       get_release
@@ -38,7 +42,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'release_container', ''
-        page << "set_data('release_container', #{@lower_release.inspect}, #{@upper_release.inspect}, 'Release Burnup Chart', 'Points (pts)', 'Accepted Points', 'Total Points');"
+        page << "set_data('release_container', #{@axes[:accepted_pts].inspect}, #{@axes[:total_pts].inspect}, 'Release Burnup Chart', 'Points (pts)', 'Accepted Points', 'Total Points', 'pts');"
       end
     end
   end
@@ -69,49 +73,71 @@ class ScrumChartsController < IssuesController
     @end_date   = @sprint.effective_date
     @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]  
     
-    gather_information(@lower_sprint = [], @upper_sprint = []) do |issue, date|
-      issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date], :order => "date DESC")
+    curves = [:actual_hrs, :actual_and_remaining_hrs, :remaining_hrs]
+    curves.each_with_index do |curve, i|
+        @axes[curve] = []
+    end
+    
+    gather_information(@axes, curves) do |issue, date|
+      # history will selects the issues in date descending order
+      # steps: sort descendingly and get the first history.
+      # if an issue has no history in this day, then the history will be the nearest history of this issue
+      # before the given date 
+      sprint_hrs = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
+      [sprint_hrs.try(:actual).to_f, sprint_hrs.try(:actual).to_f + sprint_hrs.try(:remaining).to_f, sprint_hrs.try(:remaining).to_f]
     end
   end
 
   def gather_release_data
     if @release.nil?
-      @lower_release = []
-      @upper_release = []
+      @axes = {:accepted_pts => [], :total_pts => []}
       return
     end
     @start_date = @release.start_date
     @end_date   = @release.release_date
     @issues     = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]
     
-    gather_information(@lower_release = [], @upper_release = []) do |issue, date|
-      issue.points_histories.find(:first, :conditions => ['date <= ?', date], :order => "date DESC")
+    curves = [:accepted_pts, :total_pts]
+    
+    curves.each_with_index do |curve, i|
+        @axes[curve] = []
+    end
+      
+    gather_information(@axes, curves) do |issue, date|
+      # point histories will selects the issues in date descending order
+      # steps: sort descendingly and get the first point history.
+      # if an issue has no point history in this day, then the history will be the nearest point history of this issue
+      # before the given date 
+      accepted_id =  IssueStatus.find_by_scrummer_caption(:accepted).id
+      release_points = issue.points_histories.find(:first, :conditions => ['date <= ?', date])
+      [release_points.try(:issue).try(:status_id).to_i == accepted_id ? release_points.points : 0.0, release_points.try(:points).to_f]
     end
   end
   
-  def gather_information(lower, upper, &block)
+  def gather_information(axes, curves, &block)
     start_date = @start_date
     end_date   = @end_date
     issues     = @issues
+    # if the sprint or the release has no specified start or end date
     return unless start_date && end_date
     
-    day = 0
+    # loops over the days of the sprint or the release
     (start_date..end_date).each do |date|
-      upperPoint = 0.0 # remaining + actual 
-      lowerPoint = 0.0 # actual
+      zeros = Proc.new {|zero| 0}
+      points = Array.new(curves.count, &zeros) 
       
+      # looping over all the issues every day to calculate it points (release) or the hours (sprint)
       issues.each do |issue|
-        history_entry = block.call(issue, date)
+        issue_points = block.call(issue, date)
         
-        if history_entry && !history_entry.nil_attributes?
-          lowerPoint += history_entry.lower_point
-          upperPoint += history_entry.upper_point
+        issue_points.each_with_index do |issue_point, i|
+          points[i] += issue_point
         end
       end
       
-      lower << [(date.to_time + Time.now.utc_offset).to_i * 1000 , lowerPoint]
-      upper << [(date.to_time + Time.now.utc_offset).to_i * 1000 , upperPoint]
-      day += 1
+      curves.each_with_index do |curve, i|
+        axes[curve] << [(date.to_time + Time.now.utc_offset).to_i * 1000 , points[i]]
+      end
     end
   end
   

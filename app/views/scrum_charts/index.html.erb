@@ -48,21 +48,21 @@
 </div>
 <script type="text/javascript">
 	$j(document).ready(function() {
-		var chart;
-		d1 = <%= @lower_sprint.inspect%>;
-		d2 = <%= @lower_sprint.inspect%>;
-		set_data("sprint_container", d1, d2, "Sprint Burnup Chart", "Time (hrs)", "Actual", "Actual + Todo");
+		actual = <%= @axes[:actual_hrs].inspect %>;
+		actual_and_todo = <%= @axes[:actual_and_remaining_hrs].inspect %>;
+		sprint_chart = set_data("sprint_container", actual, actual_and_todo, "Sprint Burn Chart", "Time (hrs)", "Actual", "Actual + Remaining", "hrs");
+		add_series("Remaining", <%= @axes[:remaining_hrs].inspect %>, sprint_chart)
 		
-		d1 = <%= @lower_release.inspect%>;
-		d2 = <%= @lower_release.inspect%>;
-		set_data("release_container", d1, d2, "Release Burnup Chart", "Points (pt)", "Accepted Points", "Total Points");
+		total_points = <%= @axes[:accepted_pts].inspect %>;
+		accepted_points = <%= @axes[:total_pts].inspect %>;
+		set_data("release_container", total_points, accepted_points, "Release Burnup Chart", "Points (pt)", "Total Points", "Accepted Points", "pts");
 	});
 	
 	$j('.selectable').selectable().each( function() {
 		$j($j('li', this)[0]).addClass('ui-selected');
 	});
 	
-	function set_data(div_id, d1, d2, chart_title, y_label, legend_1, legend_2) {
+	function set_data(div_id, d1, d2, chart_title, y_label, legend_1, legend_2, formatter) {
 		options = {
 			chart : {
 				renderTo : div_id,
@@ -109,7 +109,7 @@
 			tooltip : {
 				formatter : function() {
 					point_date = Highcharts.dateFormat('%e-%b-%Y', this.x);
-					return '<b>' + this.series.name + '</b><br/>' + point_date + ': ' + this.y + 'pt';
+					return '<b>' + this.series.name + '</b><br/>' + point_date + ': ' + this.y + formatter;
 				}
 			},
 			legend : {
@@ -128,6 +128,16 @@
 				data : d2
 			}]
 		}
-		chart = new Highcharts.Chart(options);
+		return new Highcharts.Chart(options);
 	}
+	
+	function add_series(name, data, chart){
+		var series = {
+			name: name,
+			data: data
+        };
+		chart.options.series.push(series);
+		new Highcharts.Chart(chart.options);
+	}
+	
 </script>

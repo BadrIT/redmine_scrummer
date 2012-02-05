@@ -1,0 +1,77 @@
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'general.css', :plugin => 'redmine_scrummer' %>
+<% end %>
+
+<div id="scrum_menu">
+	<!-- Rendering the scrummer menu --> 
+	<%= render :partial => "scrum/scrummer_menu" %>
+</div>
+
+<h1 style="margin: 10px 0px 10px 0px;">Scrum Configurations</h1>
+
+<h2>Custom Fields</h2>
+<% form_tag(update_scrum_custom_fields_path(:project_id => @project), :method => :post) do %>
+	<% @custom_fields.each do |custom_field| %>
+		<p>
+			<%= label_tag "custom_fields[#{custom_field.id}][]", custom_field.scrummer_caption.to_s.gsub("-", " ").gsub(":", "").titleize %>
+			<%= text_field_tag "custom_fields[#{custom_field.id}][]", custom_field.name %>
+		</p>
+	<% end %>
+  <p>
+    <%= submit_tag 'Update' %>
+  </p>
+<% end %>
+
+<h2>Trackers</h2>
+<% form_tag(update_scrum_trackers_path(:project_id => @project), :method => :post) do %>
+	<table class="fancy">
+		<tr>
+			<th>Tracker</th>
+			<th>Name</th>
+			<th>Short Name</th>
+		</tr>
+		<% @trackers.each do |tracker| %>
+			<tr align="center">
+				<td><%= tracker.scrummer_caption.to_s.gsub("-", " ").titleize %></td>
+				<td><%= text_field_tag "trackers[#{tracker.id}][name][]", tracker.name %></td>
+				<td><%= text_field_tag "trackers[#{tracker.id}][short_name][]", tracker.short_name %></td>
+			</tr>
+		<% end %>
+	</table>
+  <p>
+    <%= submit_tag 'Update' %>
+  </p>
+<% end %>
+
+<style>
+	label {
+		width: 8em;
+		float: left;
+		margin-right: 0.5em;
+		display: block;
+	}
+	table.fancy {
+	  margin: 1em 1em 1em 0;
+	  background: whitesmoke;
+	  border-collapse: collapse;
+	  width: 70%;
+	  margin-left:auto; 
+    margin-right:auto;
+	}
+	table.fancy tr:hover {
+	   background: lightsteelblue !important;
+	}
+	table.fancy th, table.fancy td {
+	  border: 1px silver solid;
+	  padding: 0.2em;
+	}
+	table.fancy th {
+	  background: gainsboro;
+	  text-align: center;
+	}
+	table.fancy caption {
+	  margin-left: inherit;
+	  margin-right: inherit;
+	}
+</style>
+

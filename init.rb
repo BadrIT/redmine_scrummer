@@ -57,7 +57,7 @@ Redmine::Plugin.register :redmine_scrummer do
   	
   	permission :scrum_sprint_planing, 									{ :scrum_sprints_planning  => [:index, :sprint_info]}
   	
-  	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index, :create, :destroy_release, :show, :edit, :update_release, :set_issue_release]}
+  	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index, :create, :destroy_release, :show_release, :edit_release, :update_release, :set_issue_release]}
   	
   	permission :scrum_charts, 													{ :scrum_charts => [:index, :update_chart]}
   end

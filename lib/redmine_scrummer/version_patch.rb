@@ -10,7 +10,7 @@ module RedmineScrummer
         # Each version (sprint) belongs to only one release
         belongs_to :release
         
-        after_update :alter_issues_release
+        after_save :alter_issues_release
         
         after_create :add_to_side_bar
       end
@@ -40,7 +40,7 @@ module RedmineScrummer
       def alter_issues_release
         self.fixed_issues.each do |issue|
           issue.update_attribute(:release_id, self.release_id)
-        end
+        end 
       end
       
       def add_to_side_bar

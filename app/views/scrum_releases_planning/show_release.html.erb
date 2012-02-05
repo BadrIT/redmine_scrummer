@@ -1,10 +1,13 @@
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'general.css', :plugin => 'redmine_scrummer' %>
+<% end %>
+
 <div id="scrum_menu">
 	<!-- Rendering the scrummer menu --> 
 	<%= render :partial => "scrum/scrummer_menu" %>
 </div>
 
-
-<h2>Show release</h2>
+<h2>Show Release</h2>
 
 <p>
   <b>Name:</b>
@@ -32,5 +35,5 @@
 </p>
 
 
-<%= link_to 'Edit', :action => 'edit', :id => @release.id, :project_id => @project %> |
-<%= link_to 'Back', :action => 'index', :project_id => @project %>
+<%= link_to 'Edit',  edit_scrum_release_path(:id => @release.id, :project_id => @project) %> |
+<%= link_to 'Back', scrum_release_planing_path(:project_id => @project) %>

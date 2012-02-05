@@ -5,7 +5,7 @@ class ScrumReleasesPlanningController < IssuesController
   include ScrumUserstoriesController::SharedScrumConstrollers
   
   before_filter :find_scrum_project, :only => [:index, :destroy_release]
-  prepend_before_filter :find_project, :only => [:create, :destroy_release,:edit, :show, :update_release, :set_issue_release]
+  prepend_before_filter :find_project, :only => [:create, :destroy_release, :edit_release, :show_release, :update_release, :set_issue_release]
   # By Mohamed Magdy
   # Filter before entering the index action to highlight the scrummer
   # menu tab
@@ -31,17 +31,17 @@ class ScrumReleasesPlanningController < IssuesController
 
   # GET /releases/1
   # GET /releases/1.xml
-  def show
+  def show_release
     @release = Release.find(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html # show_release.html.erb
       format.xml  { render :xml => @release }
     end
   end
 
   # GET /releases/1/edit
-  def edit
+  def edit_release
     @release = Release.find(params[:id])
   end
 
@@ -80,7 +80,7 @@ class ScrumReleasesPlanningController < IssuesController
         format.html { redirect_to(:action => 'index', :project_id => @project, :notice => 'Release was successfully updated.') }
         format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
+        format.html { render :action => "edit_release" }
         format.xml  { render :xml => @release.errors, :status => :unprocessable_entity }
       end
     end

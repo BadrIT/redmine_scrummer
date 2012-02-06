@@ -8,9 +8,6 @@
 
 <script type='text/javascript'>
 	$j(function() {
-		
-		initialize_editable();
-							 
     $j('.subject-tipsy').tipsy();
     default_issue_target_version = "<%=@issue.try(:fixed_version).try(:id)%>";
     clear_form_elements($j(".inline-issue-add"));	
@@ -98,7 +95,7 @@
 		<% issues.each do |issue| -%>
 		  <% level = hierarchy ? issue.level : 0 -%>
 			
-			<%= render :partial => "issue_row", :locals => {:issue => issue, :hierarchy => hierarchy, :query => query, :level => level, :list_id => list_id, :from_sprint => from_sprint} %>
+			<%= render :partial => "scrum_userstories/issue_row", :locals => {:issue => issue, :hierarchy => hierarchy, :query => query, :level => level, :list_id => list_id, :from_sprint => from_sprint} %>
 			
 			<tr id='placeholder-<%=issue.id%>' level="<%= (level + 1).to_s %>">
 				<td colspan="9">

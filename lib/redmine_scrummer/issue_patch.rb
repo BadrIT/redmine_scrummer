@@ -113,8 +113,8 @@ module RedmineScrummer
         tracker.try(:defectsuite?)
       end
       
-      def point_trackable?
-        self.is_epic? || self.is_user_story? || self.is_theme? || self.is_defectsuite?
+      def time_trackable?
+        self.is_task? || self.defect? || self.is_refactor? || self.is_spike?
       end
       
       def remaining_hours
@@ -273,6 +273,9 @@ module RedmineScrummer
       public
       
       def check_history_entries
+        # Time-Untrackable issues have no history entry
+        return unless self.time_trackable?
+        
         # get the newest history entry
         history_entry = self.history.first
         
@@ -297,7 +300,7 @@ module RedmineScrummer
       
       def check_points_history
         # User_Stories issues only have points_histories
-        return unless self.point_trackable?
+        return if self.time_trackable?
         
         # get the newest points_history entry
         points_entry = self.points_histories.first

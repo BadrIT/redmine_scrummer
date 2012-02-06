@@ -75,9 +75,13 @@ module ScrumUserstoriesHelper
   		"<div >&nbsp;#{subject_content(column, issue)}</div>" 
   	elsif column.name == :spent_hours && issue.scrum_issue?
   		content = column_content(column, issue)
-  		
+        		
   		output_value = value > 0 ? value.round(2).to_s : ""
-  		content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
+  		if issue.time_trackable?
+  		  content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
+  		else
+  		  content = "<div align='center' class='float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
+  		end
   		
   		unless issue.direct_children.empty?
   			content = value > 0 ? "<span align='center' class='accumelated-result'>#{content}</span>" : content
@@ -100,7 +104,7 @@ module ScrumUserstoriesHelper
 				# can be editable if doesn't have children
 				# OR having children but all children custom field aren't set then value will equal zero
 				# ex: US1 has children (US2, US3) and they don't have story size set then I can edit US1 story size
-				if issue.has_custom_field?(field_caption)
+				if (issue.direct_children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
 					content = value.to_f > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else
@@ -110,7 +114,7 @@ module ScrumUserstoriesHelper
 				content = column_content(column, issue)
 			end					
   	elsif column.name == :estimated_hours  		
-  		if (issue.direct_children.blank? || value.to_f == 0.0)
+  		if (issue.direct_children.blank? || value.to_f == 0.0) && issue.time_trackable?
 				value ||= 0.0
 				
 				content = value > 0 ? value : ''

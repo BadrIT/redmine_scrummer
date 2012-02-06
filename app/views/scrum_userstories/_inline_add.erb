@@ -50,15 +50,17 @@
 		    </div>
       	  </div>
 		</div>
+		
 	  <div class='scrum_issue_inline_field scrum_issue_row'>
-
-		<div>
-			<%= f.label :estimated_hours, l("short_field_estimated_hours"), :class => "scrum_issue_inline_label" %>
-			<div class='scrum_issue_inline_control'> 
-				<%= f.text_field :estimated_hours, :class => 'inline_issue_field_float_type' %>
-			</div> 
-		</div>
-			
+		<% if @issue.time_trackable? %>
+			<div>
+				<%= f.label :estimated_hours, l("short_field_estimated_hours"), :class => "scrum_issue_inline_label" %>
+				<div class='scrum_issue_inline_control'> 
+					<%= f.text_field :estimated_hours, :class => 'inline_issue_field_float_type' %>
+				</div> 
+			</div>
+		<% end %>
+		
 		<% @issue.custom_field_values.each do |value| %>
 		  <% if value.custom_field.scrummer_caption != :remaining_hours || !@issue.new_record? %>
 			<div class='scrum_issue_inline_field'>

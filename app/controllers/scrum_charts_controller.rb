@@ -69,7 +69,7 @@ class ScrumChartsController < IssuesController
     @sprint = @sprints.last if @sprint.nil?
     @start_date = @sprint.start_date_custom_value
     @end_date   = @sprint.effective_date
-    @issues     = @project.issues.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]  
+    @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
     
     curves = [:actual_hrs, :actual_and_remaining_hrs, :remaining_hrs]
     curves.each_with_index do |curve, i|

@@ -47,19 +47,19 @@ module ScrumUserstoriesHelper
   	if value.class == IssueStatus && issue.status.is_scrum
   	  content = case value.scrummer_caption
     	  when :defined
-    	    'D'
+    	    IssueStatus.find_by_scrummer_caption(:defined).short_name.upcase
     	  when :in_progress
-    	    'P'
+    	    IssueStatus.find_by_scrummer_caption(:in_progress).short_name.upcase
     	  when :completed
-    	    'C'
+    	    IssueStatus.find_by_scrummer_caption(:completed).short_name.upcase
     	  when :accepted
-    	    'A'
+    	    IssueStatus.find_by_scrummer_caption(:accepted).short_name.upcase
         when :succeeded
-          'S'
+          IssueStatus.find_by_scrummer_caption(:succeeded).short_name.upcase
         when :failed 
-          'F'
+          IssueStatus.find_by_scrummer_caption(:failed).short_name.upcase
         when :finished 
-          'F'
+          IssueStatus.find_by_scrummer_caption(:finished).short_name.upcase
   	  end
   	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
   	elsif column.name == :subject
@@ -80,6 +80,7 @@ module ScrumUserstoriesHelper
   		if issue.time_trackable?
   		  content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
   		else
+  		  output_value = "Σ" + output_value if !issue.direct_children.empty? && value > 0
   		  content = "<div align='center' class='float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
   		end
   		
@@ -108,7 +109,12 @@ module ScrumUserstoriesHelper
 					content = value.to_f > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else
-					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
+			    if field_caption == :remaining_hours
+			      output_content = "Σ" + value.to_s
+			    else
+			      output_content = value.to_s
+			    end
+					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
 				end
 			else
 				content = column_content(column, issue)
@@ -120,7 +126,7 @@ module ScrumUserstoriesHelper
 				content = value > 0 ? value : ''
 				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
 			else
-				content = (value.to_f > 0) ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
+				content = (value.to_f > 0) ? "<span align='center' class='accumelated-result'>Σ#{value}</span>" : '&nbsp;';
 			end			  	
   	else
   		column_content(column, issue)

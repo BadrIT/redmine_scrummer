@@ -18,8 +18,9 @@ ActionController::Routing::Routes.draw do |map|
   
   # Scrum Admin path
   map.scrum_admins '/scrum_admin', :controller => 'scrum_admins', :action => 'index'
-  map.update_scrum_custom_fields '/scrum_admin/update_custom_fields', :controller => "scrum_admins", :action => "update_custom_fields", :method => :post
+  map.update_scrum_tracker_statuses '/scrum_admin/update_custom_fields', :controller => "scrum_admins", :action => "update_scrum_tracker_statuses", :method => :post
   map.update_scrum_trackers '/scrum_admin/update_scrum_trackers', :controller => "scrum_admins", :action => "update_scrum_trackers", :method => :post
+  
   # This is just for adjusting the url to generate PDFs 
   map.scrum_charts '/projects/:project_id/scrum_charts.:format', :controller => 'scrum_charts', :action => 'index'
   

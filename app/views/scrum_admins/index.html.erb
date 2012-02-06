@@ -9,19 +9,6 @@
 
 <h1 style="margin: 10px 0px 10px 0px;">Scrum Configurations</h1>
 
-<h2>Custom Fields</h2>
-<% form_tag(update_scrum_custom_fields_path(:project_id => @project), :method => :post) do %>
-	<% @custom_fields.each do |custom_field| %>
-		<p>
-			<%= label_tag "custom_fields[#{custom_field.id}][]", custom_field.scrummer_caption.to_s.gsub("-", " ").gsub(":", "").titleize %>
-			<%= text_field_tag "custom_fields[#{custom_field.id}][]", custom_field.name %>
-		</p>
-	<% end %>
-  <p>
-    <%= submit_tag 'Update' %>
-  </p>
-<% end %>
-
 <h2>Trackers</h2>
 <% form_tag(update_scrum_trackers_path(:project_id => @project), :method => :post) do %>
 	<table class="fancy">
@@ -42,6 +29,28 @@
     <%= submit_tag 'Update' %>
   </p>
 <% end %>
+
+<h2>Tracker Statuses</h2>
+<% form_tag(update_scrum_tracker_statuses_path(:project_id => @project), :method => :post) do %>
+	<table class="fancy">
+		<tr>
+			<th>Tracker Status</th>
+			<th>Name</th>
+			<th>Short Name</th>
+		</tr>
+		<% @tracker_statuses.each do |tracker_status| %>
+			<tr align="center">
+				<td><%= tracker_status.scrummer_caption.to_s.gsub("-", " ").titleize %></td>
+				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][name][]", tracker_status.name %></td>
+				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][short_name][]", tracker_status.short_name %></td>
+			</tr>
+		<% end %>
+	</table>
+  <p>
+    <%= submit_tag 'Update' %>
+  </p>
+<% end %>
+
 
 <style>
 	label {

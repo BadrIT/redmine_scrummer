@@ -146,7 +146,7 @@ td.cf_5 {
 td.estimated_hours {
 	width: 85px;
 }
-.us-issue {
+.userstory-issue {
 	background-color:#EEEE9E
 }
 .task-issue {
@@ -155,10 +155,10 @@ td.estimated_hours {
 .epic-issue {
 	background-color:YellowGreen
 }
-.ds-issue {
+.defectsuite-issue {
 	background-color:red
 }
-.de-issue {
+.defect-issue {
 	background-color:Salmon
 }
 .test-issue {
@@ -167,7 +167,7 @@ td.estimated_hours {
 .spike-issue {
 	background-color:PaleTurquoise
 }
-.re-issue {
+.refactor-issue {
 	background-color:wheat
 }
 table#issue-table td.subject div.prefix {

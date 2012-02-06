@@ -8,24 +8,12 @@ class ScrumAdminsController < ApplicationController
   # GET /scrum_admins
   # GET /scrum_admins.xml
   def index
-    @custom_fields = CustomField.find(:all, :conditions => ["scrummer_caption IS NOT NULL"])
     @trackers = Tracker.find(:all, :conditions => ["is_scrum = ?", true])
+    @tracker_statuses = IssueStatus.find(:all, :conditions => ["is_scrum = ?", true])
 
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @scrum_admins }
-    end
-  end
-
-  def update_custom_fields
-    params[:custom_fields].each do |custom_field|
-      CustomField.update_all(['name = ?', custom_field[1]], ["id = ?", custom_field[0].to_i])
-    end
-
-    flash[:notice] = "Custom Fields successfuly update!"
-
-    respond_to do |format|
-      format.html { redirect_to(scrum_admins_path(:project_id => @project)) }
     end
   end
 
@@ -35,6 +23,18 @@ class ScrumAdminsController < ApplicationController
     end
 
     flash[:notice] = "Trackers successfuly update!"
+
+    respond_to do |format|
+      format.html { redirect_to(scrum_admins_path(:project_id => @project)) }
+    end
+  end
+
+  def update_scrum_tracker_statuses
+    params[:tracker_statuses].each do |tracker_status|
+      IssueStatus.update_all(['name = ?, short_name = ?', tracker_status[1][:name], tracker_status[1][:short_name]], ["id = ?", tracker_status[0].to_i])
+    end
+
+    flash[:notice] = "Tracker Statuses successfuly update!"
 
     respond_to do |format|
       format.html { redirect_to(scrum_admins_path(:project_id => @project)) }

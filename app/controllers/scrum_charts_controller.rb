@@ -33,8 +33,8 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'sprint_container', ''
-        page << "var sprint_chart = set_data('sprint_container', #{@axes[:actual_hrs]}, #{@axes[:actual_and_remaining_hrs]}, 'Sprint Burn Chart', 'Time (hrs)', 'Actual', 'Actual + Remaining', 'hrs');"
-        page << "add_series('Remaining', #{@axes[:remaining_hrs]}, sprint_chart)"
+        page << "var sprint_chart = set_data('sprint_container', #{@axes[:actual_hrs].inspect}, #{@axes[:actual_and_remaining_hrs].inspect}, 'Sprint Burn Chart', 'Time (hrs)', 'Actual', 'Actual + Remaining', 'hrs');"
+        page << "add_series('Remaining', #{@axes[:remaining_hrs].inspect}, sprint_chart)"
       end
     else
       get_release
@@ -42,7 +42,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'release_container', ''
-        page << "set_data('release_container', #{@axes[:accepted_pts]}, #{@axes[:total_pts]}, 'Release Burnup Chart', 'Points (pts)', 'Accepted Points', 'Total Points', 'pts');"
+        page << "set_data('release_container', #{@axes[:accepted_pts].inspect}, #{@axes[:total_pts].inspect}, 'Release Burnup Chart', 'Points (pts)', 'Accepted Points', 'Total Points', 'pts');"
       end
     end
   end
@@ -73,7 +73,7 @@ class ScrumChartsController < IssuesController
     
     curves = [:actual_hrs, :actual_and_remaining_hrs, :remaining_hrs]
     curves.each do |curve|
-        @axes[curve] = []
+      @axes[curve] = []
     end
     
     gather_information(@axes, curves) do |issue, date|
@@ -94,7 +94,7 @@ class ScrumChartsController < IssuesController
     
     curves = [:accepted_pts, :total_pts]
     
-    curves.each_with_index do |curve, i|
+    curves.each do |curve|
         @axes[curve] = []
     end
       
@@ -118,7 +118,7 @@ class ScrumChartsController < IssuesController
     
     # loops over the days of the sprint or the release
     (start_date..end_date).each do |date|
-      points = Array.new(curves.count, 0) 
+      points = Array.new(curves.count, 0)
       
       # looping over all the issues every day to calculate it points (release) or the hours (sprint)
       issues.each do |issue|

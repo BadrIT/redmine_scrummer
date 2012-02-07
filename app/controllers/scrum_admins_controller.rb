@@ -18,8 +18,11 @@ class ScrumAdminsController < ApplicationController
   end
 
   def update_scrum_trackers
-    params[:trackers].each do |tracker|
-      Tracker.update_all(['name = ?, short_name = ?', tracker[1][:name], tracker[1][:short_name]], ["id = ?", tracker[0].to_i])
+    params[:trackers].each do |tracker_attributes|
+      tracker = Tracker.find(tracker_attributes[0])
+      tracker.name = tracker_attributes[1][:name]
+      tracker.short_name = tracker_attributes[1][:short_name]
+      tracker.save
     end
 
     flash[:notice] = "Trackers successfuly update!"
@@ -30,8 +33,11 @@ class ScrumAdminsController < ApplicationController
   end
 
   def update_scrum_tracker_statuses
-    params[:tracker_statuses].each do |tracker_status|
-      IssueStatus.update_all(['name = ?, short_name = ?', tracker_status[1][:name], tracker_status[1][:short_name]], ["id = ?", tracker_status[0].to_i])
+    params[:tracker_statuses].each do |status_attributes|
+      status = IssueStatus.find(status_attributes[0])
+      status.name = status_attributes[1][:name]
+      status.short_name = status_attributes[1][:short_name]
+      status.save
     end
 
     flash[:notice] = "Tracker Statuses successfuly update!"

@@ -46,7 +46,8 @@ class ScrumUserstoriesController < IssuesController
 
   def update_single_field
     new_value = params[:value]
-
+    initialize_sort
+    
     # custom field for todo
     if params[:id] =~ /custom/
       matched_groups = params[:id].match(/issue-(\d+)-custom-field-cf_(\d+)/)
@@ -57,15 +58,9 @@ class ScrumUserstoriesController < IssuesController
       @issue = Issue.find(issue_id)
       @issue.custom_field_values = {custom_field_id => new_value}
 
-      level = params[:hierarchy] == "true" ? @issue.level: 0
-
       if @issue.save
         render :update do |page|
-          page.replace 'issue-' + @issue.id.to_s, :partial => "issue_row", :locals => {:issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => Query.find(params[:query]), :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-          @issue.ancestors.each do |parent|
-            level = params[:hierarchy] == "true" ? parent.level: 0
-            page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => Query.find(params[:query]), :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-          end
+          update_issue_and_parents(page)
         end
       else
         render :text => 'Errors in saving'
@@ -85,15 +80,9 @@ class ScrumUserstoriesController < IssuesController
       :spent_on => User.current.today,
       :activity_id => TimeEntryActivity.find_by_name('Development').id )
 
-      level = params[:hierarchy] == "true" ? @issue.level: 0
-
       if @time_entry.hours > 0 && @time_entry.save
         render :update do |page|
-          page.replace 'issue-' + @issue.id.to_s, :partial => "issue_row", :locals => {:issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => Query.find(params[:query]), :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-          @issue.ancestors.each do |parent|
-            level = params[:hierarchy] == "true" ? parent.level: 0
-            page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => Query.find(params[:query]), :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-          end
+          update_issue_and_parents(page)
         end
       else
         render :text => 'Errors in saving'
@@ -108,15 +97,9 @@ class ScrumUserstoriesController < IssuesController
       @issue = Issue.find(issue_id)
       @issue.update_attributes(column_name => new_value)
 
-      level = params[:hierarchy] == "true" ? @issue.level: 0
-
       if @issue.save
         render :update do |page|
-          page.replace 'issue-' + @issue.id.to_s, :partial => "issue_row", :locals => {:issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => Query.find(params[:query]), :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-          @issue.ancestors.each do |parent|
-            level = params[:hierarchy] == "true" ? parent.level: 0
-            page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => Query.find(params[:query]), :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-          end
+          update_issue_and_parents(page)
         end
       else
         render :text => 'Errors in saving'
@@ -132,12 +115,10 @@ class ScrumUserstoriesController < IssuesController
       else
         IssueStatus.find_by_short_name(params[:value])
       end
-      @issue.status = status
-
-      allowed_statuses = @issue.new_statuses_allowed_to(User.current)
-
-      level = params[:hierarchy] == "true" ? @issue.level: 0
-
+      @issue.status = status if status
+      
+      allowed_statuses = @issue.new_statuses_allowed_to(User.current) 
+      
       if !status
         render :text => 'Status invalid'
       elsif  !allowed_statuses.include?(status)
@@ -146,11 +127,7 @@ class ScrumUserstoriesController < IssuesController
         render :text => 'Errors in saving'
       else
         render :update do |page|
-          page.replace 'issue-' + @issue.id.to_s, :partial => "issue_row", :locals => {:issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => Query.find(params[:query]), :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-          @issue.ancestors.each do |parent|
-            level = params[:hierarchy] == "true" ? parent.level: 0
-            page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => Query.find(params[:query]), :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-          end
+          update_issue_and_parents(page)
         end
       end
 
@@ -187,7 +164,7 @@ class ScrumUserstoriesController < IssuesController
 
   def index
     initialize_sort
-
+    
     if @query.valid?
       load_issues_for_query
 

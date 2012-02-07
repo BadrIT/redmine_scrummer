@@ -364,3 +364,28 @@ div.content {
     clear: left;
     padding: 1em;
 }
+
+/*----------Fancy Table--------------*/
+table.fancy {
+  margin: 1em 1em 1em 0;
+  background: whitesmoke;
+  border-collapse: collapse;
+  width: 70%;
+  margin-left:auto; 
+  margin-right:auto;
+}
+table.fancy tr:hover {
+   background: lightsteelblue !important;
+}
+table.fancy th, table.fancy td {
+  border: 1px silver solid;
+  padding: 0.2em;
+}
+table.fancy th {
+  background: gainsboro;
+  text-align: center;
+}
+table.fancy caption {
+  margin-left: inherit;
+  margin-right: inherit;
+}

@@ -223,7 +223,7 @@ module ScrumUserstoriesHelper
     end
     
     "<li class='issue' id='#{issue.id}'> 
-      <a target='_blank' class='issue #{issue.tracker.short_name.downcase}-issue' href='issues/#{issue.id}'> 
+      <a target='_blank' class='issue #{issue.tracker.try(:scrummer_caption).to_s.downcase}-issue' href='issues/#{issue.id}'> 
       <h2>##{issue.id}: #{issue.tracker.short_name}</h2>
       <p>#{truncate(issue.subject, 30)}</p> 
       <p><span style='color: #444; float: right;'>#{pluralize(value, unit)}</span></p> 
@@ -231,4 +231,12 @@ module ScrumUserstoriesHelper
      </li>"
   end
   
+  def update_issue_and_parents(page)
+    level = params[:hierarchy] == "true" ? @issue.level: 0
+    page.replace 'issue-' + @issue.id.to_s, :partial => "issue_row", :locals => {:issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
+    @issue.ancestors.each do |parent|
+      level = params[:hierarchy] == "true" ? parent.level: 0
+      page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
+    end
+  end
 end

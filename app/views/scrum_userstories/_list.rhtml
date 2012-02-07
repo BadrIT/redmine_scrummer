@@ -8,9 +8,9 @@
 
 <script type='text/javascript'>
 	$j(function() {
-    $j('.subject-tipsy').tipsy();
-    default_issue_target_version = "<%=@issue.try(:fixed_version).try(:id)%>";
-    clear_form_elements($j(".inline-issue-add"));	
+	  $j('.subject-tipsy').tipsy();
+	  default_issue_target_version = "<%=@issue.try(:fixed_version).try(:id)%>";
+	  clear_form_elements($j(".inline-issue-add"));	
     
 	$j('.subject-contents').cluetip({
 		splitTitle: '|',
@@ -22,14 +22,14 @@
 		topOffset: -3,
 		width: 'auto',
 		fx: {
-              open:       'fadeIn', // can be 'show' or 'slideDown' or 'fadeIn'
-              openSpeed:  'fast'
-    	},
-    	clickThrough:     true,
+	            open:       'fadeIn', // can be 'show' or 'slideDown' or 'fadeIn'
+	            openSpeed:  'fast'
+	  	},
+	  	clickThrough:     true,
 	    hoverIntent: {
-                      sensitivity:  3,
-                      interval:     1000,
-                      timeout:      0
+	                    sensitivity:  3,
+	                    interval:     1000,
+	                    timeout:      0
 	    	}
 		});
 		$j(document).scroll(function(){
@@ -39,19 +39,19 @@
 	});
 	
 	function initialize_editable(){
-	$j('.edit').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
-		{
-		 	onblur 		 : 'submit',
-		 	placeholder: '<span class="edit-placeholder">Edit</span>',
-		 	submitdata : {
-		 									authenticity_token : '<%= form_authenticity_token %>'
-		 							 },
-		 	indicator  : '<%= image_tag 'loading.gif'%>' ,
-		 	data: function(value, settings) {
-		 	  return $j(this).hasClass("addition") ? "+0" : value;
-		 	},
-		 	ignoreResponse: true
-		});
+		$j('.edit').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+			{
+			 	onblur 		 : 'submit',
+			 	placeholder: '<span class="edit-placeholder">Edit</span>',
+			 	submitdata : {
+			 									authenticity_token : '<%= form_authenticity_token %>'
+			 							 },
+			 	indicator  : '<%= image_tag 'loading.gif'%>' ,
+			 	data: function(value, settings) {
+			 	  return $j(this).hasClass("addition") ? "+0" : value;
+			 	},
+			 	ignoreResponse: true
+			});
 	}
 </script>
 

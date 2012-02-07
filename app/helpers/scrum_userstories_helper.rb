@@ -61,7 +61,7 @@ module ScrumUserstoriesHelper
         when :finished 
           IssueStatus.find_by_scrummer_caption(:finished).short_name.upcase
   	  end
-  	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
+  	  "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
   	elsif column.name == :subject
   	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
@@ -238,5 +238,14 @@ module ScrumUserstoriesHelper
       level = params[:hierarchy] == "true" ? parent.level: 0
       page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
     end
+  end
+  
+  def issue_allowed_statuses(issue)
+    statuses = "{"
+    issue.new_statuses_allowed_to(User.current).each do |status|
+      statuses += "'" + status.short_name + "':'" + status.name + "', "
+    end
+    statuses += "'selected':'" + issue.status.short_name + "'}"
+    statuses
   end
 end

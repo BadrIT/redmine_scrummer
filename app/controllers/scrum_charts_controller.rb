@@ -67,6 +67,7 @@ class ScrumChartsController < IssuesController
   
   def gather_sprint_data
     @sprint ||= @sprints.last
+    return unless @sprint
     @start_date = @sprint.start_date_custom_value
     @end_date   = @sprint.effective_date
     @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]

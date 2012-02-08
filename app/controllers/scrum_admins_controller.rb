@@ -1,10 +1,11 @@
 class ScrumAdminsController < ApplicationController
   unloadable
-
+  
   include ScrumUserstoriesController::SharedScrumConstrollers
-
-  prepend_before_filter :find_scrum_project
+  
+  before_filter :require_admin
   before_filter :current_page_setter
+  
   # GET /scrum_admins
   # GET /scrum_admins.xml
   def index
@@ -22,6 +23,7 @@ class ScrumAdminsController < ApplicationController
       tracker = Tracker.find(tracker_attributes[0])
       tracker.name = tracker_attributes[1][:name]
       tracker.short_name = tracker_attributes[1][:short_name]
+      tracker.position = tracker_attributes[1][:position]
       tracker.save
     end
 
@@ -47,8 +49,9 @@ class ScrumAdminsController < ApplicationController
     end
   end
 
+  private
+  
   def current_page_setter
     @current_page = :scrum_admin
   end
-
 end

@@ -34,12 +34,14 @@
 			<th>Tracker Status</th>
 			<th>Name</th>
 			<th>Short Name</th>
+			<th>Position</th>
 		</tr>
 		<% @tracker_statuses.each do |tracker_status| %>
 			<tr align="center">
 				<td><%= tracker_status.scrummer_caption.to_s.gsub("-", " ").titleize %></td>
 				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][name]", tracker_status.name %></td>
 				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][short_name]", tracker_status.short_name %></td>
+				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][position]", tracker_status.position %></td>
 			</tr>
 		<% end %>
 	</table>

@@ -39,6 +39,7 @@ class ScrumAdminsController < ApplicationController
       status = IssueStatus.find(status_attributes[0])
       status.name = status_attributes[1][:name]
       status.short_name = status_attributes[1][:short_name]
+      status.position = status_attributes[1][:position]
       status.save
     end
 

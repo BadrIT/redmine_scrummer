@@ -9,8 +9,8 @@ class ScrumUserstoriesController < IssuesController
   prepend_before_filter :check_for_default_issue_status, :only => [:index]
   prepend_before_filter :check_for_default_issue_priority, :only => [:index]
 
-  prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list]						# must be called after find_scrum_project
-  prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :sprint_planing, :inline_add_version]
+  prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :calculate_statistics]						# must be called after find_scrum_project
+  prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :sprint_planing, :inline_add_version, :calculate_statistics]
 
   before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
   before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form, :inline_add ]
@@ -47,7 +47,7 @@ class ScrumUserstoriesController < IssuesController
   def update_single_field
     new_value = params[:value]
     initialize_sort
-    
+
     # custom field for todo
     if params[:id] =~ /custom/
       matched_groups = params[:id].match(/issue-(\d+)-custom-field-cf_(\d+)/)
@@ -116,9 +116,9 @@ class ScrumUserstoriesController < IssuesController
         IssueStatus.find_by_short_name(params[:value])
       end
       @issue.status = status if status
-      
-      allowed_statuses = @issue.new_statuses_allowed_to(User.current) 
-      
+
+      allowed_statuses = @issue.new_statuses_allowed_to(User.current)
+
       if !status
         render :text => 'Status invalid'
       elsif  !allowed_statuses.include?(status)
@@ -162,10 +162,44 @@ class ScrumUserstoriesController < IssuesController
     end
   end
 
+  def calculate_statistics
+    @statistics = { :total_story_size => 0.0,
+      :total_estimate => 0.0,
+      :total_actual => 0.0,
+      :total_remaining => 0.0 }
+
+    remaining_hours_column_caption = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
+    story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
+
+    story_column = @query.columns.find{|c| c.caption == story_size_column_caption}
+    remaining_hours_column = @query.columns.find{|c| c.caption == remaining_hours_column_caption}
+    
+    initialize_sort
+    load_issues_for_query
+
+    @all_issues.each do |issue|
+    # don't add story size if an issue having children having story sizes
+      unless issue.direct_children.sum(:story_size) > 0.0
+        @statistics[:total_story_size] += issue.story_size
+      end
+
+      # don't add estimate if an issue having children having estimated hours
+      unless issue.direct_children.sum(:estimated_hours) > 0.0
+        @statistics[:total_estimate] += issue.estimated_hours.to_f
+      end
+
+      @statistics[:total_actual]    += issue.time_entries.sum(:hours)
+      @statistics[:total_remaining] += remaining_hours_column ? remaining_hours_column.value(issue).to_f : 0;
+    end
+    
+    render :partial => 'statistics'
+  end
+
   def index
     initialize_sort
-    
+
     if @query.valid?
+      load_sidebar_query
       load_issues_for_query
 
       respond_to do |format|
@@ -453,5 +487,17 @@ class ScrumUserstoriesController < IssuesController
       end
       @partial_list = 'scrum_releases_planning/release_backlog'
     end
+  end
+  
+  # load the sidebar query. The query sorts the sprints by id not by name
+  def load_sidebar_query
+    # User can see public queries and his own queries
+    visible = ARCondition.new(["is_public = ? OR user_id = ?", true, (User.current.logged? ? User.current.id : 0)])
+    # Project specific queries and global queries
+    visible << (@project.nil? ? ["project_id IS NULL"] : ["project_id IS NULL OR project_id = ?", @project.id])
+    @sidebar_queries = Query.find(:all,
+                            :select => 'id, name, is_public',
+                            :order => "id DESC",
+                            :conditions => visible.conditions)
   end
 end

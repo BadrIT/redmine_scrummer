@@ -15,6 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   
   # User Stories path
   map.scrum_user_stories '/scrum_userstories', :controller => 'scrum_userstories', :action => 'index'
+  map.scrum_statistics '/scrum_userstories/statistics', :controller => 'scrum_userstories', :action => 'calculate_statistics'
   
   # Scrum Admin path
   map.scrum_admins '/scrum_admin', :controller => 'scrum_admins', :action => 'index'

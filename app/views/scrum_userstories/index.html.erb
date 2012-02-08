@@ -114,7 +114,12 @@
 $j(function() {
   $j("#sidebar").sidebar({  
     position:"right",  
-    open:"click"
+    open:"click",
+    onOpen: function(){
+	    	$j.get("/scrum_userstories/statistics?project_id=" + '<%= @project.identifier %>', function(data) {
+					$j("#statistics").replaceWith(data);
+				});
+    }
   });
 });
 </script>

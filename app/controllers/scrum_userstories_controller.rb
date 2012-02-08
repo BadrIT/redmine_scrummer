@@ -36,7 +36,7 @@ class ScrumUserstoriesController < IssuesController
       end
 
     def initialize_sort
-      sort_init(@query.sort_criteria.empty? ? [['id', 'desc']] : @query.sort_criteria)
+      sort_init(@query.sort_criteria.empty? ? ['id desc'] : @query.sort_criteria)
       sort_update(@query.sortable_columns)
     end
 
@@ -197,7 +197,7 @@ class ScrumUserstoriesController < IssuesController
 
   def index
     initialize_sort
-
+    
     if @query.valid?
       load_sidebar_query
       load_issues_for_query
@@ -278,10 +278,14 @@ class ScrumUserstoriesController < IssuesController
 
   def find_query
     if session[:query].nil? || params[:set_filter] == 'clear'
-      query = Query.find_by_scrummer_caption('User-Stories')
+      current_sprint = @project.current_sprint 
+      query = current_sprint ? @project.queries.find_by_name(current_sprint.name): Query.find_by_scrummer_caption('User-Stories')
       params[:query_id] = query.id
     end
     retrieve_query
+    # when a new project is created, a new query is created for that project which is initialized with some defauly columns,
+    # the following line sets the columns displayed to the default Scrummer plugin columns (see loader.rb of this plugin)
+    @query.column_names = [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2] if @query.new_record?
   end
 
   # Edited by Mohamed Magdy

@@ -25,4 +25,7 @@ ActionController::Routing::Routes.draw do |map|
   # This is just for adjusting the url to generate PDFs 
   map.scrum_charts '/projects/:project_id/scrum_charts.:format', :controller => 'scrum_charts', :action => 'index'
   
+  # Vacations
+  map.vacations '/vacations', :controller => 'vacations', :action => 'index'
+  map.weekly_vacation '/vacations/add_weekly_vacation', :controller => 'vacations', :action => 'weekly_vacation'
 end

@@ -1,0 +1,38 @@
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
+<% end %>
+
+<h1 style="margin: 10px 0px 10px 0px;">Vacations</h1>
+
+<h2>Weekly Vacations</h2>
+
+<% form_for(@weekly_vacation, :url => weekly_vacation_path(:project_id => @project.identifier)) do |f| %>
+  <%= f.error_messages %>
+  <table class="fancy">
+  	<tr>
+  		<th><%= f.label :sunday %></th>
+  		<th><%= f.label :monday %></th>
+  		<th><%= f.label :tuesday %></th>
+  		<th><%= f.label :wednesday %></th>
+  		<th><%= f.label :thursday %></th>
+  		<th><%= f.label :friday %></th>
+  		<th><%= f.label :saturday %></th>
+  	</tr>
+  	<tr>
+  		<td><%= f.check_box :sunday %></td>
+  		<td><%= f.check_box :monday %></td>
+  		<td><%= f.check_box :tuesday %></td>
+  		<td><%= f.check_box :wednesday %></td>
+  		<td><%= f.check_box :thursday %></td>
+  		<td><%= f.check_box :friday %></td>
+  		<td><%= f.check_box :saturday %></td>
+  	</tr>
+  </table>
+	<p>
+    <%= f.label :comment %><br />
+    <%= f.text_area :comment %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>

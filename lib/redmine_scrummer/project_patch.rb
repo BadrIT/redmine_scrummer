@@ -8,6 +8,8 @@ module RedmineScrummer
         
         has_many :releases,
                  :dependent => :destroy
+        
+        has_one :weekly_vacation, :dependent => :destroy
       end
       
     end

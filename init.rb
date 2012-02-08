@@ -61,10 +61,12 @@ Redmine::Plugin.register :redmine_scrummer do
   	
   	permission :scrum_charts, 													{ :scrum_charts => [:index, :update_chart]}
   	permission :scrum_admins,                           { :scrum_admins => [:index, :update_scrum_trackers, :update_scrum_tracker_statuses] }, :require => :member
+    permission :vacations,                              { :vacations => [:index]}
   end
   
   # Adjusting the Scrummer Menu "Scrummer Tab"
   menu :project_menu, :scrummer, {:controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id
+  menu :project_menu, :vacations, {:controller => 'vacations', :action => 'index' }, :after => :scrummer, :param => :project_id
   # The scrum admin menu
   menu :top_menu, :scrum_admin, {:controller => 'scrum_admins', :action => 'index' }, :caption => 'Scrum Admin', :if => Proc.new { User.current.admin? }
 #  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id 

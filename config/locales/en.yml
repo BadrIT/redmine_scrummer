@@ -71,3 +71,11 @@ en:
   actions: "Actions"
   
   error_sprint_update: "Error in updating the sprint"
+  
+  field_sunday: "Sunday"
+  field_monday: "Monday"
+  field_tuesday: "Tuesday"
+  field_wednesday: "Wednesday"
+  field_thursday: "Thursday"
+  field_friday: "Friday"
+  field_saturday: "Saturday"

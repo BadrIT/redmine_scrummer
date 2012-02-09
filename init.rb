@@ -66,7 +66,7 @@ Redmine::Plugin.register :redmine_scrummer do
   
   # Adjusting the Scrummer Menu "Scrummer Tab"
   menu :project_menu, :scrummer, {:controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id
-  menu :project_menu, :vacations, {:controller => 'vacations', :action => 'index' }, :after => :scrummer, :param => :project_id
+  menu :project_menu, :non_working_days, {:controller => 'vacations', :action => 'index' }, :after => :scrummer, :param => :project_id
   # The scrum admin menu
   menu :top_menu, :scrum_admin, {:controller => 'scrum_admins', :action => 'index' }, :caption => 'Scrum Admin', :if => Proc.new { User.current.admin? }
 #  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id 

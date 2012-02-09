@@ -10,6 +10,7 @@ module RedmineScrummer
                  :dependent => :destroy
         
         has_one :weekly_vacation, :dependent => :destroy
+        has_many :vacations, :dependent => :destroy
       end
       
     end
@@ -23,6 +24,19 @@ module RedmineScrummer
         end
         nil
       end
+      
+      def weekly_vacation_days
+        weekly_vacation = []
+        weekly_vacation << "Sunday" if self.weekly_vacation.sunday?
+        weekly_vacation << "Monday" if self.weekly_vacation.monday?
+        weekly_vacation << "Tuesday" if self.weekly_vacation.tuesday?
+        weekly_vacation << "Wednesday" if self.weekly_vacation.wednesday?
+        weekly_vacation << "Thursday" if self.weekly_vacation.thursday?
+        weekly_vacation << "Friday" if self.weekly_vacation.friday?
+        weekly_vacation << "Saturday" if self.weekly_vacation.saturday?
+        weekly_vacation
+      end
+      
     end
   end
 end

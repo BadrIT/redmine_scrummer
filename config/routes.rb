@@ -28,4 +28,7 @@ ActionController::Routing::Routes.draw do |map|
   # Vacations
   map.vacations '/vacations', :controller => 'vacations', :action => 'index'
   map.weekly_vacation '/vacations/add_weekly_vacation', :controller => 'vacations', :action => 'weekly_vacation'
+  map.calendar '/calendar/:year/:month', :controller => 'calendar', :action => 'index', :requirements => {:year => /\d{4}/, :month => /\d{1,2}/}, :year => nil, :month => nil
+  map.add_vacation '/vacations/add_vacation', :controller => 'vacations', :action => 'add_vacation'
+  map.delete_vacation '/vacations/:id/delete_vacation', :controller => 'vacations', :action => 'delete_vacation', :method => :delete
 end

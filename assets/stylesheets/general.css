@@ -389,3 +389,13 @@ table.fancy caption {
   margin-left: inherit;
   margin-right: inherit;
 }
+
+.fancy_label {
+	width: 13em;
+	float: left;
+	text-align: right;
+	margin-right: 0.5em;
+	display: block;
+}
+
+

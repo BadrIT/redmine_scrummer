@@ -129,9 +129,11 @@ class ScrumChartsController < IssuesController
           points[i] += issue_point
         end
       end
-      
-      curves.each_with_index do |curve, i|
-        axes[curve] << [(date.to_time + Time.now.utc_offset).to_i * 1000 , points[i]]
+      # Checking if the date is a vacation or the start or the end date
+      if !@project.non_working_day?(date) || date == start_date || date == end_date
+        curves.each_with_index do |curve, i|
+          axes[curve] << [(date.to_time + Time.now.utc_offset).to_i * 1000 , points[i]]
+        end
       end
     end
   end
@@ -142,5 +144,4 @@ class ScrumChartsController < IssuesController
   def current_page_setter
     @current_page = :charts
   end
-  
 end

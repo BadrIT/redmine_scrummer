@@ -38,9 +38,7 @@ module RedmineScrummer
       # The aim of this method is to alter the release id of the issues that belongs to
       # the updated version
       def alter_issues_release
-        self.fixed_issues.each do |issue|
-          issue.update_attribute(:release_id, self.release_id)
-        end 
+        self.fixed_issues.update_all(:release_id => self.release_id)
       end
 
       def add_to_side_bar

@@ -244,7 +244,7 @@ class ScrumUserstoriesController < IssuesController
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
 
     @issue.release_id = params[:issue][:release_id] if params[:issue] && params[:issue][:release_id]
-
+    
     if @query.valid? && @issue.save
       load_issues_for_query
       flash[:notice] = l(:notice_successful_create)
@@ -255,9 +255,14 @@ class ScrumUserstoriesController < IssuesController
         @partial_list ||= "list"
 
         render :update do |page|
-          page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
-          page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
-          page.replace_html "errors_for_#{div_name}", ""
+          if params[:from_sprint] == "issue_list"
+            update_issue_and_parents(page)
+            update_issue_childrens(page)
+          else
+            page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
+            page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
+            page.replace_html "errors_for_#{div_name}", ""
+          end
         end
       end
     else

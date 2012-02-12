@@ -225,7 +225,7 @@ module ScrumUserstoriesHelper
     "<li class='issue' id='#{issue.id}'> 
       <a target='_blank' class='issue #{issue.tracker.try(:scrummer_caption).to_s.downcase}-issue' href='issues/#{issue.id}'> 
       <h2>##{issue.id}: #{issue.tracker.short_name}</h2>
-      <p>#{truncate(issue.subject, 30)}</p> 
+      <p>#{truncate(issue.subject, :length => 30)}</p> 
       <p><span style='color: #444; float: right;'>#{pluralize(value, unit)}</span></p> 
       </a> 
      </li>"
@@ -237,6 +237,14 @@ module ScrumUserstoriesHelper
     @issue.ancestors.each do |parent|
       level = params[:hierarchy] == "true" ? parent.level: 0
       page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
+    end
+  end
+  
+  def update_issue_childrens
+    level = params[:hierarchy] == "true" ? @issue.level: 0
+    @issue.children.each do |children|
+      level = params[:hierarchy] == "true" ? children.level: 0
+      page.replace 'issue-' + children.id.to_s, :partial => "issue_row", :locals => {:issue => children, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
     end
   end
   

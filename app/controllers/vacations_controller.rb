@@ -43,7 +43,7 @@ class VacationsController < ApplicationController
         format.html { redirect_to(vacations_path(:project_id => @project.identifier), :notice => 'Vacation was successfully set!') }
       else
         # Weekly vacations
-        @weekly_vacation = @project.weekly_vacation ? @project.weekly_vacation: WeeklyVacation.new
+        @weekly_vacation = @project.weekly_vacation || WeeklyVacation.new
         # General vacations
         initialize_general_vacations
         format.html { render :action => "index" }

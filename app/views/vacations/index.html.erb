@@ -11,22 +11,14 @@
   <%= f.error_messages %>
   <table class="fancy">
   	<tr>
-  		<th><%= f.label :sunday %></th>
-  		<th><%= f.label :monday %></th>
-  		<th><%= f.label :tuesday %></th>
-  		<th><%= f.label :wednesday %></th>
-  		<th><%= f.label :thursday %></th>
-  		<th><%= f.label :friday %></th>
-  		<th><%= f.label :saturday %></th>
+  	  <% Date::DAYNAMES.each do |day| %>
+  		<th><%= f.label day.downcase.to_sym %></th>
+  		<% end %>
   	</tr>
   	<tr>
-  		<td><%= f.check_box :sunday %></td>
-  		<td><%= f.check_box :monday %></td>
-  		<td><%= f.check_box :tuesday %></td>
-  		<td><%= f.check_box :wednesday %></td>
-  		<td><%= f.check_box :thursday %></td>
-  		<td><%= f.check_box :friday %></td>
-  		<td><%= f.check_box :saturday %></td>
+  	  <% Date::DAYNAMES.each do |day| %>
+  		<td><%= f.check_box day.downcase.to_sym %></td>
+  		<% end %>
   	</tr>
   </table>
   <p>

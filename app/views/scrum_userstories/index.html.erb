@@ -109,11 +109,17 @@
     <%= render :partial => 'issues/sidebar' %>
     <%= render :partial => 'statistics', :locals => {:issues => @all_issues, :query => @query} %>
 <% end %>
+
 <script type='text/javascript'>
 $j(function() {
   $j("#sidebar").sidebar({  
     position:"right",  
-    open:"click"
+    open:"click",
+    onOpen: function(){
+	    	$j.get("/scrum_userstories/statistics?project_id=" + '<%= @project.identifier %>', function(data) {
+					$j("#statistics").replaceWith(data);
+				});
+    }
   });
 });
 </script>

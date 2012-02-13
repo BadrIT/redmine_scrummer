@@ -61,7 +61,7 @@ module ScrumUserstoriesHelper
         when :finished 
           IssueStatus.find_by_scrummer_caption(:finished).short_name.upcase
   	  end
-  	  "<div align='center' class='edit status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
+  	  "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
   	elsif column.name == :subject
   	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
@@ -157,36 +157,6 @@ module ScrumUserstoriesHelper
   	issue.custom_values.collect{|value| value.custom_field_id}.include? custom_column.custom_field.id
   end
   
-  def calculate_statistics(issues, query)
-    result = {:total_story_size => 0.0,
-              :total_estimate => 0.0,
-              :total_actual => 0.0,
-              :total_remaining => 0.0}
-    
-    remaining_hours_column_caption = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
-    story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
-    
-    story_column = query.columns.find{|c| c.caption == story_size_column_caption}
-    remaining_hours_column = query.columns.find{|c| c.caption == remaining_hours_column_caption}
-    
-    issues.each do |issue|
-      # don't add story size if an issue having children having story sizes
-      unless issue.direct_children.sum(:story_size) > 0.0
-        result[:total_story_size] += issue.story_size
-      end
-      
-      # don't add estimate if an issue having children having estimated hours
-      unless issue.direct_children.sum(:estimated_hours) > 0.0
-        result[:total_estimate] += issue.estimated_hours.to_f 
-      end
-      
-      result[:total_actual]    += issue.time_entries.sum(:hours) 
-      result[:total_remaining] += remaining_hours_column ? remaining_hours_column.value(issue).to_f : 0; 
-    end 
-    
-    result
-  end
-  
 	def scrummer_image_path path
 		'../plugin_assets/redmine_scrummer/images/' + path
 	end
@@ -204,7 +174,7 @@ module ScrumUserstoriesHelper
     value = column.value(issue)
     description = textilizable(issue.description).gsub("'","\'")
     
-    options = {:title=>"#{issue.subject}|#{description}", :class=>'subject-contents'}
+    options = {:title=>"#{h(issue.subject)}|#{h(description)}", :class=>'subject-contents'}
     
     link_to(h(value), {:controller => 'issues', :action => 'show', :id => issue }, options)
   end
@@ -223,12 +193,29 @@ module ScrumUserstoriesHelper
     end
     
     "<li class='issue' id='#{issue.id}'> 
-      <a target='_blank' class='issue #{issue.tracker.short_name.downcase}-issue' href='issues/#{issue.id}'> 
+      <a target='_blank' class='issue #{issue.tracker.try(:scrummer_caption).to_s.downcase}-issue' href='issues/#{issue.id}'> 
       <h2>##{issue.id}: #{issue.tracker.short_name}</h2>
-      <p>#{truncate(issue.subject, 30)}</p> 
+      <p>#{truncate(issue.subject, :length => 30)}</p> 
       <p><span style='color: #444; float: right;'>#{pluralize(value, unit)}</span></p> 
       </a> 
      </li>"
   end
   
+  def update_issue_and_parents(page)
+    level = params[:hierarchy] == "true" ? @issue.level: 0
+    page.replace 'issue-' + @issue.id.to_s, :partial => "issue_row", :locals => {:issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
+    @issue.ancestors.each do |parent|
+      level = params[:hierarchy] == "true" ? parent.level: 0
+      page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
+    end
+  end
+  
+  def issue_allowed_statuses(issue)
+    statuses = "{"
+    issue.new_statuses_allowed_to(User.current).each do |status|
+      statuses += "'" + status.short_name + "':'" + status.name + "', "
+    end
+    statuses += "'selected':'" + issue.status.short_name + "'}"
+    statuses
+  end
 end

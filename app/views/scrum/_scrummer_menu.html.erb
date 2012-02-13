@@ -19,8 +19,4 @@
 	<li class=" <%='current' if @current_page == :charts %>" >
 		<%= link_to "Charts", scrum_charts_path(:project_id => @project.identifier) %>
 	</li>
-	
-	<li class=" <%='current' if @current_page == :scrum_admin %>" >
-		<%= link_to "Scrum Admin", scrum_admins_path(:project_id => @project.identifier) %>
-	</li>
 </ol>

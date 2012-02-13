@@ -1,0 +1,72 @@
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'jscolor', :plugin => 'redmine_scrummer' %>
+<% end %>
+
+<h1 style="margin: 10px 0px 10px 0px;">Non Working Days</h1>
+
+<h2>Weekly Non Working Days</h2>
+
+<% form_for(@weekly_vacation, :url => weekly_vacation_path(:project_id => @project.identifier)) do |f| %>
+  <%= f.error_messages %>
+  <table class="fancy">
+  	<tr>
+  		<th><%= f.label :sunday %></th>
+  		<th><%= f.label :monday %></th>
+  		<th><%= f.label :tuesday %></th>
+  		<th><%= f.label :wednesday %></th>
+  		<th><%= f.label :thursday %></th>
+  		<th><%= f.label :friday %></th>
+  		<th><%= f.label :saturday %></th>
+  	</tr>
+  	<tr>
+  		<td><%= f.check_box :sunday %></td>
+  		<td><%= f.check_box :monday %></td>
+  		<td><%= f.check_box :tuesday %></td>
+  		<td><%= f.check_box :wednesday %></td>
+  		<td><%= f.check_box :thursday %></td>
+  		<td><%= f.check_box :friday %></td>
+  		<td><%= f.check_box :saturday %></td>
+  	</tr>
+  </table>
+  <p>
+    <%= f.submit l(:save) %>
+  </p>
+<% end %>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'event_calendar', :plugin => 'redmine_scrummer' %>
+    <%= javascript_include_tag 'event_calendar', :plugin => 'redmine_scrummer'  %>
+<% end %>
+
+<h2>Calendar</h2>
+<% form_for(@vacation || Vacation.new, :url => add_vacation_path(:project_id => @project.identifier)) do |f| %>
+  <div id='vacation_errors'>
+  	<%= f.error_messages %>
+  </div>
+	<p>
+		<%= f.label :vacation, l(:field_name) , :class => "fancy_label" %>
+		<%= f.text_field :name %>
+	</p>
+	<p>
+		<%= f.label :start_at, l(:field_start_at), :class => "fancy_label"  %>
+		<%= f.text_field :start_at, :size => 10 %><%= calendar_for('vacation_start_at') %>
+	</p>
+	<p>
+		<%= f.label :end_at, l(:field_end_at), :class => "fancy_label"  %>
+		<%= f.text_field :end_at, :size => 10 %><%= calendar_for('vacation_end_at') %>
+	</p>
+	<p>
+		<%= f.label :comment, l(:field_comment), :class => "fancy_label"   %>
+		<%= f.text_field :comment %>
+	</p>
+	<p>
+		<%= f.label :color, l(:field_color), :class => "fancy_label"   %>
+		<%= f.text_field :color, :class => "color" %>
+	</p>
+	<p>
+		<%= f.submit l(:save) %>
+	</p>
+<% end %>
+<%= event_calendar %>
+

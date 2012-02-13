@@ -7,6 +7,8 @@ module RedmineScrummer
         
         include InstanceMethods
         
+        ActiveRecord::Base.lock_optimistically = false
+        
         after_create :initiate_remaining_hours
         
         after_save :update_remaining_hours
@@ -237,23 +239,19 @@ module RedmineScrummer
       end
       
       def update_children_target_versions
-        if fixed_version_id_changed? && !self.fixed_version.nil?
-          children.each do |child|
-            if child.fixed_version.nil?
-              child.fixed_version = self.fixed_version
-              child.save
-            end
+        if self.fixed_version_id_changed? && !self.fixed_version.nil?
+          self.children.each do |child|
+            child.fixed_version = self.fixed_version
+            child.save
           end
         end
       end
       
       def update_children_release
-        if release_id_changed? && !self.release.nil?
-          children.each do |child|
-            if child.release.nil?
-              child.release_id = self.release_id
-              child.save
-            end
+        if self.release_id_changed? && !self.release.nil?
+          self.children.each do |child|
+            child.release_id = self.release_id
+            child.save
           end
         end
       end

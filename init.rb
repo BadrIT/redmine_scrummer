@@ -51,7 +51,7 @@ Redmine::Plugin.register :redmine_scrummer do
   requires_redmine :version_or_higher => '1.2.0' 
   
   project_module :scrummer do
-  	permission :scrum_user_stories, 										{ :scrum_userstories => [:index, :issues_list] }
+  	permission :scrum_user_stories, 										{ :scrum_userstories => [:index, :issues_list, :calculate_statistics] }
   	permission :scrum_user_stories_add_inline, 					{ :scrum_userstories => [:inline_add, :get_inline_issue_form], :scrum_sprints_planning =>  [:inline_add_version] }
   	permission :scrum_user_stories_manipulate_inline, 	{ :scrum_userstories => [:refresh_inline_add_form, :update_single_field, :inline_add_version] }
   	
@@ -60,14 +60,15 @@ Redmine::Plugin.register :redmine_scrummer do
   	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index, :create, :destroy_release, :show_release, :edit_release, :update_release, :set_issue_release]}
   	
   	permission :scrum_charts, 													{ :scrum_charts => [:index, :update_chart]}
+  	permission :scrum_admins,                           { :scrum_admins => [:index, :update_scrum_trackers, :update_scrum_tracker_statuses] }, :require => :member
+    permission :vacations,                              { :vacations => [:index]}
   end
   
-  # By Mohamed Magdy
   # Adjusting the Scrummer Menu "Scrummer Tab"
   menu :project_menu, :scrummer, {:controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id
-  # End Mohamed Magdy
-  
-#  menu :project_menu, :scrum_charts, { :controller => 'scrum_charts', :action => 'index' }, :after => :activity, :param => :project_id
+  menu :project_menu, :non_working_days, {:controller => 'vacations', :action => 'index' }, :after => :scrummer, :param => :project_id
+  # The scrum admin menu
+  menu :top_menu, :scrum_admin, {:controller => 'scrum_admins', :action => 'index' }, :caption => 'Scrum Admin', :if => Proc.new { User.current.admin? }
 #  menu :project_menu, :scrum_user_stories, { :controller => 'scrum_userstories', :action => 'index' }, :after => :activity, :param => :project_id 
 #  menu :project_menu, :scrum_sprint_planing, { :controller => 'scrum_sprints_planning', :action => 'index' }, :after => :activity, :param => :project_id 
 #  menu :project_menu, :scrum_release_planing, { :controller => 'scrum_releases_planning', :action => 'index' }, :after => :scrum_charts, :param => :project_id 

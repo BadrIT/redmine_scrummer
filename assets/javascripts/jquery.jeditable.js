@@ -79,6 +79,10 @@
         
         var settings = $.extend({}, $.fn.editable.defaults, {target:target}, options);
         
+        if(settings.ignoreResponse == undefined){
+        	settings.ignoreResponse = false;
+        }
+        
         /* setup some functions */
         var plugin   = $.editable.types[settings.type].plugin || function() { };
         var submit   = $.editable.types[settings.type].submit || function() { };
@@ -348,8 +352,10 @@
                                   dataType: 'html',
                                   url     : settings.target,
                                   success : function(result, status) {
-                                      if (ajaxoptions.dataType == 'html') {
+                                      if (ajaxoptions.dataType == 'html' && (!settings.ignoreResponse || result == "Errors in saving" || result == "Exception occured" || result == "Status Not Allowed" || result == "Status invalid")) {
                                         $(self).html(result);
+                                      } else {
+                                      	eval(result);
                                       }
                                       self.editing = false;
                                       callback.apply(self, [result, settings]);

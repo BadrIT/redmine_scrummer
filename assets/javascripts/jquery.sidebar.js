@@ -104,6 +104,7 @@
                 if (isProcessing) return;
                 isEnter = true;
                 isProcessing = true;
+                options.onOpen();
                 container.animate(enter, {
                     duration: 200,
                     complete: function(){

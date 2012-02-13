@@ -255,14 +255,9 @@ class ScrumUserstoriesController < IssuesController
         @partial_list ||= "list"
 
         render :update do |page|
-          if params[:from_sprint] == "issue_list"
-            update_issue_and_parents(page)
-            update_issue_childrens(page)
-          else
-            page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
-            page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
-            page.replace_html "errors_for_#{div_name}", ""
-          end
+          page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
+          page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
+          page.replace_html "errors_for_#{div_name}", ""
         end
       end
     else
@@ -283,14 +278,12 @@ class ScrumUserstoriesController < IssuesController
 
   def find_query
     if session[:query].nil? || params[:set_filter] == 'clear'
-      current_sprint = @project.current_sprint 
-      query = current_sprint ? @project.queries.find_by_name(current_sprint.name): Query.find_by_scrummer_caption('User-Stories')
+      sprint = @project.current_or_latest_sprint 
+      query = sprint ? @project.queries.find_by_name(sprint.name): Query.find_by_scrummer_caption('User-Stories')
       params[:query_id] = query.id
     end
     retrieve_query
-    # when a new project is created, a new query is created for that project which is initialized with some defauly columns,
-    # the following line sets the columns displayed to the default Scrummer plugin columns (see loader.rb of this plugin)
-    @query.column_names = [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2] if @query.new_record?
+    @query.default_scrummer_columns if @query.new_record?
   end
 
   # Edited by Mohamed Magdy

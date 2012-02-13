@@ -157,36 +157,6 @@ module ScrumUserstoriesHelper
   	issue.custom_values.collect{|value| value.custom_field_id}.include? custom_column.custom_field.id
   end
   
-  def calculate_statistics(issues, query)
-    result = {:total_story_size => 0.0,
-              :total_estimate => 0.0,
-              :total_actual => 0.0,
-              :total_remaining => 0.0}
-    
-    remaining_hours_column_caption = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
-    story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
-    
-    story_column = query.columns.find{|c| c.caption == story_size_column_caption}
-    remaining_hours_column = query.columns.find{|c| c.caption == remaining_hours_column_caption}
-    
-    issues.each do |issue|
-      # don't add story size if an issue having children having story sizes
-      unless issue.direct_children.sum(:story_size) > 0.0
-        result[:total_story_size] += issue.story_size
-      end
-      
-      # don't add estimate if an issue having children having estimated hours
-      unless issue.direct_children.sum(:estimated_hours) > 0.0
-        result[:total_estimate] += issue.estimated_hours.to_f 
-      end
-      
-      result[:total_actual]    += issue.time_entries.sum(:hours) 
-      result[:total_remaining] += remaining_hours_column ? remaining_hours_column.value(issue).to_f : 0; 
-    end 
-    
-    result
-  end
-  
 	def scrummer_image_path path
 		'../plugin_assets/redmine_scrummer/images/' + path
 	end
@@ -204,7 +174,7 @@ module ScrumUserstoriesHelper
     value = column.value(issue)
     description = textilizable(issue.description).gsub("'","\'")
     
-    options = {:title=>"#{issue.subject}|#{description}", :class=>'subject-contents'}
+    options = {:title=>"#{h(issue.subject)}|#{h(description)}", :class=>'subject-contents'}
     
     link_to(h(value), {:controller => 'issues', :action => 'show', :id => issue }, options)
   end
@@ -237,14 +207,6 @@ module ScrumUserstoriesHelper
     @issue.ancestors.each do |parent|
       level = params[:hierarchy] == "true" ? parent.level: 0
       page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-    end
-  end
-  
-  def update_issue_childrens
-    level = params[:hierarchy] == "true" ? @issue.level: 0
-    @issue.children.each do |children|
-      level = params[:hierarchy] == "true" ? children.level: 0
-      page.replace 'issue-' + children.id.to_s, :partial => "issue_row", :locals => {:issue => children, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
     end
   end
   

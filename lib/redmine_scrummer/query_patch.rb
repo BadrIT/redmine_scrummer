@@ -20,6 +20,10 @@ module RedmineScrummer
 				columns.detect{|c| c.name == column_name}
 			end
 			
+			# This method sets the default columns displayed in the scrum views 
+			def default_scrummer_columns
+        self.column_names = [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2]
+			end
 		end
 		
 	end

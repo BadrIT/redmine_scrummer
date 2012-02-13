@@ -40,7 +40,7 @@
 <% end %>
 
 <h2>Calendar</h2>
-<% form_for(@vacation, :url => add_vacation_path(:project_id => @project.identifier)) do |f| %>
+<% form_for(@vacation || Vacation.new, :url => add_vacation_path(:project_id => @project.identifier)) do |f| %>
   <div id='vacation_errors'>
   	<%= f.error_messages %>
   </div>

@@ -11,7 +11,8 @@ class ScrumAdminsController < ApplicationController
   def index
     @trackers = Tracker.find(:all, :conditions => ["is_scrum = ?", true])
     @tracker_statuses = IssueStatus.find(:all, :conditions => ["is_scrum = ?", true])
-
+    @weekly_vacation = ScrumWeeklyNonWorkingDay.first || ScrumWeeklyNonWorkingDay.new
+    
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @scrum_admins }
@@ -47,6 +48,20 @@ class ScrumAdminsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to(scrum_admins_path(:project_id => @project)) }
+    end
+  end
+  
+  def update_weekly_vacation
+    @weekly_vacation = ScrumWeeklyNonWorkingDay.first || ScrumWeeklyNonWorkingDay.new
+    
+    respond_to do |format|
+      if @weekly_vacation.update_attributes(params[:scrum_weekly_non_working_day])
+        format.html { redirect_to(scrum_admins_path, :notice => 'Weekly Vacation was successfully set!') }
+        format.xml  { render :xml => @weekly_vacation, :status => :created, :location => @weekly_vacation }
+      else
+        format.html { render :action => "index" }
+        format.xml  { render :xml => @weekly_vacation.errors, :status => :unprocessable_entity }
+      end
     end
   end
 

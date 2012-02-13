@@ -4,6 +4,35 @@
 
 <h1 style="margin: 10px 0px 10px 0px;">Scrum Configurations</h1>
 
+<h2>Weekly Non Working Days</h2>
+
+<% form_for(@weekly_vacation, :url => admin_weekly_vacation_path) do |f| %>
+  <%= f.error_messages %>
+  <table class="fancy">
+  	<tr>
+  		<th><%= f.label :sunday %></th>
+  		<th><%= f.label :monday %></th>
+  		<th><%= f.label :tuesday %></th>
+  		<th><%= f.label :wednesday %></th>
+  		<th><%= f.label :thursday %></th>
+  		<th><%= f.label :friday %></th>
+  		<th><%= f.label :saturday %></th>
+  	</tr>
+  	<tr>
+  		<td><%= f.check_box :sunday %></td>
+  		<td><%= f.check_box :monday %></td>
+  		<td><%= f.check_box :tuesday %></td>
+  		<td><%= f.check_box :wednesday %></td>
+  		<td><%= f.check_box :thursday %></td>
+  		<td><%= f.check_box :friday %></td>
+  		<td><%= f.check_box :saturday %></td>
+  	</tr>
+  </table>
+  <p>
+    <%= f.submit l(:save) %>
+  </p>
+<% end %>
+
 <h2>Trackers</h2>
 <% form_tag(update_scrum_trackers_path(:project_id => @project), :method => :post) do %>
 	<table class="fancy">

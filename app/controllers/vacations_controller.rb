@@ -8,13 +8,10 @@ class VacationsController < ApplicationController
   # GET /weekly_vacations.xml
   def index
     # Weekly vacations
-    @weekly_vacation = @project.weekly_vacation ? @project.weekly_vacation: WeeklyVacation.new
+    @weekly_vacation = @project.weekly_vacation || WeeklyVacation.new
     
     # General vacations
     initialize_general_vacations
-
-    # Initialize a new vacation to be added
-    @vacation = Vacation.new
 
     respond_to do |format|
       format.html # index.html.erb
@@ -24,13 +21,9 @@ class VacationsController < ApplicationController
 
   def weekly_vacation
     @weekly_vacation = WeeklyVacation.find_or_initialize_by_project_id(@project)
-    @weekly_vacation.update_attributes(params[:weekly_vacation])
-    @weekly_vacation.project = @project
 
-    # Initialize a new vacation to be added
-    @vacation = Vacation.new
     respond_to do |format|
-      if @weekly_vacation.save
+      if @weekly_vacation.update_attributes(params[:weekly_vacation])
         format.html { redirect_to(vacations_path(:project_id => @project.identifier), :notice => 'Weekly Vacation was successfully set!') }
         format.xml  { render :xml => @weekly_vacation, :status => :created, :location => @weekly_vacation }
       else
@@ -44,11 +37,9 @@ class VacationsController < ApplicationController
     params[:vacation][:color] = "#" + params[:vacation][:color]
     @vacation = Vacation.new(params[:vacation])
     @vacation.project = @project
-    # Initialize a new vacation to be added
 
     respond_to do |format|
       if @vacation.save
-        @vacation = Vacation.new
         format.html { redirect_to(vacations_path(:project_id => @project.identifier), :notice => 'Vacation was successfully set!') }
       else
         # Weekly vacations

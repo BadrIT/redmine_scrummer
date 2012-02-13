@@ -10,8 +10,8 @@ module VacationsHelper
       :month => @month,
       :event_strips => @event_strips,
       :month_name_text => I18n.localize(@shown_month, :format => "%B %Y"),
-      :previous_month_text => "<< " + month_link(@shown_month.last_month),
-      :next_month_text => month_link(@shown_month.next_month) + " >>",
+      :previous_month_text => "<< " + month_link(@shown_month.advance(:month => -1)),
+      :next_month_text => month_link(@shown_month.advance(:months => 1)) + " >>",
       :link_to_day_action => false 
     }
   end

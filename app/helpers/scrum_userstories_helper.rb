@@ -61,7 +61,7 @@ module ScrumUserstoriesHelper
         when :finished 
           IssueStatus.find_by_scrummer_caption(:finished).short_name.upcase
   	  end
-  	  "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status'>" + content.to_s + "</div>"
+  	  "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status'><b>" + content.to_s + "</b></div>"
   	elsif column.name == :subject
   	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
@@ -114,7 +114,7 @@ module ScrumUserstoriesHelper
 			    else
 			      output_content = value.to_s
 			    end
-					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
+					content = value.to_f > 0 ? "<span align='center' class='accumelated-result' id='issue-#{issue.id}-custom-field-#{column.name}'>#{output_content}</span>" : '&nbsp;';
 				end
 			else
 				content = column_content(column, issue)
@@ -217,5 +217,14 @@ module ScrumUserstoriesHelper
     end
     statuses += "'selected':'" + issue.status.short_name + "'}"
     statuses
+  end
+  
+  def storysize_possible_values(issue, values)
+    possible_sizes = "{"
+    values.each do |value|
+      possible_sizes += "'" + value.to_s + "':'" + value.to_s + "', "
+    end
+    possible_sizes += "'selected':'" + issue.story_size.to_s + "'}"
+    possible_sizes
   end
 end

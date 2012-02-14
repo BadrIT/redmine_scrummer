@@ -107,14 +107,15 @@ module ScrumUserstoriesHelper
 				# ex: US1 has children (US2, US3) and they don't have story size set then I can edit US1 story size
 				if (issue.direct_children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
 					content = value.to_f > 0 ? value : ''
-					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
+					can_edit = column.custom_field.scrummer_caption == :story_size ? "": "edit"
+					"<div align='center' class='#{can_edit} #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else
 			    if field_caption == :remaining_hours
 			      output_content = "Σ" + value.to_s
 			    else
 			      output_content = value.to_s
 			    end
-					content = value.to_f > 0 ? "<span align='center' class='accumelated-result' id='issue-#{issue.id}-custom-field-#{column.name}'>#{output_content}</span>" : '&nbsp;';
+					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
 				end
 			else
 				content = column_content(column, issue)
@@ -224,7 +225,7 @@ module ScrumUserstoriesHelper
     values.each do |value|
       possible_sizes += "'" + value.to_s + "':'" + value.to_s + "', "
     end
-    possible_sizes += "'selected':'" + issue.story_size.to_s + "'}"
+    possible_sizes += "'selected':'" + issue.story_size.to_i.to_s + "'}"
     possible_sizes
   end
 end

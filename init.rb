@@ -61,7 +61,7 @@ Redmine::Plugin.register :redmine_scrummer do
   	
   	permission :scrum_charts, 													{ :scrum_charts => [:index, :update_chart]}
   	permission :scrum_admins,                           { :scrum_admins => [:index, :update_scrum_trackers, :update_scrum_tracker_statuses] }, :require => :member
-    permission :vacations,                              { :vacations => [:index]}
+    permission :vacations,                              { :vacations => [:index] }, :public => true
   end
   
   # Adjusting the Scrummer Menu "Scrummer Tab"

@@ -1,9 +1,8 @@
 class VacationsController < ApplicationController
   unloadable
-
+  
   include ScrumUserstoriesController::SharedScrumConstrollers
   prepend_before_filter :find_scrum_project
-  before_filter :require_admin
   # GET /weekly_vacations
   # GET /weekly_vacations.xml
   def index

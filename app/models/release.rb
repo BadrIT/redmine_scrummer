@@ -17,6 +17,10 @@ class Release < ActiveRecord::Base
   # Each release has many versions (sprints)
   has_many :versions, :dependent => :nullify
   
+  def number_of_points
+    self.issues.inject(0){ |points, issue| points + issue.points_histories.sum(:points) } 
+  end
+  
   protected
 
   def dates_overlapping

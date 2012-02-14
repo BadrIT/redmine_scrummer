@@ -69,6 +69,7 @@ en:
   name: "Name"
   description: "Description"
   actions: "Actions"
+  number_of_points: "Number of Points"
   
   error_sprint_update: "Error in updating the sprint"
   

@@ -10,27 +10,31 @@
 <h2>Show Release</h2>
 
 <p>
-  <b>Name:</b>
+  <b><%= l(:name) %></b>
   <%=h @release.name %>
 </p>
 
 <p>
-  <b>Start date:</b>
+  <b><%= l(:start_date) %></b>
   <%=h @release.start_date %>
 </p>
 
 <p>
-  <b><%= l :field_release_date %></b>
+  <b><%= l(:field_release_date) %></b>
   <%=h @release.release_date %>
 </p>
 
 <p>
-  <b><%= l :field_state %></b>
+  <b><%= l(:field_state) %></b>
   <%=h @release.state %>
+</p>
+<p>
+  <b><%= l(:number_of_points) %></b>
+  <%=h pluralize(@release.number_of_points, "point") %>
 </p>
 
 <p>
-  <b>Description:</b>
+  <b><%= l(:description) %></b><br/>
   <%=h @release.description %>
 </p>
 

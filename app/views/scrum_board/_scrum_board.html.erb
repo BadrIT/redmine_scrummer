@@ -1,0 +1,94 @@
+<table id="board-table" class="board-table">
+	<thead>
+		<tr>
+			<th class="col first" width="10%">
+				<p class="board-title">Backlog</p>
+			</th>
+			<th class="col" width="10%" style="text-align: center">
+				<p class="board-title">In Progress</p>
+			</th>
+			<th class="col" width="10%" style="text-align: center">
+				<p class="board-title">To Be Verified</p>
+			</th>
+			<th class="col" width="10%" style="text-align: center">
+				<p class="board-title">Done</p>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<% @issues.each do |row| %>
+			<% backlog = row.map{|issue| issue if issue.status == IssueStatus.find_by_scrummer_caption(:defined)}.delete_if{|issue| issue.nil?} %>
+			<% in_progress = row.map{|issue| issue if issue.status == IssueStatus.find_by_scrummer_caption(:in_progress)}.delete_if{|issue| issue.nil?} %>
+			<% completed_or_finished = row.map{|issue| issue if issue.status == IssueStatus.find_by_scrummer_caption(:completed) || issue.status == IssueStatus.find_by_scrummer_caption(:finished)}.delete_if{|issue| issue.nil?} %>
+			<% accepted = row.map{|issue| issue if issue.status == IssueStatus.find_by_scrummer_caption(:accepted)}.delete_if{|issue| issue.nil?} %>
+			<tr id="<%= row.first.id%>-row">
+				<td class="col first backlog">
+					<ul class='bachlog-list'>
+						<% backlog.each do |issue| %>
+							<%= issue_li_tag issue %>
+							<script>
+								$j( "#" + <%= issue.id %> ).draggable({containment: "#<%= row.first.id %>-row" });
+							</script>
+						<% end %>
+					</ul>
+				</td>
+				<td class="col in-progress">
+					<ul class='bachlog-list'>
+						<% in_progress.each do |issue| %>
+							<%= issue_li_tag issue %>
+							<script>
+								$j( "#" + <%= issue.id %> ).draggable({containment: "#<%= row.first.id %>-row"  });
+							</script>
+						<% end %>
+					</ul>
+				</td>
+				<td class="col completed">
+					<ul class='bachlog-list'>
+						<% completed_or_finished.each do |issue| %>
+							<%= issue_li_tag issue %>
+							<script>
+								$j( "#" + <%= issue.id %> ).draggable({containment: "#<%= row.first.id %>-row"  });
+							</script>
+						<% end %>
+					</ul>
+				</td>
+				<td class="col accepted">
+					<ul class='bachlog-list'>
+						<% accepted.each do |issue| %>
+							<%= issue_li_tag issue %>
+							<script>
+								$j( "#" + <%= issue.id %> ).draggable({containment: "#<%= row.first.id %>-row"  });
+							</script>
+						<% end %>
+					</ul>
+				</td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+
+<script>
+	$j(".backlog").droppable({
+		drop: function(event, ui) {
+			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "backlog", project_id: "<%= @project.identifier %>" });
+		}
+	});
+	
+	$j(".in-progress").droppable({
+		drop: function(event, ui) {
+			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "inprogress", project_id: "<%= @project.identifier %>" });
+		}
+	});
+	
+	$j(".completed").droppable({
+		drop: function(event, ui) {
+			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "completed", project_id: "<%= @project.identifier %>" });
+		}
+	});
+	
+	$j(".accepted").droppable({
+		drop: function(event, ui) {
+			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "accepted", project_id: "<%= @project.identifier %>" });
+		}
+	});
+</script>

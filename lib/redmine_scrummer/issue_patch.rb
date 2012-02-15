@@ -123,6 +123,18 @@ module RedmineScrummer
         self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}.try(:value).try(:to_f)
       end
       
+      def childrenless?
+        !self.children.any?  
+      end
+      
+      def with_task_children?
+        self.children.map(&:tracker).map(&:id).include?(Tracker.find_by_scrummer_caption(:task).id)
+      end
+      
+      def issue_tasks
+        self.children.map{|child| child if child.is_task?}.delete_if{|child| child.nil?}  
+      end
+      
       def remaining_hours=(value)
        (self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}).value = value
       end

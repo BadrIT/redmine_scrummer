@@ -19,6 +19,30 @@ module RedmineScrummer
     
     module InstanceMethods
       
+      def defined_issues
+        self.fixed_issues.find(:all, :conditions => ['status_id = ?', 1])
+      end
+      
+      def in_progress_issues
+        self.fixed_issues.find(:all, :conditions => ['status_id = ?', 2])
+      end
+      
+      def to_be_verified_issues
+        self.fixed_issues.find(:all, :conditions => ['status_id = ?', 3])
+      end
+      
+      def done_issues
+        self.fixed_issues.find(:all, :conditions => ['status_id = ?', 4])
+      end
+      
+      def user_stories
+        self.fixed_issues.find(:all, :conditions => ['tracker_id = ?', Tracker.find_by_scrummer_caption(:userstory).id]).map{|user_story| user_story if user_story.with_task_children? || user_story.childrenless?}.delete_if{|user_story| user_story.nil?}
+      end
+      
+      def defects
+        self.fixed_issues.find(:all, :conditions => ['tracker_id = ?', Tracker.find_by_scrummer_caption(:defect).id])
+      end
+            
       # returns the value of the buffer_size custom field or zero if nil
       def buffer_size
         buffer_size_field = VersionCustomField.find_by_scrummer_caption(:buffer_size)

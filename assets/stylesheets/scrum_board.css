@@ -1,0 +1,250 @@
+#board {
+	position: relative;
+	background-color: #dcd5d1;
+	height: 100%;
+	xwidth: 980px;
+	xborder: solid silver 8px;
+	background-image: -webkit-gradient(
+	linear,
+	left top,
+	right bottom,
+	color-stop(0.49, rgb(214,210,206)),
+	color-stop(0.84, rgb(196,191,182))
+	);
+	xbackground: -moz-linear-gradient(top,  rgb(214,210,206),  #000);
+	-webkit-box-shadow: inset 1px 1px 3px #999;
+	-moz-box-shadow: inset 1px 1px 3px #999;
+	box-shadow: inset 1px 1px 3px #999;
+}
+.board-outline {
+	border: solid #ccc 8px;
+	display: block;
+	width: 996px;
+	height: 466px;
+	xmargin-left: auto;
+	xmargin-right: auto;
+	-webkit-box-shadow: 1px 3px 2px #aaa;
+	-moz-box-shadow: 1px 3px 2px #999;
+	x-webkit-transform: rotate(0.3deg); /*"is that a little off-level? i feel like it is off-level"*/
+}
+#board-doodles {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	display: inline;
+	opacity: 0.035;
+	background-image: url('../images/scribbles2.png');
+}
+.board-table {
+	background-image: url('../images/concrete_wall_2_2.png');
+	xz-index: 1;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	xborder: solid black 1px;
+	height: 100%;
+	width: 100%;
+}
+.board-table .col{
+	xborder-left: dashed #19ba98 5px;
+	text-align: left;
+	vertical-align: top;
+	height: 20%;
+	xopacity: 1;
+	background-image: url('../images/green-board-line.png');
+	background-repeat: repeat-y;
+	background-position: left top;
+}
+.board-table tbody tr {
+	xborder-left: dashed #19ba98 5px;
+	text-align: center;
+	vertical-align: top;
+	height: 20%;
+	xopacity: 1;
+	background-image: url('../images/green-board-line-horizontal.png');
+	background-repeat: repeat-x;
+	background-position: left top;
+}
+
+.board-table .first {
+	border-left: none;
+	text-align: center;
+	vertical-align: top;
+	height: 100%;
+	background-image: none;
+}
+.board-title {
+	font-family: 'Rock Salt', "Arial Rounded MT Bold", arial, serif;
+	color: #5c9db4;
+	font-size: 18px;
+}
+/* states and images */
+.ui-resizable {
+	position: relative;
+}
+.ui-resizable-handle {
+	position: absolute;
+	font-size: 0.1px;
+	z-index: 99999;
+	display: block;
+}
+.ui-resizable-disabled .ui-resizable-handle, .ui-resizable-autohide .ui-resizable-handle {
+	display: none;
+}
+.ui-resizable-n {
+	cursor: n-resize;
+	height: 7px;
+	width: 100%;
+	top: -5px;
+	left: 0;
+}
+.ui-resizable-s {
+	cursor: s-resize;
+	height: 7px;
+	width: 100%;
+	bottom: -5px;
+	left: 0;
+}
+.ui-resizable-e {
+	cursor: e-resize;
+	width: 7px;
+	right: -5px;
+	top: 0;
+	height: 100%;
+}
+.ui-resizable-w {
+	cursor: w-resize;
+	width: 7px;
+	left: -5px;
+	top: 0;
+	height: 100%;
+}
+.ui-resizable-se {
+	cursor: se-resize;
+	width: 12px;
+	height: 12px;
+	right: 1px;
+	bottom: 1px;
+}
+.ui-resizable-sw {
+	cursor: sw-resize;
+	width: 9px;
+	height: 9px;
+	left: -5px;
+	bottom: -5px;
+}
+.ui-resizable-nw {
+	cursor: nw-resize;
+	width: 9px;
+	height: 9px;
+	left: -5px;
+	top: -5px;
+}
+.ui-resizable-ne {
+	cursor: ne-resize;
+	width: 9px;
+	height: 9px;
+	right: -5px;
+	top: -5px;
+}
+.ui-icon-gripsmall-diagonal-se {
+	background-position: -64px -224px;
+}
+/* states and images */
+.ui-icon {
+	width: 16px;
+	height: 16px;
+	background-image: url('../images/ui-icons_222222_256x240.png');
+}
+.ui-widget-content .ui-icon {
+	background-image: url('../images/ui-icons_222222_256x240.png');
+}
+.ui-widget-header .ui-icon {
+	background-image: url('../images/ui-icons_222222_256x240.png');
+}
+.ui-state-default .ui-icon {
+	background-image: url('../images/ui-icons_888888_256x240.png');
+}
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {
+	background-image: url('../images/ui-icons_454545_256x240.png');
+}
+.ui-state-active .ui-icon {
+	background-image: url('../images/ui-icons_454545_256x240.png');
+}
+.ui-state-highlight .ui-icon {
+	background-image: url('../images/ui-icons_2e83ff_256x240.png');
+}
+.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {
+	background-image: url('../images/ui-icons_cd0a0a_256x240.png');
+}
+.ui-resizable {
+	position: relative;
+}
+.ui-resizable-handle {
+	position: absolute;
+	font-size: 0.1px;
+	z-index: 99999;
+	display: block;
+}
+.ui-resizable-disabled .ui-resizable-handle, .ui-resizable-autohide .ui-resizable-handle {
+	display: none;
+}
+.ui-resizable-n {
+	cursor: n-resize;
+	height: 7px;
+	width: 100%;
+	top: -5px;
+	left: 0;
+}
+.ui-resizable-s {
+	cursor: s-resize;
+	height: 7px;
+	width: 100%;
+	bottom: -5px;
+	left: 0;
+}
+.ui-resizable-e {
+	cursor: e-resize;
+	width: 7px;
+	right: -5px;
+	top: 0;
+	height: 100%;
+}
+.ui-resizable-w {
+	cursor: w-resize;
+	width: 7px;
+	left: -5px;
+	top: 0;
+	height: 100%;
+}
+.ui-resizable-se {
+	cursor: se-resize;
+	width: 12px;
+	height: 12px;
+	right: 1px;
+	bottom: 1px;
+}
+.ui-resizable-sw {
+	cursor: sw-resize;
+	width: 9px;
+	height: 9px;
+	left: -5px;
+	bottom: -5px;
+}
+.ui-resizable-nw {
+	cursor: nw-resize;
+	width: 9px;
+	height: 9px;
+	left: -5px;
+	top: -5px;
+}
+.ui-resizable-ne {
+	cursor: ne-resize;
+	width: 9px;
+	height: 9px;
+	right: -5px;
+	top: -5px;
+}
+.ui-icon-gripsmall-diagonal-se {
+	background-position: -64px -224px;
+}

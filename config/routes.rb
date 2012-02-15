@@ -34,4 +34,9 @@ ActionController::Routing::Routes.draw do |map|
   map.calendar '/calendar/:year/:month', :controller => 'calendar', :action => 'index', :requirements => {:year => /\d{4}/, :month => /\d{1,2}/}, :year => nil, :month => nil
   map.add_vacation '/vacations/add_vacation', :controller => 'vacations', :action => 'add_vacation'
   map.delete_vacation '/vacations/:id/delete_vacation', :controller => 'vacations', :action => 'delete_vacation', :method => :delete
+  
+  #Scrum Board
+  map.scrum_board '/scrum_board', :controller => 'scrum_board', :action => 'index'
+  map.sprint_scrum_board '/scrum_board/sprint_board.:format', :controller => 'scrum_board', :action => 'sprint_board'
+  map.update_status '/scrum_board/update_status.:format', :controller => 'scrum_board', :action => 'update_status'
 end

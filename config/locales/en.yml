@@ -85,7 +85,7 @@ en:
   
   field_start_at: "Start at"
   field_end_at: "End at"
-  field_name: "Non Working Day(s) Name"
+  field_name: "Name"
   field_comment: "Non Working Day(s) Comment"
   field_color: "Non Working Day(s) Color"
   

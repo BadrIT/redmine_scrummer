@@ -52,8 +52,9 @@
 		actual = <%= @axes[:actual_hrs].inspect %>;
 		actual_and_todo = <%= @axes[:actual_and_remaining_hrs].inspect %>;
 		sprint_chart = set_data("sprint_container", actual, actual_and_todo, "Sprint Burn Chart", "Time (hrs)", "Actual", "Actual + Remaining", "hrs");
-		add_series("Remaining", <%= @axes[:remaining_hrs].inspect %>, sprint_chart)
-		
+		if(actual.length > 0 || actual_and_todo.length > 0) {
+			add_series("Remaining", <%= @axes[:remaining_hrs].inspect %>, sprint_chart)
+		}
 		total_points = <%= @axes[:accepted_pts].inspect %>;
 		accepted_points = <%= @axes[:total_pts].inspect %>;
 		set_data("release_container", total_points, accepted_points, "Release Burnup Chart", "Points (pt)", "Total Points", "Accepted Points", "pts");

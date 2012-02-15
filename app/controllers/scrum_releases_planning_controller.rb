@@ -48,6 +48,8 @@ class ScrumReleasesPlanningController < IssuesController
   # POST /releases
   # POST /releases.xml
   def create
+    @query = Query.find_by_scrummer_caption("Release-Planning")
+    initialize_sort
     @release = Release.new(params[:release])
     @release.project_id = @project.id
     

@@ -70,25 +70,25 @@
 <script>
 	$j(".backlog").droppable({
 		drop: function(event, ui) {
-			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "backlog", project_id: "<%= @project.identifier %>" });
+			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "backlog", project_id: "<%= @project.identifier %>" }, {global: false});
 		}
 	});
 	
 	$j(".in-progress").droppable({
 		drop: function(event, ui) {
-			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "inprogress", project_id: "<%= @project.identifier %>" });
+			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "inprogress", project_id: "<%= @project.identifier %>" }, {global: false});
 		}
 	});
 	
 	$j(".completed").droppable({
 		drop: function(event, ui) {
-			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "completed", project_id: "<%= @project.identifier %>" });
+			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "completed", project_id: "<%= @project.identifier %>" }, {global: false});
 		}
 	});
 	
 	$j(".accepted").droppable({
 		drop: function(event, ui) {
-			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "accepted", project_id: "<%= @project.identifier %>" });
+			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "accepted", project_id: "<%= @project.identifier %>" }, {global: false});
 		}
 	});
 </script>

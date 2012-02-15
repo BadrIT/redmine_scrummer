@@ -23,13 +23,13 @@ class ScrumBoardController < ApplicationController
      issue = @project.issues.find(params[:issue_id])
      case status
      when "backlog"
-       issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:defined)) 
+       issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:defined).id) 
      when "inprogress"
-       issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:in_progress))
+       issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:in_progress).id)
      when "completed"
-       issue.task? ? issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:finished)): issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:completed))
+       issue.is_task? ? issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:finished).id): issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:completed).id)
      when "accepted"
-       issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:accepted))
+       issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:accepted).id)
      end
      
      render :nothing => true

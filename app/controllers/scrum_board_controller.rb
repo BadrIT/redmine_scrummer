@@ -39,7 +39,7 @@ class ScrumBoardController < ApplicationController
   
   def initialize_board
     @issues = []
-    @sprint = @project.versions.find(params[:sprint_id])
+    @sprint = params[:sprint_id] ? @project.versions.find(params[:sprint_id]) : @project.current_or_latest_sprint
     
     @sprint.user_stories.each do |user_story|
       @issues << [user_story] + user_story.issue_tasks 

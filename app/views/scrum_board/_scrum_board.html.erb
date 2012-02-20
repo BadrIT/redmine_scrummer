@@ -68,6 +68,10 @@
 </table>
 
 <script>
+	$j(function() {
+		$j(".board-outline").height($j("#board-table").height() + 20)
+	});
+	
 	$j(".backlog").droppable({
 		drop: function(event, ui) {
 			$j.get('scrum_board/update_status.js', { issue_id: ui.draggable.attr("id"),  status: "backlog", project_id: "<%= @project.identifier %>" }, {global: false});

@@ -120,7 +120,7 @@ module RedmineScrummer
       end
       
       def remaining_hours
-        self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}.try(:value).try(:to_f)
+        self.custom_values.map{|custom_value| custom_value if custom_value.custom_field.scrummer_caption == :remaining_hours}.first.try(:value).try(:to_f)
       end
       
       def childrenless?

@@ -7,6 +7,7 @@ module RedmineScrummer
         include InstanceMethods 
         
         after_create :set_weekly_non_working_days
+        after_initialize :initiate_custom_fields
         
         has_many :releases,
                  :dependent => :destroy
@@ -60,12 +61,14 @@ module RedmineScrummer
       
       # This method sets the default scrummer project attributes. By default, the Scrummer option will be 
       # selected on creating a new project as well as the scrummer custom fields (stroy size, remaining hours and the business value)
-      def after_initialize
-        Setting.default_projects_modules << "scrummer"
-        
-        self.issue_custom_fields << CustomField.find_by_scrummer_caption(:story_size)
-        self.issue_custom_fields << CustomField.find_by_scrummer_caption(:remaining_hours)
-        self.issue_custom_fields << CustomField.find_by_scrummer_caption(:business_value)
+      def initiate_custom_fields
+        if self.new_record?
+          Setting.default_projects_modules << "scrummer"
+          
+          self.issue_custom_fields << CustomField.find_by_scrummer_caption(:story_size)
+          self.issue_custom_fields << CustomField.find_by_scrummer_caption(:remaining_hours)
+          self.issue_custom_fields << CustomField.find_by_scrummer_caption(:business_value)
+        end
       end
     end
   end

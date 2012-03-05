@@ -38,60 +38,60 @@
 
 <% form_tag('', {:id => 'context_menu_form'}) do -%>
 	<%= hidden_field_tag 'back_url', url_for(build_params_for_context_menu) %>
-
-	<%if hierarchy%>
-		<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
-		<%= " / " %>
-		<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
-	<%end%>
-	
-	<div class="autoscroll">
-	
-	<% if issues.length > 0 %>
-		<%= hidden_field_tag("first_index", issues.first.position) %>
-	<% else %>
-		<%= hidden_field_tag("first_index", 0) %>
-	<%- end -%>
-	
-	<table id='issue-table' class="list issues">
-	    <thead>
-	    	<tr>
-	    	
-	    	<% if hierarchy %>	
-	        <th class="checkbox hide-when-print"><%= link_to image_tag('toggle_check.png'), {}, :onclick => 'toggleIssuesSelection(Element.up(this, "form")); return false;',
-	                                                           :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}" %>
-	        </th>
-	        <% end %>
-	        
-	        <% query.columns.each do |column| %>
-	          <%= column_short_header(column) %>
-	        <% end %>
-	        <th>Actions</th>
-				</tr>
-			</thead>
-		<% previous_group = false %>
-		<tbody sort='<%=@sort_criteria.first_key%>'>
-		<% if issues.length > 0 %>
-			<% issues.each do |issue| -%>
-			  <% level = hierarchy ? issue.level : 0 -%>
-				
-				<%= render :partial => "scrum_userstories/issue_row", :locals => {:issue => issue, :hierarchy => hierarchy, :query => query, :level => level, :list_id => list_id, :from_sprint => from_sprint} %>
-				
-				<tr id='placeholder-<%=issue.id%>' level="<%= (level + 1).to_s %>">
-					<td colspan="9">
-						<div id="issue-<%= issue.id%>-inline-child" class='inline_child_container'></div>
-					</td>	
-				</tr>
-			<% end -%>
-		<% else %>
-			<tr id="empty_issues" level="0" class="us-issue hascontextmenu odd issue priority-1 created-by-me">
-				<td height="30" colspan="20" align="center"><b>No issues in this sprint</b></td>
-			</tr>
-		<% end %>
-		</tbody>
-	</table>
-	</div>
 <% end %>
+
+<%if hierarchy%>
+	<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
+	<%= " / " %>
+	<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($j('.expander')[0])", :class => 'toggle-all') %>
+<%end%>
+
+<div class="autoscroll">
+
+<% if issues.length > 0 %>
+	<%= hidden_field_tag("first_index", issues.first.position) %>
+<% else %>
+	<%= hidden_field_tag("first_index", 0) %>
+<%- end -%>
+
+<table id='issue-table' class="list issues">
+    <thead>
+    	<tr>
+    	
+    	<% if hierarchy %>	
+        <th class="checkbox hide-when-print"><%= link_to image_tag('toggle_check.png'), {}, :onclick => 'toggleIssuesSelection(Element.up(this, "form")); return false;',
+                                                           :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}" %>
+        </th>
+        <% end %>
+        
+        <% query.columns.each do |column| %>
+          <%= column_short_header(column) %>
+        <% end %>
+        <th>Actions</th>
+			</tr>
+		</thead>
+	<% previous_group = false %>
+	<tbody sort='<%=@sort_criteria.first_key%>'>
+	<% if issues.length > 0 %>
+		<% issues.each do |issue| -%>
+		  <% level = hierarchy ? issue.level : 0 -%>
+			
+			<%= render :partial => "scrum_userstories/issue_row", :locals => {:issue => issue, :hierarchy => hierarchy, :query => query, :level => level, :list_id => list_id, :from_sprint => from_sprint} %>
+			
+			<tr id='placeholder-<%=issue.id%>' level="<%= (level + 1).to_s %>">
+				<td colspan="9">
+					<div id="issue-<%= issue.id%>-inline-child" class='inline_child_container'></div>
+				</td>	
+			</tr>
+		<% end -%>
+	<% else %>
+		<tr id="empty_issues" level="0" class="us-issue hascontextmenu odd issue priority-1 created-by-me">
+			<td height="30" colspan="20" align="center"><b>No issues in this sprint</b></td>
+		</tr>
+	<% end %>
+	</tbody>
+</table>
+</div>
 <% unless hierarchy %>
 	<script>
 		$j('span.expander').css('display','none');

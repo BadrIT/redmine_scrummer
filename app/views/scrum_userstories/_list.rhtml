@@ -78,11 +78,13 @@
 			
 			<%= render :partial => "scrum_userstories/issue_row", :locals => {:issue => issue, :hierarchy => hierarchy, :query => query, :level => level, :list_id => list_id, :from_sprint => from_sprint} %>
 			
-			<tr id='placeholder-<%=issue.id%>' level="<%= (level + 1).to_s %>">
-				<td colspan="9">
-					<div id="issue-<%= issue.id%>-inline-child" class='inline_child_container'></div>
-				</td>	
-			</tr>
+			<% if User.current.allowed_to?(:scrum_user_stories_add_inline, @project) || User.current.allowed_to?(:scrum_user_stories_manipulate_inline, @project)%>
+				<tr id='placeholder-<%=issue.id%>' level="<%= (level + 1).to_s %>">
+					<td colspan="9">
+						<div id="issue-<%= issue.id%>-inline-child" class='inline_child_container'></div>
+					</td>	
+				</tr>
+			<% end%>
 		<% end -%>
 	<% else %>
 		<tr id="empty_issues" level="0" class="us-issue hascontextmenu odd issue priority-1 created-by-me">

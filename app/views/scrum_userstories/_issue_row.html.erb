@@ -15,23 +15,30 @@
 		
 	  	<!--Remove 'add_child' form task and test trackers -->
 	  	<%if !(issue.is_task? || issue.is_test? || issue.is_spike?)%>
-	  	<%= link_to_remote image_tag( scrummer_image_path('add_issue.gif') ), 
-	  										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id},
-	  										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",
-	  										 :update => "issue-#{issue.id}-inline-child" %>
-			<%end%>
-	  	<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
+	  		<% if User.current.allowed_to?(:scrum_user_stories_add_inline, @project)%>
+		  		<%= link_to_remote image_tag( scrummer_image_path('add_issue.gif') ), 
+		  										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id},
+		  										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",
+		  										 :update => "issue-#{issue.id}-inline-child" %>
+				<%end%>
+			<% end%>
+	
+			<% if User.current.allowed_to?(:scrum_user_stories_manipulate_inline, @project)%>			
+		  	<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
 	  										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id, :from_sprint => from_sprint},
 	  										 :with => "'issue_id=#{issue.id}&project_id=#{@project.id}'",
 	  										 :update => "issue-#{issue.id}-inline-child" %>
-											 
-	  	<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list) %>
-	  	<%= link_to_remote image_tag( scrummer_image_path('remove_issue.gif') ), 
-	  										 :url => (issue_path issue.id),
-	  										 :method => :delete,
-										     :confirm => "Are you sure?",
-	  										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ query.id }&project_id=#{@project.identifier}&list_id=#{list_id}')",
-	  										 :update => list_id %>
+			<% end%>											 
+	
+	  	<% if User.current.allowed_to?(:scrum_user_stories_manipulate_inline, @project)%>	
+		  	<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list) %>
+		  	<%= link_to_remote image_tag( scrummer_image_path('remove_issue.gif') ), 
+		  										 :url => (issue_path issue.id),
+		  										 :method => :delete,
+											     :confirm => "Are you sure?",
+		  										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ query.id }&project_id=#{@project.identifier}&list_id=#{list_id}')",
+		  										 :update => list_id %>
+	  	<% end%>
 	  </td>	    
 	<!-- The following Tr is sued as a place holder for inline-add-child -->
 </tr>

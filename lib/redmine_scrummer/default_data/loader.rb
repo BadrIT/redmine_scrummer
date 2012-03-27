@@ -368,13 +368,13 @@ module RedmineScrummer
           Issue.all.each{|i| i.update_story_size(custom_field)}
           
           # Create points history entry for all the issues as a strat point
-          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
+          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|
             issue.build_points_history_entry.save
           end
           
           
           # Create points history entry for all the issues as a strat point
-          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]).each do |issue|
+          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|
             if issue.points_histories.blank?
               issue.build_points_history_entry.save
             end

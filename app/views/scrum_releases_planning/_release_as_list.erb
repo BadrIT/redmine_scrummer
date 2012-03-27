@@ -3,7 +3,7 @@
 	<ul class='bachlog-list'>
 		<% issues = release_as_list.issues.find(:all, :order => sort_clause) %>
 		<% issues.each do |issue| %>
-			<%= issue_li_tag issue  unless issue.is_test? || issue.is_task? %>
+			<%= issue_li_tag issue  unless issue.test? || issue.task? %>
 		<% end %>
 	</ul>
 </div>

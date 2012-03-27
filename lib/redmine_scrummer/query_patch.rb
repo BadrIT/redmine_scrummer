@@ -22,6 +22,7 @@ module RedmineScrummer
 			
 			# This method sets the default columns displayed in the scrum views 
 			def default_scrummer_columns
+			  #TODO Refactoring CF
         self.column_names = [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2]
 			end
 		end

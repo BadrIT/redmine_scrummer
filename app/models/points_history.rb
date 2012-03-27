@@ -3,7 +3,7 @@ class PointsHistory < ActiveRecord::Base
   
   belongs_to :issue,
              :class_name => 'Issue',
-             :conditions => ['tracker_id = ?',Tracker.scrum_user_story_tracker.id]
+             :conditions => ['tracker_id = ?',Tracker.scrum_userstory_tracker.id]
              
   before_save :check_nil_attributes
              

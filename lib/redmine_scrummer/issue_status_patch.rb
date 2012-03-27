@@ -7,15 +7,13 @@ module RedmineScrummer
 				
 			  serialize :scrummer_caption   
 			  
-			  def self.method_missing(m, *args, &block)
-          # check status methods (status_defined?, status_accepted?, completed?, ..etc)
-          # method name can be (status_status_name?) OR (status_name?) directly
-          # we had to add status_ in some cases like (defined?) because defined? is a ruby keywork
-          if m.to_s =~ /^(status_)?(defined|in_progress|completed|accepted|failed|succeeded|finished)$/
-            IssueStatus.find_by_scrummer_caption($2.to_sym)
-          else
-            super
-          end
+			  base.all.each do |status|
+          base.instance_eval %Q{
+            def #{'status_' if status.scrummer_caption==:defined}#{status.scrummer_caption}?
+              IssueStatus.find_by_scrummer_caption(:#{status.scrummer_caption})
+            end
+          } unless status.scrummer_caption.blank?
+          
         end
       end
       

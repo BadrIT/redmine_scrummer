@@ -185,9 +185,9 @@ module ScrumUserstoriesHelper
   end
   
   def issue_li_tag(issue)
-    unit = issue.is_user_story? ? "pt":"hr"
+    unit = issue.userstory? ? "pt":"hr"
     
-    if issue.is_user_story?
+    if issue.userstory?
       value = issue.story_size
     else 
       value = issue.remaining_hours

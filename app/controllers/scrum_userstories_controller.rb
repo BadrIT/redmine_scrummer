@@ -111,7 +111,7 @@ class ScrumUserstoriesController < IssuesController
       @issue         = Issue.find(issue_id)
 
       status = if ["f", "F"].include? params[:value].to_s
-        @issue.is_test? ? IssueStatus.failed : IssueStatus.finished
+        @issue.test? ? IssueStatus.failed : IssueStatus.finished
       else
         IssueStatus.find_by_short_name(params[:value])
       end
@@ -343,7 +343,7 @@ class ScrumUserstoriesController < IssuesController
       if params[:issue].blank? || params[:issue][:tracker_id].blank?
         @issue.tracker = case @parent_issue.tracker.scrummer_caption
         when :epic
-          Tracker.scrum_user_story_tracker
+          Tracker.scrum_userstory_tracker
         when :userstory
           Tracker.scrum_task_tracker
         when :defectsuite
@@ -351,7 +351,7 @@ class ScrumUserstoriesController < IssuesController
         when :defect
           Tracker.scrum_defect_tracker
         else
-        Tracker.scrum_user_story_tracker
+        Tracker.scrum_userstory_tracker
         end
       end
     end

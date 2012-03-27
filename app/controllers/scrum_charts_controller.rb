@@ -91,7 +91,7 @@ class ScrumChartsController < IssuesController
     return if @release.nil?
     @start_date = @release.start_date
     @end_date   = @release.release_date
-    @issues     = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_user_story_tracker.id]
+    @issues     = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]
     
     curves = [:accepted_pts, :total_pts]
     

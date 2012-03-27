@@ -27,7 +27,7 @@ class ScrumBoardController < ApplicationController
      when "inprogress"
        issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:in_progress).id)
      when "completed"
-       issue.is_task? ? issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:finished).id): issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:completed).id)
+       issue.task? ? issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:finished).id): issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:completed).id)
      when "accepted"
        issue.update_attribute(:status_id, IssueStatus.find_by_scrummer_caption(:accepted).id)
      end

@@ -1,5 +1,5 @@
 <ul class='bachlog-list'>
 	<% @issues.each do |issue| %>
-		<%= issue_li_tag issue unless issue.is_test? || issue.is_task?%>
+		<%= issue_li_tag issue unless issue.test? || issue.task?%>
 	<% end %>
 </ul>

@@ -7,6 +7,7 @@ module RedmineScrummer
         include InstanceMethods 
         
         after_create :set_weekly_non_working_days
+        #TODO Refactoring CF
         after_initialize :initiate_custom_fields
         
         has_many :releases,

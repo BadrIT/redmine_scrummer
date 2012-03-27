@@ -51,7 +51,7 @@ module RedmineScrummer
         
         # backlog issues
         named_scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
-            Tracker.scrum_user_story_tracker.id,
+            Tracker.scrum_userstory_tracker.id,
             Tracker.scrum_defect_tracker.id,
             Tracker.scrum_defectsuite_tracker.id,
             Tracker.scrum_refactor_tracker.id,
@@ -75,32 +75,32 @@ module RedmineScrummer
     end
     
     module InstanceMethods
-      def is_test?
-        tracker.try(:is_test?)
+      def test?
+        tracker.try(:test?)
       end
       
       def scrum_issue?
         tracker.try(:is_scrum?)
       end
       
-      def is_user_story?
-        tracker.try(:is_user_story?)
+      def userstory?
+        tracker.try(:userstory?)
       end
       
-      def is_epic?
-        tracker.try(:is_epic?)
+      def epic?
+        tracker.try(:epic?)
       end
       
-      def is_theme?
-        tracker.try(:is_theme?)
+      def theme?
+        tracker.try(:theme?)
       end
       
-      def is_task?
-        tracker.try(:is_task?)
+      def task?
+        tracker.try(:task?)
       end
       
-      def is_spike?
-        tracker.try(:is_spike?)
+      def spike?
+        tracker.try(:spike?)
       end
       
       def defect?
@@ -116,7 +116,7 @@ module RedmineScrummer
       end
       
       def time_trackable?
-        self.is_task? || self.defect? || self.is_refactor? || self.is_spike?
+        self.task? || self.defect? || self.is_refactor? || self.spike?
       end
       
       def remaining_hours
@@ -132,7 +132,7 @@ module RedmineScrummer
       end
       
       def issue_tasks
-        self.children.map{|child| child if child.is_task?}.delete_if{|child| child.nil?}  
+        self.children.map{|child| child if child.task?}.delete_if{|child| child.nil?}  
       end
       
       def remaining_hours=(value)
@@ -170,12 +170,12 @@ module RedmineScrummer
         self.status = if self.children.all?(&:status_defined?)
           IssueStatus.status_defined 
           # In-Progress if at least one child is in progress OR defined
-        elsif self.children.any?{|c| c.in_progress? || c.status_defined?} && !self.is_test?
+        elsif self.children.any?{|c| c.in_progress? || c.status_defined?} && !self.test?
           IssueStatus.in_progress
           # Completed if all children are completed, accepted OR finished
           # if user story is accepted don't move to completed, keep it accepted
-        elsif !self.accepted? && self.children.all?{|c| c.completed? || c.accepted? || c.status_finished?} && !self.is_test?
-          self.is_task? || self.is_spike? ? IssueStatus.finished : IssueStatus.completed
+        elsif !self.accepted? && self.children.all?{|c| c.completed? || c.accepted? || c.status_finished?} && !self.test?
+          self.task? || self.spike? ? IssueStatus.finished : IssueStatus.completed
         end
         
         self.save
@@ -234,10 +234,10 @@ module RedmineScrummer
           # when a story goes to completed OR accepted, all its children should be completed
           if self.completed? || self.accepted?
             self.children.each do |child|
-              if (child.is_task? || child.is_spike?) && (child.status_defined? || child.in_progress?)
+              if (child.task? || child.spike?) && (child.status_defined? || child.in_progress?)
                 child.status = IssueStatus.finished
                 child.save
-              elsif child.is_user_story? && (child.status_defined? || child.in_progress? || child.completed?)
+              elsif child.userstory? && (child.status_defined? || child.in_progress? || child.completed?)
                 # if moved to completed, move children to completed
                 # if moved to accepted, move children to accepted
                 child.status = self.status

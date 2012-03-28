@@ -1,3 +1,4 @@
+<% logger.info "xxxxxxxxxxxxxxxxxxxxxxxx";tt %>
 <tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:scrummer_caption).to_s.downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.direct_children.length > 0 ? "group open" : nil%>">
 	<% if hierarchy %>	
 	  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
@@ -10,7 +11,6 @@
 	  <% end %>    
 	  
 	<%= hidden_field_tag("position-" + issue.id.to_s, issue.position) %>
-	
 	<td class='issue-actions'>
 		
 	  	<!--Remove 'add_child' form task and test trackers -->
@@ -37,8 +37,7 @@
 </tr>
 
 <script>
-	<% userstory_custom_field = query.columns.find{|column| column.custom_field.scrummer_caption == :story_size if column.is_a?(QueryCustomFieldColumn)} %>
-	$j('#issue-' + "<%= issue.id %>" + '-custom-field-' + "<%= userstory_custom_field.name %>").editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+	$j('#issue-' + "<%= issue.id %>" + "-field-story_size").editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
 			{
 			 	onblur 		 : 'submit',
 			 	placeholder: '<span class="edit-placeholder">Edit</span>',
@@ -46,11 +45,11 @@
 			 									authenticity_token : '<%= form_authenticity_token %>'
 			 							 },
 			 	indicator  : '<%= image_tag 'loading.gif'%>' ,
-			 	data: "<%= storysize_possible_values(issue, userstory_custom_field.custom_field.possible_values) %>",
+			 	data: "<%= storysize_possible_values(issue, Scrummer::Constants::StorySizes) %>",
 			 	type: 'select',
 			 	ignoreResponse: true
 		});	
-			
+		
 	$j('.edit').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
 		{
 		 	onblur 		 : 'submit',

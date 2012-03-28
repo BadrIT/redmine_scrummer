@@ -8,12 +8,11 @@ module ScrumUserstoriesHelper
 	
 	def column_short_header(column)
 	  todo_column_caption       = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
-	  story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
 	  
 	  caption = column.caption
 	  
 	  short_headers = {todo_column_caption        => l("short_field_remaining_hours"),
-	                   story_size_column_caption  => l("short_field_story_size"),
+	                   l("field_story_size")  => l("short_field_story_size"),
 	                   l("field_estimated_hours") => l("short_field_estimated_hours")}
 	                   
     caption = short_headers[caption] || caption
@@ -89,16 +88,27 @@ module ScrumUserstoriesHelper
   		end
   		
   		content
+  		
+    elsif column.name == :story_size && issue.scrum_issue?
+      if issue.accept_story_size?
+        value = issue.story_size
+        if (issue.direct_children.blank? || value.to_f == 0.0)
+          content = value.to_f > 0 ? value : ''
+          "<div align='center' id='issue-#{issue.id}-field-story_size'>" + content.to_s + "</div>"
+        else
+          content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
+        end
+      else
+        # tasks, defects etc shouldn't display story size
+        content = ''
+      end
+      
   	elsif column.respond_to?(:custom_field) && issue.scrum_issue?
 			field_format = column.custom_field.field_format
 			
 			content = '' 
 			if ["int", "float", "list"].include?(field_format)
-			  if  column.custom_field.scrummer_caption == :story_size
-			    value = issue.story_size
-			  else
-				  value = issue_accumelated_custom_values(issue, column.custom_field)
-				end
+			  value = issue_accumelated_custom_values(issue, column.custom_field)
 				
 				field_caption = column.custom_field.scrummer_caption
 				
@@ -107,8 +117,7 @@ module ScrumUserstoriesHelper
 				# ex: US1 has children (US2, US3) and they don't have story size set then I can edit US1 story size
 				if (issue.direct_children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
 					content = value.to_f > 0 ? value : ''
-					can_edit = column.custom_field.scrummer_caption == :story_size ? "": "edit"
-					"<div align='center' class='#{can_edit} #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
+					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else
 			    if field_caption == :remaining_hours
 			      output_content = "Σ" + value.to_s
@@ -225,7 +234,7 @@ module ScrumUserstoriesHelper
     values.each do |value|
       possible_sizes += "'" + value.to_s + "':'" + value.to_s + "', "
     end
-    possible_sizes += "'selected':'" + issue.story_size.to_i.to_s + "'}"
+    possible_sizes += "'selected':'" + issue.story_size.to_s + "'}"
     possible_sizes
   end
 end

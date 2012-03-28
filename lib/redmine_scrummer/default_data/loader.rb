@@ -11,7 +11,7 @@ module RedmineScrummer
           set_language_if_valid(lang)
           
           filters = {"status_id"=>{:values=>["1"], :operator=>"o"}} #TODO should have empty spaces
-          columns =  [:subject, :fixed_version, :assigned_to, :cf_1, :status, :estimated_hours, :spent_hours, :cf_2] 
+          columns =  [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :spent_hours, :cf_2] 
           Query.find_or_create_by_scrummer_caption(:scrummer_caption => "User-Stories", 
                                                    :sort_criteria    => [:id],
                                                    :column_names     => columns,                                                   
@@ -19,7 +19,7 @@ module RedmineScrummer
                                                    :filters          => filters, 
                                                    :is_public        => true)
           
-          columns =  [:subject, :assigned_to, :cf_1, :status, :estimated_hours, :cf_3] 
+          columns =  [:subject, :assigned_to, :story_size, :status, :estimated_hours, :cf_3] 
           sprint_query = Query.find_or_create_by_scrummer_caption(:scrummer_caption => "Sprint-Planning", 
                                                    :sort_criteria    => [],
                                                    :column_names     => columns,                                                   
@@ -310,15 +310,6 @@ module RedmineScrummer
           # Create/Update custom fields
           #############################################################################################  
           
-          # add story size custom field
-          story_size_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :story_size)
-          story_size_custom_field.update_attributes(
-                                    :name             => l(:story_size),
-                                    :field_format     => 'list',
-                                    :possible_values  => Scrummer::Constants::StorySizes.map{|size| size.to_s},
-                                    :is_required      => false,
-                                    :default_value    => "0")
-          
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
@@ -333,14 +324,14 @@ module RedmineScrummer
                                     :field_format     => 'float',
                                     :default_value    => "0")
           
-         trackers_custom_fields = { :userstory => [:story_size, :business_value],
-                                           :epic      => [:story_size, :business_value],
-                                           :theme     => [:story_size, :business_value],
+         trackers_custom_fields = { :userstory => [:business_value],
+                                           :epic      => [:business_value],
+                                           :theme     => [:business_value],
                                            :task      => [:remaining_hours],
                                            :defect    => [:remaining_hours],
                                            :refactor  => [:remaining_hours],
                                            :spike     => [:remaining_hours],
-                                           :defectsuite => [:story_size, :business_value]}
+                                           :defectsuite => [:business_value]}
           
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
@@ -364,8 +355,7 @@ module RedmineScrummer
           
           Issue.all.each{|i| i.update_attribute(:story_size, 0.0) if i.story_size.nil?}
           
-          custom_field = CustomField.find_by_scrummer_caption(:story_size)
-          Issue.all.each{|i| i.update_story_size(custom_field)}
+          Issue.all.each{|i| i.update_story_size}
           
           # Create points history entry for all the issues as a strat point
           Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|

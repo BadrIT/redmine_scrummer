@@ -169,17 +169,15 @@ class ScrumUserstoriesController < IssuesController
       :total_remaining => 0.0 }
 
     remaining_hours_column_caption = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
-    story_size_column_caption = IssueCustomField.find_by_scrummer_caption(:story_size).name
 
-    story_column = @query.columns.find{|c| c.caption == story_size_column_caption}
     remaining_hours_column = @query.columns.find{|c| c.caption == remaining_hours_column_caption}
     
     initialize_sort
     load_issues_for_query
 
     @all_issues.each do |issue|
-    # don't add story size if an issue having children having story sizes
-      unless issue.direct_children.sum(:story_size) > 0.0
+      # don't add story size if an issue having children having story sizes
+      if issue.direct_children.sum(:story_size).to_f == 0.0
         @statistics[:total_story_size] += issue.story_size
       end
 

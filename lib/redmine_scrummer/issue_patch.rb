@@ -150,6 +150,10 @@ module RedmineScrummer
         level
       end
       
+      def accept_story_size?
+        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
+      end
+      
       def has_custom_field?(field_name)
         self.tracker.custom_fields.any?{|field| field.scrummer_caption == field_name.to_sym}
       end
@@ -181,30 +185,27 @@ module RedmineScrummer
         self.save
       end
       
-      def update_story_size(custom_field=nil)
+      def update_story_size
         # if the issue has children having the story size custom field
         # then sum children
         # else take issue story size custom field value
         if self.direct_children.any?
           value = direct_children.sum(:story_size)
+          
+           if self.story_size.to_f != value.to_f
+            self.update_attribute(:story_size, value)
+            self.update_parent_story_size(custom_field)
+          end
         end
         
-        if value.to_f == 0.0
-          custom_field ||= CustomField.find_by_scrummer_caption(:story_size)
-          value = (self.custom_value_for(custom_field).try(:value) || '').to_f
-        end
-        
-        if self.story_size.to_f != value.to_f
-          self.update_attribute(:story_size, value)
-          self.update_parent_story_size(custom_field)
-        end
+       
       end
       
       
       protected
       
-      def update_parent_story_size(custom_field=nil)
-        self.parent.update_story_size(custom_field) if self.parent
+      def update_parent_story_size
+        self.parent.update_story_size if self.parent
       end
       
       def initiate_remaining_hours

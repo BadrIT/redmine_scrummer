@@ -77,7 +77,7 @@
 		  <% level = hierarchy ? issue.level : 0 -%>
 			
 			<%= render :partial => "scrum_userstories/issue_row", :locals => {:issue => issue, :hierarchy => hierarchy, :query => query, :level => level, :list_id => list_id, :from_sprint => from_sprint} %>
-			
+			<% logger.info "e"*10 %>
 			<tr id='placeholder-<%=issue.id%>' level="<%= (level + 1).to_s %>">
 				<td colspan="9">
 					<div id="issue-<%= issue.id%>-inline-child" class='inline_child_container'></div>

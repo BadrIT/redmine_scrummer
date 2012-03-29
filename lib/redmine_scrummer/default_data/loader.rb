@@ -11,7 +11,7 @@ module RedmineScrummer
           set_language_if_valid(lang)
           
           filters = {"status_id"=>{:values=>["1"], :operator=>"o"}} #TODO should have empty spaces
-          columns =  [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :spent_hours, :cf_2] 
+          columns =  [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :spent_hours, :remaining_hours] 
           Query.find_or_create_by_scrummer_caption(:scrummer_caption => "User-Stories", 
                                                    :sort_criteria    => [:id],
                                                    :column_names     => columns,                                                   
@@ -310,13 +310,6 @@ module RedmineScrummer
           # Create/Update custom fields
           #############################################################################################  
           
-          # add remaining time custom field
-          remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
-          remaining_hours_custom_field.update_attributes(
-                                    :name             => l(:remaining_hours),
-                                    :field_format     => 'float',
-                                    :default_value    => "0")
-          
           # add business value custom field
           business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
           business_value_custom_field.update_attributes(
@@ -327,10 +320,6 @@ module RedmineScrummer
          trackers_custom_fields = { :userstory => [:business_value],
                                            :epic      => [:business_value],
                                            :theme     => [:business_value],
-                                           :task      => [:remaining_hours],
-                                           :defect    => [:remaining_hours],
-                                           :refactor  => [:remaining_hours],
-                                           :spike     => [:remaining_hours],
                                            :defectsuite => [:business_value]}
           
           # add connections between fields and trackers          
@@ -355,7 +344,7 @@ module RedmineScrummer
           
           Issue.all.each{|i| i.update_attribute(:story_size, 0.0) if i.story_size.nil?}
           
-          Issue.all.each{|i| i.update_story_size}
+          Issue.all.each{|i| i.update_accumulated_fields}
           
           # Create points history entry for all the issues as a strat point
           Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|

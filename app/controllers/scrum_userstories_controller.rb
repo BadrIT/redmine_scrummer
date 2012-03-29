@@ -150,6 +150,7 @@ class ScrumUserstoriesController < IssuesController
     end
 
   rescue Exception => e
+    puts e.inspect
     render :text => "Exception occured"
     end
 
@@ -168,10 +169,6 @@ class ScrumUserstoriesController < IssuesController
       :total_actual => 0.0,
       :total_remaining => 0.0 }
 
-    remaining_hours_column_caption = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
-
-    remaining_hours_column = @query.columns.find{|c| c.caption == remaining_hours_column_caption}
-    
     initialize_sort
     load_issues_for_query
 
@@ -180,6 +177,10 @@ class ScrumUserstoriesController < IssuesController
       if issue.direct_children.sum(:story_size).to_f == 0.0
         @statistics[:total_story_size] += issue.story_size
       end
+      
+      if issue.direct_children.sum(:remaining_hours).to_f == 0.0
+        @statistics[:total_remaining] += issue.remaining_hours.to_f
+      end
 
       # don't add estimate if an issue having children having estimated hours
       unless issue.direct_children.sum(:estimated_hours) > 0.0
@@ -187,7 +188,6 @@ class ScrumUserstoriesController < IssuesController
       end
 
       @statistics[:total_actual]    += issue.time_entries.sum(:hours)
-      @statistics[:total_remaining] += remaining_hours_column ? remaining_hours_column.value(issue).to_f : 0;
     end
     
     render :partial => 'statistics'

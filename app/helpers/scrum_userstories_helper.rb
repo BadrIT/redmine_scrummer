@@ -7,11 +7,9 @@ module ScrumUserstoriesHelper
 	include CustomFieldsHelper unless included_modules.include? CustomFieldsHelper
 	
 	def column_short_header(column)
-	  todo_column_caption       = IssueCustomField.find_by_scrummer_caption(:remaining_hours).name
-	  
 	  caption = column.caption
 	  
-	  short_headers = {todo_column_caption        => l("short_field_remaining_hours"),
+	  short_headers = {l("field_remaining_hours")        => l("short_field_remaining_hours"),
 	                   l("field_story_size")  => l("short_field_story_size"),
 	                   l("field_estimated_hours") => l("short_field_estimated_hours")}
 	                   
@@ -43,23 +41,10 @@ module ScrumUserstoriesHelper
   def scrum_column_content(column, issue)
   	value = column.value(issue)
 
-  	if value.class == IssueStatus && issue.status.is_scrum
-  	  content = case value.scrummer_caption
-    	  when :defined
-    	    IssueStatus.find_by_scrummer_caption(:defined).short_name.upcase
-    	  when :in_progress
-    	    IssueStatus.find_by_scrummer_caption(:in_progress).short_name.upcase
-    	  when :completed
-    	    IssueStatus.find_by_scrummer_caption(:completed).short_name.upcase
-    	  when :accepted
-    	    IssueStatus.find_by_scrummer_caption(:accepted).short_name.upcase
-        when :succeeded
-          IssueStatus.find_by_scrummer_caption(:succeeded).short_name.upcase
-        when :failed 
-          IssueStatus.find_by_scrummer_caption(:failed).short_name.upcase
-        when :finished 
-          IssueStatus.find_by_scrummer_caption(:finished).short_name.upcase
-  	  end
+  	if value.is_a?(IssueStatus) && issue.status.is_scrum
+  	  #TODO refactoring cache IssueStatus please :(
+  	  content = IssueStatus.find_by_scrummer_caption(value.scrummer_caption).short_name.upcase
+  	  
   	  "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status'><b>" + content.to_s + "</b></div>"
   	elsif column.name == :subject
   	  prefix = if issue.direct_children.blank? 
@@ -89,14 +74,24 @@ module ScrumUserstoriesHelper
   		
   		content
   		
-    elsif column.name == :story_size && issue.scrum_issue?
-      if issue.accept_story_size?
-        value = issue.story_size
-        if (issue.direct_children.blank? || value.to_f == 0.0)
+    elsif [:story_size, :remaining_hours].include?(column.name) && issue.scrum_issue?
+      issue_has_children = issue.direct_children.any?  
+      
+      if issue_has_children || issue.send("accept_#{column.name}?")
+        value = issue.send(column.name)
+        
+        if (!issue_has_children || value.to_f == 0.0)
           content = value.to_f > 0 ? value : ''
-          "<div align='center' id='issue-#{issue.id}-field-story_size'>" + content.to_s + "</div>"
+          css_class = 'edit' unless column.name == :story_size
+          format = 'float'  unless column.name == :story_size
+          "<div align='center' class='#{css_class} #{format}' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
         else
-          content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
+          if column.name == :remaining_hours
+            output_content = "Σ" + value.to_s
+          else
+            output_content = value.to_s
+          end
+          content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
         end
       else
         # tasks, defects etc shouldn't display story size
@@ -119,12 +114,7 @@ module ScrumUserstoriesHelper
 					content = value.to_f > 0 ? value : ''
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else
-			    if field_caption == :remaining_hours
-			      output_content = "Σ" + value.to_s
-			    else
-			      output_content = value.to_s
-			    end
-					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
+					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
 				end
 			else
 				content = column_content(column, issue)

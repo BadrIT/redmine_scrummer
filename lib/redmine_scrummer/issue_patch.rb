@@ -8,6 +8,7 @@ module RedmineScrummer
         include InstanceMethods
         
         ActiveRecord::Base.lock_optimistically = false
+        safe_attributes 'story_size', 'remaining_hours'
         
         after_create :initiate_remaining_hours
         
@@ -15,15 +16,13 @@ module RedmineScrummer
         before_save :update_children_target_versions
         before_save :update_children_release
         
-        before_save :adjust_todo_custom_field
+        before_save :update_remaining_by_estimate
           
         after_save :update_parent_status
         after_destroy :update_parent_status
         
-        after_save :update_story_size
-        after_destroy :update_parent_story_size
-        
-        before_save :init_was_new
+        after_save :update_accumulated_fields
+        after_destroy :update_parent_accumulated_fields
         
         after_save :check_history_entries
         after_save :check_points_history
@@ -62,8 +61,8 @@ module RedmineScrummer
         named_scope :backlog, :conditions => {:fixed_version_id => nil}
         
         named_scope :active, lambda { |*args| {:conditions => ["status_id = ? OR status_id = ?",
-            IssueStatus.status_in_progress.id,
-            IssueStatus.status_defined.id]} }
+            IssueStatus.in_progress.id,
+            IssueStatus.defined.id]} }
         
         named_scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
             Tracker.scrum_task_tracker.id,
@@ -119,10 +118,6 @@ module RedmineScrummer
         self.task? || self.defect? || self.is_refactor? || self.spike?
       end
       
-      def remaining_hours
-        self.custom_values.map{|custom_value| custom_value if custom_value.custom_field.scrummer_caption == :remaining_hours}.first.try(:value).try(:to_f)
-      end
-      
       def childrenless?
         !self.children.any?  
       end
@@ -133,10 +128,6 @@ module RedmineScrummer
       
       def issue_tasks
         self.children.map{|child| child if child.task?}.delete_if{|child| child.nil?}  
-      end
-      
-      def remaining_hours=(value)
-       (self.custom_field_values.find{|c| c.custom_field.scrummer_caption == :remaining_hours}).value = value
       end
       
       def level
@@ -154,8 +145,20 @@ module RedmineScrummer
         [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
       end
       
+      def accept_remaining_hours?
+        [:task, :defect, :refactor, :spike].include?(self.tracker.scrummer_caption)
+      end
+      
       def has_custom_field?(field_name)
         self.tracker.custom_fields.any?{|field| field.scrummer_caption == field_name.to_sym}
+      end
+      
+      def status_in?(statuses)
+        statuses.include?(self.status.scrummer_caption)
+      end
+      
+      def tracker_in?(trackers)
+        trackers.include?(self.tracker.scrummer_caption)
       end
       
       def method_missing(m, *args, &block)
@@ -185,29 +188,43 @@ module RedmineScrummer
         self.save
       end
       
-      def update_story_size
+      def update_accumulated_fields
         # if the issue has children having the story size custom field
         # then sum children
         # else take issue story size custom field value
-        if self.direct_children.any?
-          value = direct_children.sum(:story_size)
-          
-           if self.story_size.to_f != value.to_f
-            self.update_attribute(:story_size, value)
-            self.update_parent_story_size(custom_field)
+        [:story_size, :remaining_hours].each do |field|
+          if self.send("#{field}_changed?")
+            if self.direct_children.any?
+              update_accumulated_field(field)
+            else
+              update_parent_accumulated_field(field)
+            end
           end
         end
-        
-       
+      end
+      
+      def update_accumulated_field(field)
+        value = self.direct_children.sum(field)
+            
+        if self.send(field).to_f != value.to_f
+          self.update_attribute(field, value)
+          self.update_parent_accumulated_field(field) 
+        end
       end
       
       
       protected
-      
-      def update_parent_story_size
-        self.parent.update_story_size if self.parent
+      def update_parent_accumulated_fields
+        [:story_size, :remaining_hours].each do |field|
+          update_parent_accumulated_field(field)
+        end
       end
       
+      def update_parent_accumulated_field(field)
+        self.parent.update_accumulated_field(field) if self.parent
+      end
+      
+      # initiate remaining hours equal to Estimate if remaining is blank
       def initiate_remaining_hours
         if self.remaining_hours == 0.0
           self.remaining_hours = self.estimated_hours
@@ -217,7 +234,7 @@ module RedmineScrummer
       
       def update_remaining_hours
         # reset todo hours if completed, accepted or finished
-        if status_id_changed? && (self.status_completed? ||self.status_finished? || self.status_accepted?) && self.remaining_hours.to_f > 0.0
+        if status_id_changed? && self.remaining_hours.to_f > 0.0 && self.status_in?([:completed, :finished, :accepted]) 
           self.remaining_hours = 0.0
           self.save
         end
@@ -231,14 +248,17 @@ module RedmineScrummer
       end
       
       def update_parent_status
-        if self.status_id_changed? || @was_a_new_record
+        # check for id_changed to handle after_create
+        if self.status_id_changed? || self.id_changed?
           # when a story goes to completed OR accepted, all its children should be completed
-          if self.completed? || self.accepted?
+          if self.status_in?([:completed, :accepted])
             self.children.each do |child|
-              if (child.task? || child.spike?) && (child.status_defined? || child.in_progress?)
+              child_tracker = child.tracker
+              
+              if (child_tracker.task? || child_tracker.spike?) && child.status_in?([:defined, :in_progress])
                 child.status = IssueStatus.finished
                 child.save
-              elsif child.userstory? && (child.status_defined? || child.in_progress? || child.completed?)
+              elsif child_tracker.userstory? && child.status_in?([:defined, :in_progress, :completed])
                 # if moved to completed, move children to completed
                 # if moved to accepted, move children to accepted
                 child.status = self.status
@@ -269,16 +289,10 @@ module RedmineScrummer
         end
       end
       
-      def adjust_todo_custom_field
+      def update_remaining_by_estimate
         if self.estimated_hours_changed? && self.status_defined?
-          remaining_hours_cf_id = IssueCustomField.find_by_scrummer_caption(:remaining_hours).id
-          self.custom_field_values = {remaining_hours_cf_id => self.estimated_hours}
+          self.remaining_hours = self.estimated_hours
         end
-      end
-      
-      def init_was_new
-        @was_a_new_record = self.new_record? if @was_a_new_record.nil?
-        return true
       end
       
       public

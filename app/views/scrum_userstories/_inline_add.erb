@@ -59,10 +59,26 @@
 					<%= f.text_field :estimated_hours, :class => 'inline_issue_field_float_type' %>
 				</div> 
 			</div>
+			
+			<div>
+        <%= f.label :remaining_hours, l("remaining_hours"), :class => "scrum_issue_inline_label" %>
+        <div class='scrum_issue_inline_control'> 
+          <%= f.text_field :remaining_hours, :class => 'inline_issue_field_float_type' %>
+        </div> 
+      </div>
+		<% end %>
+		
+		<% if @issue.accept_story_size? %>
+		  <div>
+        <%= f.label :story_size, l("short_field_story_size"), :class => "scrum_issue_inline_label" %>
+        <div class='scrum_issue_inline_control'> 
+          <%= f.select :story_size, Scrummer::Constants::StorySizes %>
+        </div> 
+      </div>
 		<% end %>
 		
 		<% @issue.custom_field_values.each do |value| %>
-		  <% if value.custom_field.scrummer_caption != :remaining_hours || !@issue.new_record? %>
+		  <% if !@issue.new_record? %>
 			<div class='scrum_issue_inline_field'>
 				<%= custom_field_tag_with_label :issue, value %>
 			</div>

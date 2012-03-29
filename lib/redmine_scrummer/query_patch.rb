@@ -7,6 +7,7 @@ module RedmineScrummer
 				
 				add_available_column QueryColumn.new(:spent_hours)	
 				add_available_column QueryColumn.new(:story_size)	
+				add_available_column QueryColumn.new(:remaining_hours)	
 				add_available_column QueryColumn.new(:position, :sortable => "#{Issue.table_name}.position")
 				
 				include InstanceMethods		
@@ -23,8 +24,7 @@ module RedmineScrummer
 			
 			# This method sets the default columns displayed in the scrum views 
 			def default_scrummer_columns
-			  #TODO Refactoring CF
-        self.column_names = [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :spent_hours, :cf_2]
+        self.column_names = [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :spent_hours, :remaining_hours]
 			end
 		end
 		

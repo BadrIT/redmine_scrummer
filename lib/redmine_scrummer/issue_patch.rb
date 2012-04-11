@@ -8,7 +8,7 @@ module RedmineScrummer
         include InstanceMethods
         
         ActiveRecord::Base.lock_optimistically = false
-        safe_attributes 'story_size', 'remaining_hours'
+        safe_attributes 'story_size', 'remaining_hours', 'business_value'
         
         after_create :initiate_remaining_hours
         

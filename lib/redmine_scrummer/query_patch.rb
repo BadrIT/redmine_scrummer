@@ -8,6 +8,7 @@ module RedmineScrummer
 				add_available_column QueryColumn.new(:spent_hours)	
 				add_available_column QueryColumn.new(:story_size)	
 				add_available_column QueryColumn.new(:remaining_hours)	
+				add_available_column QueryColumn.new(:business_value)	
 				add_available_column QueryColumn.new(:position, :sortable => "#{Issue.table_name}.position")
 				
 				include InstanceMethods		

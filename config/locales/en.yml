@@ -25,6 +25,7 @@ en:
   short_field_estimated_hours: "Estimate"
   short_field_story_size: "Size"
   short_field_remaining_hours: "TODO"
+  field_business_value: "Business Value"
   
   scrum_userStory: "Scrum-UserStory"
   scrum_task: "Scrum-Task"

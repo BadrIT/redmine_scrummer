@@ -19,7 +19,7 @@ module RedmineScrummer
                                                    :filters          => filters, 
                                                    :is_public        => true)
           
-          columns =  [:subject, :assigned_to, :story_size, :status, :estimated_hours, :cf_3] 
+          columns =  [:subject, :assigned_to, :story_size, :status, :estimated_hours, :business_value] 
           sprint_query = Query.find_or_create_by_scrummer_caption(:scrummer_caption => "Sprint-Planning", 
                                                    :sort_criteria    => [],
                                                    :column_names     => columns,                                                   
@@ -309,25 +309,6 @@ module RedmineScrummer
           #############################################################################################  
           # Create/Update custom fields
           #############################################################################################  
-          
-          # add business value custom field
-          business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
-          business_value_custom_field.update_attributes(
-                                    :name             => l(:business_value),
-                                    :field_format     => 'float',
-                                    :default_value    => "0")
-          
-         trackers_custom_fields = { :userstory => [:business_value],
-                                           :epic      => [:business_value],
-                                           :theme     => [:business_value],
-                                           :defectsuite => [:business_value]}
-          
-          # add connections between fields and trackers          
-          trackers_custom_fields.each do |tracker_caption, fields_captions|
-            tracker = Tracker.find_by_scrummer_caption(tracker_caption)
-            tracker.custom_fields = []
-            tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
-          end
           
           # add buffer_size custom field to versions
           buffer_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :buffer_size)

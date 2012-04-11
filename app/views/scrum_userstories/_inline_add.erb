@@ -75,7 +75,16 @@
           <%= f.select :story_size, Scrummer::Constants::StorySizes %>
         </div> 
       </div>
+      
+      <div>
+        <%= f.label :business_value, l("business_value"), :class => "scrum_issue_inline_label" %>
+        <div class='scrum_issue_inline_control'> 
+          <%= f.text_field :business_value, :class => "inline_issue_field_float_type" %>
+        </div> 
+      </div>
 		<% end %>
+		
+		
 		
 		<% @issue.custom_field_values.each do |value| %>
 		  <% if !@issue.new_record? %>

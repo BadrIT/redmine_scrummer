@@ -45,7 +45,7 @@ module ScrumUserstoriesHelper
   	  #TODO refactoring cache IssueStatus please :(
   	  content = IssueStatus.find_by_scrummer_caption(value.scrummer_caption).short_name.upcase
   	  
-  	  "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status'><b>" + content.to_s + "</b></div>"
+      "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status' data-statuses=\"#{issue_allowed_statuses(issue)}\"><b>" + content.to_s + "</b></div>"
   	elsif column.name == :subject
   	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
@@ -84,7 +84,7 @@ module ScrumUserstoriesHelper
           content = value.to_f > 0 ? value : ''
           css_class = 'edit' unless column.name == :story_size
           format = 'float'  unless column.name == :story_size
-          "<div align='center' class='#{css_class} #{format}' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
+          "<div align='center' class='#{css_class} #{format} #{column.name}-container' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
         else
           if column.name == :remaining_hours
             output_content = "Σ" + value.to_s
@@ -219,12 +219,11 @@ module ScrumUserstoriesHelper
     statuses
   end
   
-  def storysize_possible_values(issue, values)
-    possible_sizes = "{"
-    values.each do |value|
+  def storysize_possible_values
+    possible_sizes = ""
+    Scrummer::Constants::StorySizes.each do |value|
       possible_sizes += "'" + value.to_s + "':'" + value.to_s + "', "
     end
-    possible_sizes += "'selected':'" + issue.story_size.to_s + "'}"
     possible_sizes
   end
 end

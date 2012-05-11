@@ -66,9 +66,9 @@ class ScrumUserstoriesController < IssuesController
         render :text => 'Errors in saving'
       end
 
-    elsif params[:id] =~ /spent_hours/ && params[:value] =~ /^\+(.*)/
+    elsif params[:id] =~ /actual_hours/ && params[:value] =~ /^\+(.*)/
       # virtual fields like actual
-      matched_groups = params[:id].match(/issue-(\d+)-spent_hours/)
+      matched_groups = params[:id].match(/issue-(\d+)-actual_hours/)
       issue_id       = matched_groups[1]
       value          = params[:value].match(/^\+(.*)/)[1]
 

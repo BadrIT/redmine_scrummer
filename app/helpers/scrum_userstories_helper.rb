@@ -57,15 +57,15 @@ module ScrumUserstoriesHelper
   		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
   		"#{tracker_name}</b>:</div>" +
   		"<div >&nbsp;#{subject_content(column, issue)}</div>" 
-  	elsif column.name == :spent_hours && issue.scrum_issue?
+  	elsif column.name == :actual_hours && issue.scrum_issue?
   		content = column_content(column, issue)
         		
-  		output_value = value > 0 ? value.round(2).to_s : ""
+  		output_value = value > 0 ? value.round(2).to_s : "&nbsp;"*4
   		if issue.time_trackable?
-  		  content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
+  		  content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-actual_hours'>" + output_value + "</div>"
   		else
   		  output_value = "Σ" + output_value if !issue.direct_children.empty? && value > 0
-  		  content = "<div align='center' class='float addition' id='issue-#{issue.id}-spent_hours'>" + output_value + "</div>"
+  		  content = "<div align='center' class='float addition' id='issue-#{issue.id}-actual_hours'>" + output_value + "</div>"
   		end
   		
   		unless issue.direct_children.empty?
@@ -81,7 +81,7 @@ module ScrumUserstoriesHelper
         value = issue.send(column.name)
         
         if (!issue_has_children || value.to_f == 0.0)
-          content = value.to_f > 0 ? value : ''
+          content = value.to_f > 0 ? value : '&nbsp;'*4
           css_class = 'edit' unless column.name == :story_size
           format = 'float'  unless column.name == :story_size
           "<div align='center' class='#{css_class} #{format} #{column.name}-container' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
@@ -111,7 +111,7 @@ module ScrumUserstoriesHelper
 				# OR having children but all children custom field aren't set then value will equal zero
 				# ex: US1 has children (US2, US3) and they don't have story size set then I can edit US1 story size
 				if (issue.direct_children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
-					content = value.to_f > 0 ? value : ''
+					content = value.to_f > 0 ? value : '&nbsp;'*4
 					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
 			  else
 					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
@@ -123,7 +123,7 @@ module ScrumUserstoriesHelper
   		if (issue.direct_children.blank? || value.to_f == 0.0) && issue.time_trackable?
 				value ||= 0.0
 				
-				content = value > 0 ? value : ''
+				content = value > 0 ? value : '&nbsp;'*4
 				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
 			else
 				content = (value.to_f > 0) ? "<span align='center' class='accumelated-result'>Σ#{value}</span>" : '&nbsp;';
@@ -212,7 +212,8 @@ module ScrumUserstoriesHelper
   
   def issue_allowed_statuses(issue)
     statuses = "{"
-    issue.new_statuses_allowed_to(User.current).each do |status|
+    # issue.new_statuses_allowed_to(User.current).each do |status|
+    issue.tracker.issue_statuses.each do |status|
       statuses += "'" + status.short_name + "':'" + status.name + "', "
     end
     statuses += "'selected':'" + issue.status.short_name + "'}"

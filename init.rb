@@ -38,6 +38,10 @@ Dispatcher.to_prepare :redmine_scrummer do
   unless Project.included_modules.include? RedmineScrummer::ProjectPatch
     Project.send :include, RedmineScrummer::ProjectPatch
   end
+  
+  unless TimeEntry.included_modules.include? RedmineScrummer::TimeEntryPatch
+    TimeEntry.send :include, RedmineScrummer::TimeEntryPatch
+  end
 end
 
 Redmine::Plugin.register :redmine_scrummer do

@@ -165,6 +165,7 @@ module RedmineScrummer
           #############################################################################################  
           # seed scrum roles permissions
           #############################################################################################  
+          #TODO (MA): seems like all roles have the same permissions ??
           all_default_permissions = [:add_issue_notes,
                                   :add_issue_watchers,
                                   :add_issues,

@@ -105,8 +105,8 @@
 <script>
   var authenticity_token = '<%= form_authenticity_token %>';
   
-  $j(".sprint-<%=from_sprint%> .story_size-container").live('click', function(){
-    $j(this).editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+  function enableInlineEdit(){
+    $j(".sprint-<%=from_sprint%> .story_size-container").editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
       {
         onblur     : 'submit',
         placeholder: '<span class="edit-placeholder">Edit</span>',
@@ -121,38 +121,38 @@
         },
         type: 'select',
         ignoreResponse: true
-    }); 
-  });
+      }); 
   
-  $j('.sprint-<%=from_sprint%> .edit').live('click', function(){
-    $j(this).editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
-    {
-      onblur     : 'submit',
-      placeholder: '<span class="edit-placeholder">Edit</span>',
-      submitdata : {
-                      authenticity_token : authenticity_token
-                   },
-      indicator  : '<%= image_tag 'loading.gif'%>' ,
-      data: function(value, settings) {
-        return $j(this).hasClass("addition") ? "+0" : value;
-      },
-      ignoreResponse: true
-    });
-  });
+    $j('.sprint-<%=from_sprint%> .edit').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+      {
+        onblur     : 'submit',
+        placeholder: '<span class="edit-placeholder">Edit</span>',
+        submitdata : {
+                        authenticity_token : authenticity_token
+                     },
+        indicator  : '<%= image_tag 'loading.gif'%>' ,
+        data: function(value, settings) {
+          return $j(this).hasClass("addition") ? "+0" : value;
+        },
+        ignoreResponse: true
+      });
   
-  $j('.sprint-<%= from_sprint %> .status').live('click', function(){
-    $j(this).editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+    $j('.sprint-<%= from_sprint %> div.status').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
       {
         onblur     : 'submit',
         submitdata : {
                         authenticity_token : authenticity_token
                      },
         indicator  : '<%= image_tag 'loading.gif'%>' ,
-        data: $j(this).attr('data-statuses'),
+        data: function(value, settings) {
+          return $j(this).attr('data-statuses');
+        },
         type: 'select',
         ignoreResponse: true
     }); 
-  }); 
+  }
+  
+  enableInlineEdit();
 
 </script>
 

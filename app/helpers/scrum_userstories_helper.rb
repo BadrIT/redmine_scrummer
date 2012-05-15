@@ -202,11 +202,11 @@ module ScrumUserstoriesHelper
   end
   
   def scrum_user_stories_manipulate_inline
-    User.current.allowed_to?(:scrum_user_stories_manipulate_inline, @project)
+    @scrum_user_stories_manipulate_inline ||= User.current.allowed_to?(:scrum_user_stories_manipulate_inline, @project)
   end
 
   def scrum_user_stories_add_inline
-    User.current.allowed_to?(:scrum_user_stories_add_inline, @project)
+    @scrum_user_stories_add_inline ||= User.current.allowed_to?(:scrum_user_stories_add_inline, @project)
   end
 
   def update_issue_and_parents(page)
@@ -216,6 +216,8 @@ module ScrumUserstoriesHelper
       level = params[:hierarchy] == "true" ? parent.level: 0
       page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
     end
+    
+    page << "enableInlineEdit();"
   end
   
   def issue_allowed_statuses(issue)

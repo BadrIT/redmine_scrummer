@@ -11,8 +11,8 @@ function init_planning() {
 function update_sprint_status() {
 	$j('.sprint').each( function() {
 		var size = 0;
-		var cf_1 = $j('.autoscroll > table > tbody > tr.issue .story_size-container', this);
-		$j('span , div',cf_1).each( function() {
+		var cf_1 = $j('.autoscroll > table > tbody > tr.issue .story_size span, .autoscroll > table > tbody > tr.issue .story_size div', this);
+		$j(cf_1).each( function() {
 			if (!isNaN(parseFloat($j(this).html()))){
 				size += parseFloat($j(this).html());
 			}

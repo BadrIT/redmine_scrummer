@@ -123,3 +123,14 @@ function select_menu_item(scrum_label_class){
 		$j('#main-menu ul li a.' + scrum_label_class).addClass('selected');
 	})
 }
+
+
+function toggleScrumIssuesSelection(el) {
+  var checkStatus = $j("#issue-table input:checkbox").is(":checked");
+  $j("#issue-table input:checkbox").attr("checked", !checkStatus);
+  if(!checkStatus) 
+    $j("#issue-table input:checkbox").parent().parent().addClass("context-menu-selection")  
+  else
+    $j("#issue-table input:checkbox").parent().parent().removeClass("context-menu-selection")
+  
+}

@@ -1,6 +1,6 @@
 <tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:scrummer_caption).to_s.downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.direct_children.length > 0 ? "group open" : nil%>">
 	<% if hierarchy %>	
-	  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
+	  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil, :onclick => "$j(this).parent().parent().toggleClass('context-menu-selection')") %></td>
 	    <% end %>
 	  
 	  <% query.columns.each do |column| %>

@@ -26,6 +26,7 @@ module RedmineScrummer
         
         after_save :check_history_entries
         after_save :check_points_history
+        after_save :sync_story_size
         
         # By Mohamed Magdy
         after_save :set_issue_release
@@ -378,6 +379,17 @@ module RedmineScrummer
           end
           
           self.save
+        end
+      end
+      
+      def sync_story_size
+        if accept_story_size?
+          story_size_custom_field = IssueCustomField.find_by_scrummer_caption(:story_size)
+          field_value = self.custom_values.find_or_create_by_custom_field_id(story_size_custom_field.id)
+          
+          if field_value.value.nil? || (self.story_size_changed? && field_value.value.to_f != self.story_size)
+            field_value.update_attributes(:value => self.story_size.to_s)
+          end
         end
       end
     end

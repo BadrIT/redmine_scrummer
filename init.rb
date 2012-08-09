@@ -42,6 +42,10 @@ Dispatcher.to_prepare :redmine_scrummer do
   unless TimeEntry.included_modules.include? RedmineScrummer::TimeEntryPatch
     TimeEntry.send :include, RedmineScrummer::TimeEntryPatch
   end
+  
+  unless CustomValue.included_modules.include? RedmineScrummer::CustomValuePatch
+    CustomValue.send :include, RedmineScrummer::CustomValuePatch
+  end
 end
 
 Redmine::Plugin.register :redmine_scrummer do

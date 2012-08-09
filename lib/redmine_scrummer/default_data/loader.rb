@@ -326,7 +326,38 @@ module RedmineScrummer
           
           Issue.all.each{|i| i.update_attribute(:story_size, 0.0) if i.story_size.nil?}
           
+          # add story size custom field
+          story_size_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :story_size)
+          story_size_custom_field.update_attributes(
+                                    :name             => l(:story_size),
+                                    :field_format     => 'list',
+                                    :possible_values  => Scrummer::Constants::StorySizes.map{|size| size.to_f.to_s},
+                                    :is_required      => false,
+                                    :default_value    => "0.0",
+                                    :is_filter        => true,
+                                    :is_for_all       => true)
+          
           Issue.all.each{|i| i.update_accumulated_fields}
+          
+          # create story-size custom value for current issues that accept story size
+          Issue.all.each do |issue|
+            if issue.accept_story_size?
+              field_value = issue.custom_values.find_or_create_by_custom_field_id(story_size_custom_field.id)
+              field_value.update_attributes(:value => issue.story_size.to_s)
+            end
+          end
+          
+            
+         trackers_custom_fields = {:userstory => [:story_size],
+                                   :epic      => [:story_size],
+                                   :theme     => [:story_size],
+                                   :defectsuite => [:story_size]}
+          # add connections between fields and trackers          
+          trackers_custom_fields.each do |tracker_caption, fields_captions|
+            tracker = Tracker.find_by_scrummer_caption(tracker_caption)
+            tracker.custom_fields = []
+            tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
+          end
           
           # Create points history entry for all the issues as a strat point
           Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|

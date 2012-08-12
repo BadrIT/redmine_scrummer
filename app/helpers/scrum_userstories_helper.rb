@@ -233,7 +233,7 @@ module ScrumUserstoriesHelper
   def storysize_possible_values
     possible_sizes = ""
     Scrummer::Constants::StorySizes.each do |value|
-      possible_sizes += "'" + value.to_s + "':'" + value.to_s + "', "
+      possible_sizes += "'" + value.to_f.to_s + "':'" + value.to_f.to_s + "', "
     end
     possible_sizes
   end

@@ -95,6 +95,7 @@ class ScrumUserstoriesController < IssuesController
       column_name    = matched_groups[2].to_sym
 
       @issue = Issue.find(issue_id)
+      @issue.init_journal(User.current)
       @issue.update_attributes(column_name => new_value)
 
       if @issue.save

@@ -57,6 +57,7 @@ en:
   buffer_size: "Traget points"
   start_date: "Start date"
   
+  field_story_size: "Story-Size"
   field_release_id: "Release"
   field_release_date: "Release date"
   field_state: "State"

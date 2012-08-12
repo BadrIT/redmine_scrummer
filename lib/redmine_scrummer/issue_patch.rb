@@ -31,6 +31,9 @@ module RedmineScrummer
         # By Mohamed Magdy
         after_save :set_issue_release
         
+        # By Mohamed Elsaka
+        before_save :set_done_ratio_value
+        
         has_many :history,
 				         :class_name => 'IssueHistory',
 				         :table_name => 'issue_histories',
@@ -390,6 +393,12 @@ module RedmineScrummer
           if field_value.value.nil? || (self.story_size_changed? && field_value.value.to_f != self.story_size)
             field_value.update_attributes(:value => self.story_size.to_s)
           end
+        end
+      end
+      
+      def set_done_ratio_value
+        if !done_ratio_changed? && (estimated_hours_changed? || actual_hours_changed?)
+          self.done_ratio = estimated_hours > 0 ? ((actual_hours / estimated_hours) * 10).round * 10 : 100
         end
       end
     end

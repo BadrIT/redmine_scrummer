@@ -37,10 +37,13 @@
 	<%= f.select :status, Version::VERSION_STATUSES.collect {|s| [l("version_status_#{s}"), s]} %>
 	</p>
 	
-	<p>
-	<%= f.label :wiki_page_title, l("label_wiki_page"), :class => "scrum_version_inline_label" %>
-	<%= f.text_field :wiki_page_title, :label => :label_wiki_page, :size => 55, :disabled => @project.wiki.nil? %>
-	</p>
+	<% if @version %>
+		<p>
+		<%= f.label :wiki_page_title, l("label_wiki_page"), :class => "scrum_version_inline_label" %>
+		<%= f.text_field :wiki_page_title, :label => :label_wiki_page, :size => 30, :disabled => @project.wiki.nil? %>
+		<%= link_to_wiki_page(@version.wiki_page) if @version.try(:wiki_page) %>
+		</p>
+	<% end %>
 	
 	<p>
 	<%= f.label :effective_date, l("field_effective_date"), :class => "scrum_version_inline_label" %>

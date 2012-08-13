@@ -13,6 +13,8 @@ module RedmineScrummer
         after_update :alter_issues_release
         
         after_create :add_to_side_bar
+        
+        after_create :add_wiki_page
       end
       
     end
@@ -76,6 +78,17 @@ module RedmineScrummer
         @query.project = @project
         
         @query.save
+      end
+      
+      
+      # By Mohamed Elsaka
+      # This method create a retrospective after creating the sprint,
+      # this retrospective is represented as a wikipage with default content.
+      def add_wiki_page
+        wikiPage = self.project.wiki.pages.create(:title => self.name)
+        self.update_attributes(:wiki_page_title => wikiPage.title)
+        wikiPage.create_content(:text => I18n.translate('retrospective_default_content'),
+                                :author_id => User.current)
       end
     
     end

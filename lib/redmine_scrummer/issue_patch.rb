@@ -31,7 +31,6 @@ module RedmineScrummer
         # By Mohamed Magdy
         after_save :set_issue_release
         
-        # By Mohamed Elsaka
         before_save :set_done_ratio_value
         
         has_many :history,
@@ -397,8 +396,8 @@ module RedmineScrummer
       end
       
       def set_done_ratio_value
-        if !done_ratio_changed? && (estimated_hours_changed? || actual_hours_changed?)
-          self.done_ratio = estimated_hours > 0 ? ((actual_hours / estimated_hours) * 10).round * 10 : 100
+        if !done_ratio_changed? && (estimated_hours_changed? || remaining_hours_changed?)
+          self.done_ratio = estimated_hours > 0 ? (((estimated_hours - remaining_hours) / estimated_hours) * 10).round * 10 : 100
         end
       end
     end

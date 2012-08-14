@@ -83,8 +83,14 @@ class ScrumSprintsPlanningController < IssuesController
   def create_sprint
     @sprint = Version.new(params[:version])
     @sprint.project = @project
-    
-    if @sprint.save
+
+    # adding retrospective_url form the creating wiki_page
+    page = @sprint.build_wiki_page
+    retrospective_url = url_for(:controller => 'wiki', :action => 'show', :project_id => page.project,
+                              :id => page.title, :only_path => false, :protocol => 'http')
+    @sprint.retrospective_url = retrospective_url
+
+    if page.save && @sprint.save
       flash[:notice] = l(:notice_successful_create)
       true
     else

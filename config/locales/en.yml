@@ -26,6 +26,7 @@ en:
   short_field_story_size: "Size"
   short_field_remaining_hours: "TODO"
   field_business_value: "Business Value"
+  field_remaining_hours: "TODO"
   
   scrum_userStory: "Scrum-UserStory"
   scrum_task: "Scrum-Task"
@@ -95,3 +96,5 @@ en:
   save: "Save"
   non_working_delete_confirm: "Are you sure you want to delete the non working day(s)?"
   retrospective_default_content: "* What did we do well? \r\n* What did we do wrong? \r\n* What could be improved?\r\n\r\n* Do not exceed your Timebox \r\n* Review your team metrics, like the team velocity \r\n* Review your sprint and release burn charts"
+  label_retrospective_url: "Retrospective"
+  go: "GO"

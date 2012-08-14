@@ -39,9 +39,9 @@
 	
 	<% if @version %>
 		<p>
-		<%= f.label :wiki_page_title, l("label_wiki_page"), :class => "scrum_version_inline_label" %>
-		<%= f.text_field :wiki_page_title, :label => :label_wiki_page, :size => 30, :disabled => @project.wiki.nil? %>
-		<%= link_to_wiki_page(@version.wiki_page) if @version.try(:wiki_page) %>
+		<%= f.label :retrospective_url, l("label_retrospective_url"), :class => "scrum_version_inline_label" %>
+		<%= f.text_field :retrospective_url, :label => :label_retrospective_url, :size => 50 %>
+		<%= (link_to t('go'), @version.retrospective_url) if @version.retrospective_url && !@version.retrospective_url.empty? %>
 		</p>
 	<% end %>
 	

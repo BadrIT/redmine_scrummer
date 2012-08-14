@@ -4,9 +4,9 @@ module RedmineScrummer
     def self.included(base)
       base.class_eval do        
         unloadable # Send unloadable so it will not be unloaded in development
-        
-        include InstanceMethods   
-        
+
+        include InstanceMethods
+
         # Each version (sprint) belongs to only one release
         belongs_to :release
         
@@ -14,7 +14,7 @@ module RedmineScrummer
         
         after_create :add_to_side_bar
         
-        after_create :add_wiki_page
+        validates_format_of :retrospective_url, :with => URI::regexp(%w(http https))
       end
       
     end
@@ -80,17 +80,18 @@ module RedmineScrummer
         @query.save
       end
       
-      
       # By Mohamed Elsaka
       # This method create a retrospective after creating the sprint,
       # this retrospective is represented as a wikipage with default content.
-      def add_wiki_page
-        wikiPage = self.project.wiki.pages.create(:title => self.name)
-        self.update_attributes(:wiki_page_title => wikiPage.title)
-        wikiPage.create_content(:text => I18n.translate('retrospective_default_content'),
+      public
+      def build_wiki_page
+        wikiPage = self.project.wiki.pages.new(:title => self.name)
+        self.wiki_page_title = wikiPage.title
+        wikiPage.build_content(:text => I18n.translate('retrospective_default_content'),
                                 :author_id => User.current)
+        wikiPage
       end
-    
+
     end
     
   end

@@ -7,19 +7,23 @@ module RedmineScrummer
         
         include InstanceMethods
         
-        after_save :sync_story_size
+        after_save :sync_column_value
       end
       
     end
     
     module InstanceMethods
-      def sync_story_size
-        if self.custom_field.scrummer_caption == :story_size &&
-          self.customized.story_size.to_s != self.value
-          
-          self.customized.update_attributes(:story_size => self.value.to_f)
+      
+      def sync_column_value
+        caption = self.custom_field.scrummer_caption.to_s
+
+        if ['story_size', 'business_value'].include?(caption) &&
+          self.customized.send(caption) != self.value.to_f
+        
+          self.customized.update_attributes(caption.to_sym => self.value.to_f)
         end
       end
+
     end
    
   end

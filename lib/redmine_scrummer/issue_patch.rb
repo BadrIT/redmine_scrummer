@@ -26,8 +26,10 @@ module RedmineScrummer
         
         after_save :check_history_entries
         after_save :check_points_history
-        after_save :sync_story_size
-        
+
+
+        after_save :sync_custom_fields
+
         # By Mohamed Magdy
         after_save :set_issue_release
         
@@ -145,6 +147,10 @@ module RedmineScrummer
       end
       
       def accept_story_size?
+        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
+      end
+
+      def accept_business_value?
         [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
       end
       
@@ -384,13 +390,15 @@ module RedmineScrummer
         end
       end
       
-      def sync_story_size
-        if accept_story_size?
-          story_size_custom_field = IssueCustomField.find_by_scrummer_caption(:story_size)
-          field_value = self.custom_values.find_or_create_by_custom_field_id(story_size_custom_field.id)
-          
-          if field_value.value.nil? || (self.story_size_changed? && field_value.value.to_f != self.story_size)
-            field_value.update_attributes(:value => self.story_size.to_s)
+      def sync_custom_fields
+        ['story_size', 'business_value'].each do |caption|
+          if self.send("accept_#{caption}?")
+            field = IssueCustomField.find_by_scrummer_caption(caption.to_sym)
+            field_value = self.custom_values.find_or_create_by_custom_field_id(field.id)
+
+            if field_value.value.nil? || (self.send("#{caption}_changed?") && field_value.value.to_f != self.send("#{caption}"))
+              field_value.update_attributes(:value => self.send("#{caption}").to_s)
+            end
           end
         end
       end

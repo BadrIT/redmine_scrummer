@@ -346,12 +346,28 @@ module RedmineScrummer
               field_value.update_attributes(:value => issue.story_size.to_s)
             end
           end
+
+           # add business value custom field
+          business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
+          business_value_custom_field.update_attributes(
+                                    :name             => l(:business_value),
+                                    :field_format     => 'float',
+                                    :default_value    => "0",
+                                    :is_filter        => true,
+                                    :is_for_all       => true)
           
+          # create business-value custom value for current issues that accept business value
+          Issue.all.each do |issue|
+            if issue.accept_business_value? && issue.business_value
+              field_value = issue.custom_values.find_or_create_by_custom_field_id(business_value_custom_field.id)
+              field_value.update_attributes(:value => issue.business_value)
+            end
+          end
             
-         trackers_custom_fields = {:userstory => [:story_size],
-                                   :epic      => [:story_size],
-                                   :theme     => [:story_size],
-                                   :defectsuite => [:story_size]}
+          trackers_custom_fields = {:userstory => [:story_size, :business_value],
+                                   :epic      => [:story_size, :business_value],
+                                   :theme     => [:story_size, :business_value],
+                                   :defectsuite => [:story_size, :business_value]}
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption)

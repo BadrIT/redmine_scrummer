@@ -19,7 +19,7 @@ module RedmineScrummer
       def sync_column_value
         caption = self.custom_field.scrummer_caption.to_s
 
-        if ['story_size', 'business_value'].include?(caption) &&
+        if ['story_size', 'business_value', 'remaining_hours'].include?(caption) &&
           self.customized.send(caption) != self.value.to_f
         
           self.customized.update_attributes(caption.to_sym => self.value.to_f)
@@ -33,7 +33,7 @@ module RedmineScrummer
       end
 
       def sync_release_custome_field_value
-        if self.custom_field.scrummer_caption. == :release && self.customized.release &&
+        if self.custom_field.scrummer_caption == :release && self.customized.release &&
            self.customized.release.name != self.value.to_s
 
           self.customized.update_attributes(:release_id => Release.find_by_name(self.value.to_s).id)

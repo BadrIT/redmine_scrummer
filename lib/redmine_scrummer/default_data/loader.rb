@@ -381,11 +381,33 @@ module RedmineScrummer
             field_value = issue.custom_values.find_or_create_by_custom_field_id(release_custom_field.id)
             field_value.update_attributes(:value => issue.release.name) if issue.release
           end
+
+          # add remaining time custom field
+          remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
+          remaining_hours_custom_field.update_attributes(
+                                    :name             => l(:remaining_hours),
+                                    :field_format     => 'float',
+                                    :default_value    => "0",
+                                    :is_filter        => true)
+
+          Issue.all.each do |issue|
+            if issue.accept_remaining_hours? && issue.remaining_hours
+              puts issue.id
+              field_value = issue.custom_values.find_or_create_by_custom_field_id(remaining_hours_custom_field.id)
+              field_value.update_attributes(:value => issue.remaining_hours)
+            end
+          end
             
           trackers_custom_fields = {:userstory => [:story_size, :business_value, :release],
                                    :epic      => [:story_size, :business_value, :release],
                                    :theme     => [:story_size, :business_value, :release],
-                                   :defectsuite => [:story_size, :business_value, :release]}
+                                   :defectsuite => [:story_size, :business_value, :release],
+                                   :task      => [:remaining_hours],
+                                   :defect    => [:remaining_hours],
+                                   :refactor  => [:remaining_hours],
+                                   :spike     => [:remaining_hours]}
+          
+                                   
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption)

@@ -392,7 +392,7 @@ module RedmineScrummer
       end
       
       def sync_custom_fields
-        ['story_size', 'business_value'].each do |caption|
+        ['story_size', 'business_value', 'remaining_hours'].each do |caption|
           if self.send("accept_#{caption}?")
             field = IssueCustomField.find_by_scrummer_caption(caption.to_sym)
             field_value = self.custom_values.find_or_create_by_custom_field_id(field.id)
@@ -417,7 +417,7 @@ module RedmineScrummer
       
       def set_done_ratio_value
         if !done_ratio_changed? && (estimated_hours_changed? || remaining_hours_changed?)
-          self.done_ratio = estimated_hours > 0 ? (((estimated_hours - remaining_hours) / estimated_hours) * 10).round * 10 : 100
+          self.done_ratio = (estimated_hours && estimated_hours > 0) ? (((estimated_hours - remaining_hours) / estimated_hours) * 10).round * 10 : 100
         end
       end
     end

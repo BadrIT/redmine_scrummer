@@ -87,3 +87,10 @@ Float.class_eval do
   end
 end
 
+Redmine::CustomFieldFormat.class_eval do
+  def format_as_release(value)
+    return value
+  end
+end
+release_field_format = Redmine::CustomFieldFormat.new("release", :edit_as => "list", :label => "release")
+Redmine::CustomFieldFormat.register(release_field_format)

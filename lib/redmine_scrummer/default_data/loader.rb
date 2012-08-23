@@ -363,11 +363,29 @@ module RedmineScrummer
               field_value.update_attributes(:value => issue.business_value)
             end
           end
+          
+          # adding release_id value custom field
+          release_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :release)
+          release_custom_field.update_attributes(
+                                    :name             => l(:release),
+                                    :field_format     => 'list',
+                                    :possible_values  => ["0"],
+                                    :is_required      => false,
+                                    :default_value    => "0",
+                                    :is_filter        => true,
+                                    :is_for_all       => true)
+
+          release_custom_field.update_attribute(:field_format, 'release')
+          
+          Issue.all.each do |issue|
+            field_value = issue.custom_values.find_or_create_by_custom_field_id(release_custom_field.id)
+            field_value.update_attributes(:value => issue.release.name) if issue.release
+          end
             
-          trackers_custom_fields = {:userstory => [:story_size, :business_value],
-                                   :epic      => [:story_size, :business_value],
-                                   :theme     => [:story_size, :business_value],
-                                   :defectsuite => [:story_size, :business_value]}
+          trackers_custom_fields = {:userstory => [:story_size, :business_value, :release],
+                                   :epic      => [:story_size, :business_value, :release],
+                                   :theme     => [:story_size, :business_value, :release],
+                                   :defectsuite => [:story_size, :business_value, :release]}
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption)

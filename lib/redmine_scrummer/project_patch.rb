@@ -67,6 +67,7 @@ module RedmineScrummer
 
           self.issue_custom_fields << CustomField.find_by_scrummer_caption(:story_size)
           self.issue_custom_fields << CustomField.find_by_scrummer_caption(:business_value)
+          self.issue_custom_fields << CustomField.find_by_scrummer_caption(:release)
         end
       end
     end

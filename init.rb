@@ -89,7 +89,7 @@ end
 
 Redmine::CustomFieldFormat.class_eval do
   def format_as_release(value)
-    return value
+    value
   end
 end
 release_field_format = Redmine::CustomFieldFormat.new("release", :edit_as => "list", :label => "release")

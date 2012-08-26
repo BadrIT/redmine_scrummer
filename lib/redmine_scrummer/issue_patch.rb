@@ -397,8 +397,8 @@ module RedmineScrummer
             field = IssueCustomField.find_by_scrummer_caption(caption.to_sym)
             field_value = self.custom_values.find_or_create_by_custom_field_id(field.id)
 
-            if field_value.value.nil? || (self.send("#{caption}_changed?") && field_value.value.to_f != self.send("#{caption}"))
-              field_value.update_attributes(:value => self.send("#{caption}").to_s)
+            if field_value.value.nil? || (self.send("#{caption}_changed?") && field_value.value.to_f != self.send(caption))
+              field_value.update_attributes(:value => self.send(caption).to_s)
             end
           end
         end

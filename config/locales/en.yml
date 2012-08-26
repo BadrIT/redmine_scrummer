@@ -44,7 +44,7 @@ en:
   scrum_projectMember: "ProjectMember"
   
   scrum_defined: "Defined"
-  scrum_inProgress: "In-Progress"
+  scrum_inProgress: "In Progress"
   scrum_completed: "Completed"
   scrum_accepted: "Accepted"
   scrum_succeeded: "Succeeded"

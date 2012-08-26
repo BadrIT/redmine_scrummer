@@ -83,7 +83,16 @@ module RedmineScrummer
             status = IssueStatus.find_or_create_by_scrummer_caption(caption)
             status.update_attributes(options)
           end
-          
+
+          # remove 'In-Progress' status and user 'In Progress' instead
+          old_status = IssueStatus.find_by_name('In-Progress')
+          new_status = IssueStatus.find_by_name(l(:scrum_inProgress))
+          if old_status
+            Issue.update_all("status_id = #{new_status.id}", "status_id = #{old_status.id}")
+            new_status.update_attributes({:scrummer_caption => :in_progress, :is_scrum => true, :name => l(:scrum_inProgress), :short_name => 'P'})
+            old_status.destroy
+          end
+
           # update all tasks from completed or accepted to finished
           # TEMP
           task_id = Tracker.find_by_scrummer_caption(:task).id
@@ -392,7 +401,6 @@ module RedmineScrummer
 
           Issue.all.each do |issue|
             if issue.accept_remaining_hours? && issue.remaining_hours
-              puts issue.id
               field_value = issue.custom_values.find_or_create_by_custom_field_id(remaining_hours_custom_field.id)
               field_value.update_attributes(:value => issue.remaining_hours)
             end

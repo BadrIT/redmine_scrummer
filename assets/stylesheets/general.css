@@ -323,6 +323,10 @@ table#issue-table td.subject div.subject-contents {
 	width: 30px;
 }
 
+input.iconed-input{
+	margin-top: -10px;
+}
+
 /*-------- By Mohamed Magdy --------*/
 /*-------- Animated Scrummer Menu---------*/
 ol#scrummer_menu {

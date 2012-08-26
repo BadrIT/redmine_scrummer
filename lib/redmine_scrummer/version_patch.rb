@@ -14,7 +14,7 @@ module RedmineScrummer
         
         after_create :add_to_side_bar
         
-        validates_format_of :retrospective_url, :with => URI::regexp(%w(http https))
+        validates_format_of :retrospective_url, :with => URI::regexp(%w(http https)), :allow_blank => true
       end
       
     end

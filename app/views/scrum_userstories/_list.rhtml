@@ -115,8 +115,7 @@
                      },
         indicator  : '<%= image_tag 'loading.gif'%>' ,
         data: function(value, settings) {
-          selectedValue = (value == "0.5" ? value : parseInt(value)) 
-          toReturn = "{<%= storysize_possible_values %> " +"'selected':'" + selectedValue + "'}";
+          toReturn = "{<%= storysize_possible_values %> " +"'selected':'" + value + "'}";
           return toReturn;
         },
         type: 'select',

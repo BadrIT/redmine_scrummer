@@ -116,6 +116,8 @@ tr.open span.expander.hover {
 .edit {
 	float: left;
 	width: 100%;
+	min-height: 10px;
+	min-width: 10px;
 }
 .edit.float input, .edit.list input {
 	width: 50px;

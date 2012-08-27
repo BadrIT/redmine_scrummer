@@ -349,9 +349,7 @@ module RedmineScrummer
                                     :field_format     => 'list',
                                     :possible_values  => Scrummer::Constants::StorySizes.map{|size| size.to_f.to_s},
                                     :is_required      => false,
-                                    :default_value    => "0.0",
-                                    :is_filter        => true,
-                                    :is_for_all       => true)
+                                    :default_value    => "0.0")
           
           Issue.all.each{|i| i.update_accumulated_fields}
           
@@ -368,9 +366,7 @@ module RedmineScrummer
           business_value_custom_field.update_attributes(
                                     :name             => l(:business_value),
                                     :field_format     => 'float',
-                                    :default_value    => "0",
-                                    :is_filter        => true,
-                                    :is_for_all       => true)
+                                    :default_value    => "0")
           
           # create business-value custom value for current issues that accept business value
           Issue.all.each do |issue|
@@ -387,9 +383,7 @@ module RedmineScrummer
                                     :field_format     => 'list',
                                     :possible_values  => ["0"],
                                     :is_required      => false,
-                                    :default_value    => "0",
-                                    :is_filter        => true,
-                                    :is_for_all       => true)
+                                    :default_value    => "0")
 
           release_custom_field.update_attribute(:field_format, 'release')
           
@@ -403,8 +397,7 @@ module RedmineScrummer
           remaining_hours_custom_field.update_attributes(
                                     :name             => l(:remaining_hours),
                                     :field_format     => 'float',
-                                    :default_value    => "0",
-                                    :is_filter        => true)
+                                    :default_value    => "0")
 
           Issue.all.each do |issue|
             if issue.accept_remaining_hours? && issue.remaining_hours

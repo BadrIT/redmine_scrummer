@@ -38,7 +38,6 @@ module RedmineScrummer
         return if self.custom_field.scrummer_caption != :release ||
                   self.value.to_s == self.customized.release.try(:name)
 
-        puts "relase will be synced from CF with value: #{self.value}"
         issue = self.customized
         issue.release_id = issue.project.releases.find_by_name(self.value).try(:id)
 

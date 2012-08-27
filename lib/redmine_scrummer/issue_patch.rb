@@ -30,6 +30,7 @@ module RedmineScrummer
 
         after_save :sync_custom_fields
         after_save :sync_release_custom_field
+        before_save :set_release_CF_value
 
         # By Mohamed Magdy
         after_save :set_issue_release
@@ -418,7 +419,16 @@ module RedmineScrummer
           field_value.send(:update_without_callbacks)
         end
       end
-      
+
+      def set_release_CF_value
+        if self.new_record?
+          field = IssueCustomField.find_by_scrummer_caption(:release)
+          field_value = self.custom_values.select{|cv| cv.custom_field_id == field.id}.try(:first)
+
+          field_value.value = self.release.try(:name) if field_value
+        end
+      end
+
       def set_done_ratio_value
         if estimated_hours && !done_ratio_changed? && (estimated_hours_changed? || remaining_hours_changed?) 
           self.done_ratio = if estimated_hours < remaining_hours

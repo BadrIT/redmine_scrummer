@@ -80,7 +80,6 @@ module RedmineScrummer
         @query.save
       end
       
-      # By Mohamed Elsaka
       # This method create a retrospective after creating the sprint,
       # this retrospective is represented as a wikipage with default content.
       public

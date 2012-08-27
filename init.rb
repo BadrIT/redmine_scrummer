@@ -46,6 +46,10 @@ Dispatcher.to_prepare :redmine_scrummer do
   unless CustomValue.included_modules.include? RedmineScrummer::CustomValuePatch
     CustomValue.send :include, RedmineScrummer::CustomValuePatch
   end
+
+  unless VersionCustomField.included_modules.include? RedmineScrummer::VersionCustomFieldPatch
+    VersionCustomField.send :include, RedmineScrummer::VersionCustomFieldPatch
+  end
 end
 
 Redmine::Plugin.register :redmine_scrummer do

@@ -332,6 +332,13 @@ module RedmineScrummer
           start_date_custom_field.update_attributes(
                               :name          => l(:start_date),
                               :field_format  => 'date')
+
+          # add retrospective custom field to versions
+          retrospective_url_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :retrospective_url)
+          retrospective_url_custom_field.update_attributes(
+                              :name          => l(:retrospective_url),
+                              :field_format  => 'string',
+                              :is_required   => false)
           
           Issue.all.each{|i| i.update_attribute(:story_size, 0.0) if i.story_size.nil?}
           
@@ -410,10 +417,10 @@ module RedmineScrummer
                                    :epic      => [:story_size, :business_value, :release],
                                    :theme     => [:story_size, :business_value, :release],
                                    :defectsuite => [:story_size, :business_value, :release],
-                                   :task      => [:remaining_hours],
-                                   :defect    => [:remaining_hours],
-                                   :refactor  => [:remaining_hours],
-                                   :spike     => [:remaining_hours]}
+                                   :task      => [:remaining_hours, :release],
+                                   :defect    => [:remaining_hours, :release],
+                                   :refactor  => [:remaining_hours, :release],
+                                   :spike     => [:remaining_hours, :release]}
           
                                    
           # add connections between fields and trackers          

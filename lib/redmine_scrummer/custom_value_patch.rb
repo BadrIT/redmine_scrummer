@@ -5,6 +5,8 @@ module RedmineScrummer
       base.class_eval do
         unloadable # Send unloadable so it will not be unloaded in development
         
+        validate :validate_retrospective_url
+
         include InstanceMethods
         
         after_save :sync_column_value
@@ -37,6 +39,17 @@ module RedmineScrummer
            self.customized.release.name != self.value.to_s
 
           self.customized.update_attributes(:release_id => Release.find_by_name(self.value.to_s).id)
+        end
+      end
+
+      protected
+      
+      def validate_retrospective_url
+        if self.custom_field.scrummer_caption == :retrospective_url &&
+           !self.value.blank? &&
+           (self.value.to_s =~ URI::regexp(%w(http https))).nil?
+
+           errors.add(:value, :invalid)
         end
       end
 

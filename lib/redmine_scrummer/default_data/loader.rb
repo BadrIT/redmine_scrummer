@@ -357,7 +357,7 @@ module RedmineScrummer
           Issue.all.each do |issue|
             if issue.accept_story_size?
               field_value = issue.custom_values.find_or_create_by_custom_field_id(story_size_custom_field.id)
-              field_value.update_attributes(:value => issue.story_size.to_s)
+              field_value.update_attribute('value', issue.story_size.to_s)
             end
           end
 
@@ -372,7 +372,7 @@ module RedmineScrummer
           Issue.all.each do |issue|
             if issue.accept_business_value? && issue.business_value
               field_value = issue.custom_values.find_or_create_by_custom_field_id(business_value_custom_field.id)
-              field_value.update_attributes(:value => issue.business_value)
+              field_value.update_attribute('value', issue.business_value)
             end
           end
           
@@ -389,7 +389,7 @@ module RedmineScrummer
           
           Issue.all.each do |issue|
             field_value = issue.custom_values.find_or_create_by_custom_field_id(release_custom_field.id)
-            field_value.update_attributes(:value => issue.release.name) if issue.release
+            field_value.update_attribute('value', issue.release.name) if issue.release
           end
 
           # add remaining time custom field
@@ -401,8 +401,15 @@ module RedmineScrummer
 
           Issue.all.each do |issue|
             if issue.accept_remaining_hours? && issue.remaining_hours
-              field_value = issue.custom_values.find_or_create_by_custom_field_id(remaining_hours_custom_field.id)
-              field_value.update_attributes(:value => issue.remaining_hours)
+              field_value = issue.custom_values.find_by_custom_field_id(remaining_hours_custom_field.id)
+              field_value = issue.custom_values.build(:custom_field_id => remaining_hours_custom_field.id) unless field_value
+
+              field_value.value = issue.remaining_hours
+              if field_value.new_record?
+                field_value.send(:create_without_callbacks)
+              else
+                field_value.send(:update_without_callbacks)
+              end
             end
           end
             
@@ -428,25 +435,13 @@ module RedmineScrummer
             issue.build_points_history_entry.save
           end
           
-          
+
           # Create points history entry for all the issues as a strat point
           Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|
             if issue.points_histories.blank?
               issue.build_points_history_entry.save
             end
           end
-          
-          # By Mohamed Magdy
-          # Intializing the issues' project_issue_number
-          # Setting the nil values of the old projects which 
-          # are created before adding the project_issue_number
-          Issue.all.each do |issue|
-            unless issue.project_issue_number
-              issue.update_attribute(:project_issue_number, issue.project.issues.maximum(:project_issue_number).to_i + 1)
-            end
-          end
-          
-          # End Mohamed Magdy
           
           true
         end

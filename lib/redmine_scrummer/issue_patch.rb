@@ -408,13 +408,12 @@ module RedmineScrummer
 
       def sync_release_custom_field
         return unless release_id_changed?
-        
         field = IssueCustomField.find_by_scrummer_caption(:release)
         return unless field
         field_value = self.custom_values.find_by_custom_field_id(field.id)
 
         if field_value.nil?
-          field_value = self.custom_values.build(:field_id => field.id, :value => self.release.try(:name))
+          field_value = self.custom_values.build(:custom_field_id => field.id, :value => self.release.try(:name))
           field_value.send(:create_without_callbacks)
         else
           field_value.value = self.release.try(:name)

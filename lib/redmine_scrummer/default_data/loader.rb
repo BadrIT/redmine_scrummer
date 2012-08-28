@@ -85,13 +85,13 @@ module RedmineScrummer
           end
 
           # remove 'In-Progress' status and user 'In Progress' instead
-          old_status = IssueStatus.find_by_name('In-Progress')
-          new_status = IssueStatus.find_by_name(l(:scrum_inProgress))
+          old_status = IssueStatus.find_by_name('Scrum-In-Progress')
+          new_status = IssueStatus.find_by_name(I18n.translate(:scrum_inProgress))
           if old_status
             Issue.update_all("status_id = #{new_status.id}", "status_id = #{old_status.id}")
-            new_status.update_attributes({:scrummer_caption => :in_progress, :is_scrum => true, :name => l(:scrum_inProgress), :short_name => 'P'})
             old_status.destroy
           end
+          new_status.update_attributes({:scrummer_caption => :in_progress, :is_scrum => true, :name => I18n.translate(:scrum_inProgress), :short_name => 'P'})
 
           # update all tasks from completed or accepted to finished
           # TEMP

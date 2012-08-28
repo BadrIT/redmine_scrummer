@@ -26,9 +26,16 @@ module RedmineScrummer
         
         after_save :check_history_entries
         after_save :check_points_history
-        
+
+
+        after_save :sync_custom_fields
+        after_save :sync_release_custom_field
+        before_save :set_release_CF_value
+
         # By Mohamed Magdy
         after_save :set_issue_release
+        
+        before_save :set_done_ratio_value
         
         has_many :history,
 				         :class_name => 'IssueHistory',
@@ -142,6 +149,10 @@ module RedmineScrummer
       end
       
       def accept_story_size?
+        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
+      end
+
+      def accept_business_value?
         [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
       end
       
@@ -378,6 +389,55 @@ module RedmineScrummer
           end
           
           self.save
+        end
+      end
+      
+      def sync_custom_fields
+        ['story_size', 'business_value', 'remaining_hours'].each do |caption|
+          if self.send("accept_#{caption}?")
+            field = IssueCustomField.find_by_scrummer_caption(caption.to_sym)
+            field_value = self.custom_values.find_or_create_by_custom_field_id(field.id)
+
+            if field_value.value.nil? || (self.send("#{caption}_changed?") && field_value.value.to_f != self.send(caption))
+              field_value.update_attributes(:value => self.send(caption).to_s)
+            end
+          end
+        end
+      end
+
+      def sync_release_custom_field
+        return unless release_id_changed?
+        
+        field = IssueCustomField.find_by_scrummer_caption(:release)
+        field_value = self.custom_values.find_by_custom_field_id(field.id)
+
+        if field_value.nil?
+          field_value = self.custom_values.build(:field_id => field.id, :value => self.release.try(:name))
+          field_value.send(:create_without_callbacks)
+        else
+          field_value.value = self.release.try(:name)
+          field_value.send(:update_without_callbacks)
+        end
+      end
+
+      def set_release_CF_value
+        if self.new_record?
+          field = IssueCustomField.find_by_scrummer_caption(:release)
+          field_value = self.custom_values.select{|cv| cv.custom_field_id == field.id}.try(:first)
+
+          field_value.value = self.release.try(:name) if field_value
+        end
+      end
+
+      def set_done_ratio_value
+        if estimated_hours && !done_ratio_changed? && (estimated_hours_changed? || remaining_hours_changed?) 
+          self.done_ratio = if estimated_hours < remaining_hours
+            0.0
+          elsif estimated_hours > 0
+            (((estimated_hours - remaining_hours) / estimated_hours) * 10).round * 10
+          else
+            100
+          end
         end
       end
     end

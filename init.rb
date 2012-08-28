@@ -42,6 +42,14 @@ Dispatcher.to_prepare :redmine_scrummer do
   unless TimeEntry.included_modules.include? RedmineScrummer::TimeEntryPatch
     TimeEntry.send :include, RedmineScrummer::TimeEntryPatch
   end
+  
+  unless CustomValue.included_modules.include? RedmineScrummer::CustomValuePatch
+    CustomValue.send :include, RedmineScrummer::CustomValuePatch
+  end
+
+  unless VersionCustomField.included_modules.include? RedmineScrummer::VersionCustomFieldPatch
+    VersionCustomField.send :include, RedmineScrummer::VersionCustomFieldPatch
+  end
 end
 
 Redmine::Plugin.register :redmine_scrummer do
@@ -83,3 +91,10 @@ Float.class_eval do
   end
 end
 
+Redmine::CustomFieldFormat.class_eval do
+  def format_as_release(value)
+    value
+  end
+end
+release_field_format = Redmine::CustomFieldFormat.new("release", :edit_as => "list", :label => "release")
+Redmine::CustomFieldFormat.register(release_field_format)

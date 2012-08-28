@@ -83,8 +83,21 @@ class ScrumSprintsPlanningController < IssuesController
   def create_sprint
     @sprint = Version.new(params[:version])
     @sprint.project = @project
-    
-    if @sprint.save
+
+    # adding retrospective_url form the creating wiki_page
+    wiki_disabled = @sprint.project.wiki.nil?
+    unless wiki_disabled
+      page = @sprint.build_wiki_page
+    end
+
+    if @sprint.save && (wiki_disabled || page.save)
+      field = VersionCustomField.find_by_scrummer_caption(:retrospective_url)
+      field_value = @sprint.custom_values.find_or_create_by_custom_field_id(field.id)
+      
+      field_value.value = url_for(:controller => 'wiki', :action => 'show', :project_id => page.project,
+                                :id => page.title, :only_path => false, :protocol => 'http')
+      field_value.save
+
       flash[:notice] = l(:notice_successful_create)
       true
     else

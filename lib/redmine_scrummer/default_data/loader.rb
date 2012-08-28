@@ -83,7 +83,16 @@ module RedmineScrummer
             status = IssueStatus.find_or_create_by_scrummer_caption(caption)
             status.update_attributes(options)
           end
-          
+
+          # remove 'In-Progress' status and user 'In Progress' instead
+          old_status = IssueStatus.find_by_name('In-Progress')
+          new_status = IssueStatus.find_by_name(l(:scrum_inProgress))
+          if old_status
+            Issue.update_all("status_id = #{new_status.id}", "status_id = #{old_status.id}")
+            new_status.update_attributes({:scrummer_caption => :in_progress, :is_scrum => true, :name => l(:scrum_inProgress), :short_name => 'P'})
+            old_status.destroy
+          end
+
           # update all tasks from completed or accepted to finished
           # TEMP
           task_id = Tracker.find_by_scrummer_caption(:task).id
@@ -323,10 +332,96 @@ module RedmineScrummer
           start_date_custom_field.update_attributes(
                               :name          => l(:start_date),
                               :field_format  => 'date')
+
+          # add retrospective custom field to versions
+          retrospective_url_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :retrospective_url)
+          retrospective_url_custom_field.update_attributes(
+                              :name          => l(:retrospective_url),
+                              :field_format  => 'string',
+                              :is_required   => false)
           
           Issue.all.each{|i| i.update_attribute(:story_size, 0.0) if i.story_size.nil?}
           
+          # add story size custom field
+          story_size_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :story_size)
+          story_size_custom_field.update_attributes(
+                                    :name             => l(:story_size),
+                                    :field_format     => 'list',
+                                    :possible_values  => Scrummer::Constants::StorySizes.map{|size| size.to_f.to_s},
+                                    :is_required      => false,
+                                    :default_value    => "0.0")
+          
           Issue.all.each{|i| i.update_accumulated_fields}
+          
+          # create story-size custom value for current issues that accept story size
+          Issue.all.each do |issue|
+            if issue.accept_story_size?
+              field_value = issue.custom_values.find_or_create_by_custom_field_id(story_size_custom_field.id)
+              field_value.update_attributes(:value => issue.story_size.to_s)
+            end
+          end
+
+           # add business value custom field
+          business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
+          business_value_custom_field.update_attributes(
+                                    :name             => l(:business_value),
+                                    :field_format     => 'float',
+                                    :default_value    => "0")
+          
+          # create business-value custom value for current issues that accept business value
+          Issue.all.each do |issue|
+            if issue.accept_business_value? && issue.business_value
+              field_value = issue.custom_values.find_or_create_by_custom_field_id(business_value_custom_field.id)
+              field_value.update_attributes(:value => issue.business_value)
+            end
+          end
+          
+          # adding release_id value custom field
+          release_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :release)
+          release_custom_field.update_attributes(
+                                    :name             => l(:release),
+                                    :field_format     => 'list',
+                                    :possible_values  => ["0"],
+                                    :is_required      => false,
+                                    :default_value    => "0")
+
+          release_custom_field.update_attribute(:field_format, 'release')
+          
+          Issue.all.each do |issue|
+            field_value = issue.custom_values.find_or_create_by_custom_field_id(release_custom_field.id)
+            field_value.update_attributes(:value => issue.release.name) if issue.release
+          end
+
+          # add remaining time custom field
+          remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
+          remaining_hours_custom_field.update_attributes(
+                                    :name             => l(:remaining_hours),
+                                    :field_format     => 'float',
+                                    :default_value    => "0")
+
+          Issue.all.each do |issue|
+            if issue.accept_remaining_hours? && issue.remaining_hours
+              field_value = issue.custom_values.find_or_create_by_custom_field_id(remaining_hours_custom_field.id)
+              field_value.update_attributes(:value => issue.remaining_hours)
+            end
+          end
+            
+          trackers_custom_fields = {:userstory => [:story_size, :business_value, :release],
+                                   :epic      => [:story_size, :business_value, :release],
+                                   :theme     => [:story_size, :business_value, :release],
+                                   :defectsuite => [:story_size, :business_value, :release],
+                                   :task      => [:remaining_hours, :release],
+                                   :defect    => [:remaining_hours, :release],
+                                   :refactor  => [:remaining_hours, :release],
+                                   :spike     => [:remaining_hours, :release]}
+          
+                                   
+          # add connections between fields and trackers          
+          trackers_custom_fields.each do |tracker_caption, fields_captions|
+            tracker = Tracker.find_by_scrummer_caption(tracker_caption)
+            tracker.custom_fields = []
+            tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
+          end
           
           # Create points history entry for all the issues as a strat point
           Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|

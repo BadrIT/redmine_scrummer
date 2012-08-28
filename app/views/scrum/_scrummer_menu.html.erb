@@ -1,3 +1,5 @@
+<% # highlighting scrummer label in the main menu%>
+<%= javascript_tag "select_menu_item('scrummer');"%>
 <ol id="scrummer_menu">
 	
 <% if User.current.allowed_to?(:scrum_release_planing, @project)%>

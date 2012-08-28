@@ -107,6 +107,8 @@
 			}
 		});
 		$j("#version-name").attr('disabled', false);
+		// removing retrospective url field when creating new sprint.
+		$j('#version_custom_field_values_<%= VersionCustomField.find_by_scrummer_caption(:retrospective_url).id%>').parent().remove();
 	});
 	
 	function hide_field(){

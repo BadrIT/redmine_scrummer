@@ -90,6 +90,7 @@ class ScrumReleasesPlanningController < IssuesController
   
   def set_issue_release
     @issue = Issue.find params[:issue_id]
+    @issue.init_journal(User.current)
     release_id = params[:release_id] != 'backlog' ? params[:release_id] : nil
     @issue.release_id = release_id
     @issue.save

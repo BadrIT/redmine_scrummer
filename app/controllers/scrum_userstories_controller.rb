@@ -56,6 +56,7 @@ class ScrumUserstoriesController < IssuesController
       custom_field_id = matched_groups[2]
 
       @issue = Issue.find(issue_id)
+      @issue.init_journal(User.current)
       @issue.custom_field_values = {custom_field_id => new_value}
 
       if @issue.save
@@ -73,6 +74,7 @@ class ScrumUserstoriesController < IssuesController
       value          = params[:value].match(/^\+(.*)/)[1]
 
       @issue      = Issue.find(issue_id)
+      @issue.init_journal(User.current)
       @time_entry = TimeEntry.new(:hours => value,
       :issue => @issue,
       :user => User.current,
@@ -95,6 +97,7 @@ class ScrumUserstoriesController < IssuesController
       column_name    = matched_groups[2].to_sym
 
       @issue = Issue.find(issue_id)
+      @issue.init_journal(User.current)
       @issue.update_attributes(column_name => new_value)
 
       if @issue.save
@@ -109,6 +112,7 @@ class ScrumUserstoriesController < IssuesController
       matched_groups = params[:id].match(/issue-(\d+)-status/)
       issue_id       = matched_groups[1]
       @issue         = Issue.find(issue_id)
+      @issue.init_journal(User.current)
 
       status = if ["f", "F"].include? params[:value].to_s
         @issue.test? ? IssueStatus.failed : IssueStatus.finished
@@ -135,6 +139,7 @@ class ScrumUserstoriesController < IssuesController
       matched_groups = params[:id].match(/issue-(\d+)-version/)
       issue_id       = matched_groups[1]
       @issue         = Issue.find(issue_id)
+      @issue.init_journal(User.current)
 
       version_id = params[:value] == 'backlog' ? nil : params[:value].gsub('sprint-','').to_i
 

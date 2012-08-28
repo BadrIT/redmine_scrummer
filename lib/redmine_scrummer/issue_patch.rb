@@ -396,6 +396,7 @@ module RedmineScrummer
         ['story_size', 'business_value', 'remaining_hours'].each do |caption|
           if self.send("accept_#{caption}?")
             field = IssueCustomField.find_by_scrummer_caption(caption.to_sym)
+            next unless field
             field_value = self.custom_values.find_or_create_by_custom_field_id(field.id)
 
             if field_value.value.nil? || (self.send("#{caption}_changed?") && field_value.value.to_f != self.send(caption))
@@ -409,6 +410,7 @@ module RedmineScrummer
         return unless release_id_changed?
         
         field = IssueCustomField.find_by_scrummer_caption(:release)
+        return unless field
         field_value = self.custom_values.find_by_custom_field_id(field.id)
 
         if field_value.nil?

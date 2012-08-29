@@ -443,6 +443,9 @@ module RedmineScrummer
             end
           end
           
+          # set the defualt method for calculation done ratio for issues.
+          Setting.issue_done_ratio = 'automatic_calculation'
+
           true
         end
       end

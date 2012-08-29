@@ -7,6 +7,9 @@ module RedmineScrummer
         
         include InstanceMethods
         
+        # adding automatic_calculation to done ratio calculation options
+        const_set "DONE_RATIO_OPTIONS", %w(issue_field issue_status automatic_calculation)
+
         ActiveRecord::Base.lock_optimistically = false
         safe_attributes 'story_size', 'remaining_hours', 'business_value'
         
@@ -434,6 +437,8 @@ module RedmineScrummer
       end
 
       def set_done_ratio_value
+        return if Setting.issue_done_ratio != "automatic_calculation"
+        
         if !done_ratio_changed? && (actual_hours_changed? || remaining_hours_changed?) 
 
           self.done_ratio = if actual_hours.to_f == 0.0 

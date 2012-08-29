@@ -96,7 +96,8 @@ en:
   
   save: "Save"
   non_working_delete_confirm: "Are you sure you want to delete the non working day(s)?"
-  retrospective_default_content: "* What did we do well? \r\n* What did we do wrong? \r\n* What could be improved?\r\n\r\n* Do not exceed your Timebox \r\n* Review your team metrics, like the team velocity \r\n* Review your sprint and release burn charts"
+  retrospective_default_content: "\r\nh3. What did we do well?\r\n\r\n* Item1\r\n* Item2\r\n \r\nh3. What did we do wrong? \r\n\r\n* Item1\r\n* Item2\r\n\r\nh3. What could be improved?\r\n\r\n* Item1\r\n* Item2\r\n\r\nh3. Reminder:\r\n\r\n* Do not exceed your Timebox \r\n* Review your team metrics, like the team velocity \r\n* Review your sprint and release burn charts"
   label_retrospective_url: "Retrospective"
   retrospective_url: "Retrospective"
   go: "GO"
+  setting_issue_done_ratio_automatic_calculation: "Automatic Calculation"

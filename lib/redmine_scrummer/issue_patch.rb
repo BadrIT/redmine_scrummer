@@ -364,7 +364,7 @@ module RedmineScrummer
         unless @blocked
           @blocked = true
           
-          if self.fixed_version
+          if self.fixed_version && self.fixed_version_id_changed?
             # if the release ID of the issue is
             # not set, set it to the sprint id
             unless self.release
@@ -397,10 +397,13 @@ module RedmineScrummer
           if self.send("accept_#{caption}?")
             field = IssueCustomField.find_by_scrummer_caption(caption.to_sym)
             next unless field
-            field_value = self.custom_values.find_or_create_by_custom_field_id(field.id)
+            field_value = self.custom_values.find_by_custom_field_id(field.id)
+            field_value = self.custom_values.build(:custom_field_id => field.id) unless field_value
 
             if field_value.value.nil? || (self.send("#{caption}_changed?") && field_value.value.to_f != self.send(caption))
-              field_value.update_attributes(:value => self.send(caption).to_s)
+              field_value.value = self.send(caption).to_s
+              save_method = field_value.new_record? ? :create_without_callbacks : :update_without_callbacks
+              field_value.send(save_method)
             end
           end
         end

@@ -434,13 +434,12 @@ module RedmineScrummer
       end
 
       def set_done_ratio_value
-        if estimated_hours && !done_ratio_changed? && (estimated_hours_changed? || remaining_hours_changed?) 
-          self.done_ratio = if estimated_hours < remaining_hours
+        if !done_ratio_changed? && (actual_hours_changed? || remaining_hours_changed?) 
+
+          self.done_ratio = if actual_hours.to_f == 0.0 
             0.0
-          elsif estimated_hours > 0
-            (((estimated_hours - remaining_hours) / estimated_hours) * 10).round * 10
           else
-            100
+            ((actual_hours / (actual_hours + remaining_hours.to_f)) * 10).round * 10
           end
         end
       end

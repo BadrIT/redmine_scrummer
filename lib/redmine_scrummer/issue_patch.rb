@@ -33,10 +33,11 @@ module RedmineScrummer
 
         after_save :sync_custom_fields
         after_save :sync_release_custom_field
-        before_save :set_release_CF_value
+        before_create :set_release_CF_value
 
-        # By Mohamed Magdy
-        after_save :set_issue_release
+        # set issue release by sprint release
+        # set issue sprint to nil if release changed
+        before_save :set_issue_release
         
         before_save :set_done_ratio_value
         
@@ -368,18 +369,10 @@ module RedmineScrummer
           @blocked = true
           
           if self.fixed_version && self.fixed_version_id_changed?
-            # if the release ID of the issue is
-            # not set, set it to the sprint id
-            unless self.release
-              self.release = self.fixed_version.release
-            end
-            
             # The case that the sprint ID is changed,
             # change the issue release ID to match 
             # the sprint release 
-            if self.fixed_version_id_changed?
-              self.release = self.fixed_version.release
-            end
+            self.release = self.fixed_version.release
           end
           
           if self.release
@@ -390,16 +383,14 @@ module RedmineScrummer
               self.fixed_version = nil
             end
           end
-          
-          self.save
         end
       end
       
       def sync_custom_fields
         ['story_size', 'business_value', 'remaining_hours'].each do |caption|
           if self.send("accept_#{caption}?")
-            field = IssueCustomField.find_by_scrummer_caption(caption.to_sym)
-            next unless field
+            next unless (field = IssueCustomField.find_by_scrummer_caption(caption.to_sym))
+            
             field_value = self.custom_values.find_by_custom_field_id(field.id)
             field_value = self.custom_values.build(:custom_field_id => field.id) unless field_value
 

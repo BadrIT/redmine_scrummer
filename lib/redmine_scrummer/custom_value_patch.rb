@@ -20,9 +20,10 @@ module RedmineScrummer
       
       def sync_column_value
         caption = self.custom_field.scrummer_caption.to_s
-        if ['story_size', 'business_value', 'remaining_hours'].include?(caption) &&
-          self.customized.send(caption) != self.value.to_f &&
-          !self.new_record?
+        if !self.new_record? &&
+          self.value_changed? && 
+          ['story_size', 'business_value', 'remaining_hours'].include?(caption) &&
+          self.customized.send(caption) != self.value.to_f 
 
           self.customized.update_attributes(caption.to_sym => self.value.to_f)
         end

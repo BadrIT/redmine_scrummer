@@ -70,13 +70,14 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Statuses
           #############################################################################################
-          statuses = [{:scrummer_caption => :defined,     :is_scrum => true,     :name => l(:scrum_defined),     :short_name => 'D', :is_default => true},
-          {:scrummer_caption => :in_progress, :is_scrum => true,     :name => l(:scrum_inProgress),  :short_name => 'P'}, 
-          {:scrummer_caption => :completed,   :is_scrum => true,     :name => l(:scrum_completed),   :short_name => 'C'}, 
-          {:scrummer_caption => :accepted,    :is_scrum => true,     :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true},
-          {:scrummer_caption => :succeeded,   :is_scrum => true,     :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true},
-          {:scrummer_caption => :failed,      :is_scrum => true,     :name => l(:scrum_failed),      :short_name => 'F'},
-          {:scrummer_caption => :finished,    :is_scrum => true,     :name => l(:scrum_finished),    :short_name => 'F', :is_closed => true}]
+          statuses = [
+          {:scrummer_caption => :defined,     :position => 1, :is_scrum => true,     :name => l(:scrum_defined),     :short_name => 'D', :is_default => true},
+          {:scrummer_caption => :in_progress, :position => 2, :is_scrum => true,     :name => l(:scrum_inProgress),  :short_name => 'P'}, 
+          {:scrummer_caption => :completed,   :position => 3, :is_scrum => true,     :name => l(:scrum_completed),   :short_name => 'C'}, 
+          {:scrummer_caption => :accepted,    :position => 4, :is_scrum => true,     :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true},
+          {:scrummer_caption => :succeeded,   :position => 5, :is_scrum => true,     :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true},
+          {:scrummer_caption => :failed,      :position => 6, :is_scrum => true,     :name => l(:scrum_failed),      :short_name => 'F'},
+          {:scrummer_caption => :finished,    :position => 7, :is_scrum => true,     :name => l(:scrum_finished),    :short_name => 'F', :is_closed => true}]
           
           statuses.each do |options|
             caption = options[:scrummer_caption]
@@ -91,7 +92,7 @@ module RedmineScrummer
             Issue.update_all("status_id = #{new_status.id}", "status_id = #{old_status.id}")
             old_status.destroy
           end
-          new_status.update_attributes({:scrummer_caption => :in_progress, :is_scrum => true, :name => I18n.translate(:scrum_inProgress), :short_name => 'P'})
+          new_status.update_attributes({:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :name => I18n.translate(:scrum_inProgress), :short_name => 'P'})
 
           # update all tasks from completed or accepted to finished
           # TEMP

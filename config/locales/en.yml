@@ -22,11 +22,11 @@ en:
   label_total_remaining: "Total Remaining Hrs:"
   label_total_actual: "Total Actual Hrs:"
   
-  short_field_estimated_hours: "Estimate"
+  short_field_estimated_hours: "1st Est."
   short_field_story_size: "Size"
-  short_field_remaining_hours: "TODO"
+  short_field_remaining_hours: "Rem."
   field_business_value: "Business Value"
-  field_remaining_hours: "TODO"
+  field_remaining_hours: "Remaining"
   
   scrum_userStory: "UserStory"
   scrum_task: "Task"
@@ -53,7 +53,7 @@ en:
   
   
   story_size: "Story-Size"
-  remaining_hours: "TODO(hrs)"
+  remaining_hours: "Remaining"
   business_value: "Business Value"
   buffer_size: "Traget points"
   start_date: "Start date"

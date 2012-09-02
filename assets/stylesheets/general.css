@@ -114,10 +114,12 @@ tr.open span.expander.hover {
 	background-image: url('../images/row_expanded_icon_over.png');
 }
 .edit {
-	float: left;
-	width: 100%;
-	min-height: 10px;
+	width: 70%;
+	min-height: 16px;
 	min-width: 10px;
+	border: solid 1px yellow;
+	background-color: white;
+	margin:0 auto;
 }
 .edit.float input, .edit.list input {
 	width: 50px;

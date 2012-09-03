@@ -34,6 +34,7 @@ module RedmineScrummer
         after_save :sync_custom_fields
         after_save :sync_release_custom_field
         before_create :set_release_CF_value
+        before_create :init_custom_fields_values
 
         # set issue release by sprint release
         # set issue sprint to nil if release changed
@@ -305,7 +306,7 @@ module RedmineScrummer
       end
       
       def update_remaining_by_estimate
-        if self.estimated_hours_changed? && self.status_defined?
+        if self.estimated_hours_changed? && self.status_defined? && !self.remaining_hours_changed?
           self.remaining_hours = self.estimated_hours
         end
       end
@@ -424,6 +425,17 @@ module RedmineScrummer
           field_value = self.custom_values.select{|cv| cv.custom_field_id == field.id}.try(:first)
 
           field_value.value = self.release.try(:name) if field_value
+        end
+      end
+
+      def init_custom_fields_values
+        ['story_size', 'business_value', 'remaining_hours'].each do |caption|
+          if self.send("accept_#{caption}?")
+            next unless (field = IssueCustomField.find_by_scrummer_caption(caption.to_sym))
+            
+            field_value = self.custom_values.select{|cv| cv.custom_field_id == field.id}.try(:first)
+            field_value.value = self.send(caption).to_s if (field_value && field_value.value == field.default_value)
+          end
         end
       end
 

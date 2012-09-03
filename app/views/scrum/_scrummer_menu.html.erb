@@ -23,12 +23,6 @@
 			<%= link_to "User Stories", scrum_user_stories_path(:project_id => @project.identifier), :class => class_attr[:user_stories] %>
 		</li>
 	<% end%>
-		
-	<% if User.current.allowed_to?(:scrum_sprint_planing, @project)%>
-		<li>
-			<%= link_to "Board", scrum_board_path(:project_id => @project.identifier), :class => class_attr[:board] %>
-		</li>
-	<% end%>
 
 	<% if User.current.allowed_to?(:scrum_charts, @project)%>
 		<li>

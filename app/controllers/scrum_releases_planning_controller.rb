@@ -20,8 +20,6 @@ class ScrumReleasesPlanningController < IssuesController
     
     @release  = Release.new
     @releases = @project.releases
-    @issues   = @project.issues.sprint_planing.find(:all, :conditions => ['release_id is NULL'], :order => sort_clause)
-    @planning_releases = @project.releases.find_all_by_state('Planning') 
     
     respond_to do |format|
       format.html # index.html.erb

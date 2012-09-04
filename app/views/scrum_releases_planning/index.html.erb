@@ -28,13 +28,6 @@
 	</div>
 </fieldset>
 
-<fieldset id="inline-add" class="collapsible collapsed">
-	<legend onclick="toggleFieldset(this);"><%= l(:label_scrum_stories_inline_add) %></legend>
-	<div id='inline_add_container' style="display:none">
-		<%= render :partial => 'scrum_userstories/inline_add', :locals => {:hide_cancel => true, :list_id => "release-backlog", :from_sprint => "release-backlog"} %>
-	</div>
-</fieldset>
-
 <br/>
 <h2>Releases</h2>
 <table class="list releases">
@@ -54,68 +47,3 @@
 </table>
 
 <br/>
-<h2>Plan</h2>
-
-<br/>
-	<%= content_tag('a', sort_link("position", "Sort by priority", "asc"), nil) %>
-<br/>
-
-<div id='release-backlog' class='list-parent planning-issues' style='float:left'>
-	<%= render :partial => 'release_backlog' %>
-</div>
-
-<div id="accordion" class='planning-issues' style='float:right;'>
-	<%= render :partial => 'release_as_list', :collection => @planning_releases%>
-</div>
-
-<script>
-$j('li.issue').draggable({
-	appendTo: 'parent',
-	helper: 'clone',
-	revert: true
-});
-function init_accordion(){
-	$j('.release-header').click( function() {
-		$(this).next().toggle();
-		return true;
-	}).next().hide();
-	$j('.release-header')[0].next().show();
-}
-function add_last_element_to_accordion(){
-	$j('.release-header').last().click( function() {
-		$(this).next().toggle();
-		return true;
-	}).next().hide();
-}
-function init_release_planning(){
-	$j('.list-parent').droppable({
-		accept: 'li.issue',
-		drop:function(event, ui){
-			var release_id = $j(this)[0].id;
-			var issue_id = ui.draggable[0].id;
-			
-			// prevent sending requet when droping in the same place
-			if(ui.draggable.parent().parent()[0].id == release_id)
-				return;
-
-			$j('.ui-draggable-dragging').hide();
-			$j('ul', this).append(ui.draggable);
-			
-			
-			var url = '<%= url_for :action => 'set_issue_release', :project_id => @project%>'
-			
-			new Ajax.Request(url, {
-				parameters: {
-					issue_id: issue_id,
-					release_id: release_id
-				},
-				method: 'post',
-				asynchronous:true
-			});
-		}
-	});
-}
-init_accordion();
-init_release_planning();
-</script>
-	

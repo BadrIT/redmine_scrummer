@@ -64,10 +64,10 @@ Redmine::Plugin.register :redmine_scrummer do
   
   project_module :scrummer do
   	permission :scrum_user_stories, 										{ :scrum_userstories => [:index, :issues_list, :calculate_statistics] }
-  	permission :scrum_user_stories_add_inline, 					{ :scrum_userstories => [:inline_add, :get_inline_issue_form], :scrum_sprints_planning =>  [:inline_add_version] }
-  	permission :scrum_user_stories_manipulate_inline, 	{ :scrum_userstories => [:get_inline_issue_form, :refresh_inline_add_form, :update_single_field, :inline_add_version] }
+  	permission :scrum_user_stories_add_inline, 					{ :scrum_userstories => [:inline_add, :get_inline_issue_form], :scrum_sprints_planning =>  [:inline_add_version, :add_version, :destroy_version] }
+  	permission :scrum_user_stories_manipulate_inline, 	{ :scrum_userstories => [:get_inline_issue_form, :refresh_inline_add_form, :update_single_field, :inline_add_version, :add_version, :destroy_version] }
   	
-  	permission :scrum_sprint_planing, 									{ :scrum_sprints_planning  => [:index, :sprint_info]}
+  	permission :scrum_sprint_planing, 									{ :scrum_sprints_planning  => [:index, :sprint_info, :add_version, :destroy_version]}
   	
   	permission :scrum_release_planing, 									{ :scrum_releases_planning => [:index, :create, :destroy_release, :show_release, :edit_release, :update_release, :set_issue_release]}
   	

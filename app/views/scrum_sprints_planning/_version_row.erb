@@ -1,0 +1,30 @@
+<tr class="version <%= cycle 'odd', 'even' %> <%=h version.status %> <%= 'shared' if version.project != @project %>">
+	<td class="name"><%= link_to_version version %></td>
+	<td class="description"><%=h version.description %></td>
+	<td class="release"><%=h version.release.try(:name) %></td>
+	
+	<td class="status"><%= l("version_status_#{version.status}") %></td>
+	<td class="sharing"><%=h format_version_sharing(version.sharing) %></td>
+
+	<td class="date"><%= version.try(:start_date_custom_value) %></td>
+	<td class="date"><%= version.effective_date %></td>
+	
+	<td class="buttons">
+		<% if version.project == @project %>
+			<%= link_to_remote l(:button_edit), 
+					 :url => { :controller => :scrum_sprints_planning,
+					 :action => :sprint_info, 
+					 :id => version.id,
+					 :project_id => @project.identifier},
+					 :html => {:id =>"edit-sprint-#{version.id}"}, :success => 'populate_version_data(request)', :class => 'icon icon-edit' %>
+    		<%= link_to l(:button_delete), {:controller => 'scrum_sprints_planning', :action => 'destroy_version', :id => version.id}, :confirm => l(:text_are_you_sure), :class => 'icon icon-del' %>
+		<% end %>
+	</td>
+	<script>
+	  	$j('#edit-sprint-<%= version.id %>').click(function() {
+			var fieldset = $j('#inline-version-add');
+			fieldset.children('div').slideDown("slow");
+			$j('#version-control-label').text('<%= l(:label_version_edit) %>');
+		});
+	</script>
+</tr>

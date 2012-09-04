@@ -5,11 +5,11 @@
 	<% version ||= @project.versions.build %>
 <% end %>
 
-<% remote_form_for :version, :url => {:controller => :scrum_sprints_planning, 
-									  :action => :inline_add_version, :project_id => @project},
+<% form_for :version, :url => {:controller => :scrum_sprints_planning, 
+									  :action => :add_version, :project_id => @project},
 									  :html => {:id => 'version-form'}, :success => 'hide_field()' do |f| %>
 
-	<div id='version_errors'></div>
+	<div id='version_errors'> <%= error_messages_for 'sprint' %></div>
 	<!--%= error_messages_for 'version' %-->
 	
 	<div class="box">
@@ -38,13 +38,13 @@
 	</p>
 	
 	<p>
-	<%= f.label :effective_date, l("field_effective_date"), :class => "scrum_version_inline_label" %>
-	<%= f.text_field :effective_date, :size => 10 %><%= calendar_for('version_effective_date') %>
-	</p>
-	
-	<p>
 	<%= f.label :sharing, l("field_sharing"), :class => "scrum_version_inline_label" %>
 	<%= f.select :sharing, version.allowed_sharings.collect {|v| [format_version_sharing(v), v]} %>
+	</p>
+
+	<p>
+	<%= f.label :effective_date, l("field_end_date"), :class => "scrum_version_inline_label" %>
+	<%= f.text_field :effective_date, :size => 10 %><%= calendar_for('version_effective_date') %>
 	</p>
 	
 	<% version.custom_field_values.each do |cf_value| %>

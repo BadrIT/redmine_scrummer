@@ -28,15 +28,7 @@
 <h2>Sprint Planning</h2>
 <!--Sprints stacked vertically-->
 
-<fieldset id="inline-add" class="collapsible collapsed">
-	<legend onclick="toggleFieldset(this);"><%= l(:label_scrum_stories_inline_add) %></legend>
-	<div id='inline_add_container' style="display:none">
-		<%= render :partial => 'scrum_userstories/inline_add', :locals => {:hide_cancel => true, :list_id => "backlog", :from_sprint => "backlog"} %>
-	</div>
-</fieldset>
-
-<div id='right-side-panel' >
-	
+<div>
 	<fieldset id="inline-version-add" class="collapsible collapsed">
 		<legend onclick="toggleFieldset(this);" id="version-control-label"><%= l(:label_version_new) %></legend>
 		<div id='inline_add_container' style="display:none">
@@ -44,32 +36,48 @@
 		</div>
 	</fieldset>
 	
-	<div id='sprints'>
-		<%= render(:partial => "sprint", :collection => @sprints) %>
-	</div>
-</div>
-<!--backlog filters-->
-<div class='filters'>
-	<%= backlog_filter nil, "all.png", "All"%>
-	<%= backlog_filter Tracker.scrum_userstory_tracker.id, 'us.png', l(:scrum_userStory) %>
-	<%= backlog_filter Tracker.scrum_defect_tracker.id, 'de.png', l(:scrum_defect) %> 
-	<%= backlog_filter Tracker.scrum_defectsuite_tracker.id, 'ds.GIF', l(:scrum_defectSuite) %>
-	<%= backlog_filter Tracker.scrum_refactor_tracker.id, 'ref.png', l(:scrum_refactor) %>
-	<%= backlog_filter Tracker.scrum_spike_tracker.id, 'sp.png', l(:scrum_spike) %>
-</div>
+	<table class="list versions">
+		<thead><tr>
+	    <th><%= l(:field_sprint_name) %></th>
+	    <th><%= l(:field_description) %></th>
+	    <th><%= l(:field_release) %></th>
 
-<br/>
-	<%= content_tag('a', sort_link("position", "Sort by priority", "asc"), nil) %>
-<br/>
+	    <th><%= l(:field_status) %></th>
+	    <th><%= l(:field_sharing) %></th>
 
-<!--listing nil-version issues-->
-<div id= 'backlog'>
-	<%= render :partial => 'scrum_userstories/list', :locals => {:issues => @backlog_issues, :query => @query, :hierarchy => false, :list_id => 'backlog', :from_sprint => 'backlog'} %>
+	    <th><%= l(:field_start_date) %></th>
+	    <th><%= l(:field_end_date) %></th>
+
+	    <th style="width:30px"></th>
+	    </tr></thead>
+		<tbody>
+	<% for version in @sprints %>
+	    <%= render :partial => 'version_row', :locals => {:version => version} %>
+	<% end; reset_cycle %>
+	    </tbody>
+	</table>
 </div>
-
 <script>
-	var url = '<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id}%>'
-	update_sprint_status();
-	init_planning();
-	init_sortable();
+	$j('#version-control-label').click(function(event){
+		$j('#version-control-label').text('<%= l(:label_version_new) %>');
+		$j('#version-form').find(':input').each(function() { 
+			if (this.type != 'submit') {
+				$j(this).val('');
+			}
+		});
+		$j("#version-name").attr('disabled', false);
+		// removing retrospective url field when creating new sprint.
+		$j('#version_custom_field_values_<%= VersionCustomField.find_by_scrummer_caption(:retrospective_url).id%>').parent().remove();
+	});
+	
+	function hide_field(){
+		var fieldset = $j('#inline-version-add');
+		fieldset.toggleClass('collapsed');
+		fieldset.children('div').slideUp("slow");
+		$j('#version-control-label').text('<%= l(:label_version_new) %>');
+	}
+	
+	function populate_version_data(request){
+		$j('#version-form').replaceWith(request.responseText);
+	}
 </script>

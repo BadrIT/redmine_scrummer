@@ -5,19 +5,16 @@ class ScrumSprintsPlanningController < IssuesController
   
   include ScrumUserstoriesController::SharedScrumConstrollers  
   
-  prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version, :sprint_info]
+  prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version, :sprint_info, :add_version]
   # By Mohamed Magdy
   # Filter before entering the index action to highlight the scrummer
   # menu tab
-  before_filter :current_page_setter, :only => :index
+  before_filter :current_page_setter, :only => [:index, :add_version, :destroy_version]
   before_filter :build_new_issue_from_params, :only => :index
   
   def index
-    @query = Query.find_by_scrummer_caption("Sprint-Planning")
-    initialize_sort
     # retrive the sprints ordered by its date
     @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
-    @backlog_issues = @project.issues.backlog.sprint_planing.find(:all, :order => sort_clause)
   end
   
   def inline_add_version
@@ -56,7 +53,35 @@ class ScrumSprintsPlanningController < IssuesController
       format.js { render :partial => 'inline_add_version' }
     end
   end
-  
+
+  def add_version
+     @sprint = Version.find(:first, :conditions => ['id = ?', params[:version_id]])
+    
+    if @sprint
+      @success = update_sprint
+    else
+      @success = create_sprint
+    end
+    
+    @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
+    render :index
+  end
+
+  def destroy_version
+    @version = Version.find params[:id]
+    puts @version.destroy
+    
+    debugger
+    if Version.exist?(params[:id])
+      flash[:notice] = l(:notice_successful_delete)
+    else  
+      flash[:error] = l(:notice_unable_delete_version)
+    end
+
+    @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
+    render :index
+  end
+
   protected
   # By Mohamed Magdy
   # This methods sets the curret_page attribute to be used in the view 

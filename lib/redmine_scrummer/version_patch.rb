@@ -13,6 +13,8 @@ module RedmineScrummer
         after_update :alter_issues_release
         
         after_create :add_to_side_bar
+
+        after_destroy :destroy_custom_query
       end
       
     end
@@ -84,7 +86,12 @@ module RedmineScrummer
         
         @query.save
       end
-      
+
+      def destroy_custom_query
+        query = Query.find_by_name(self.name)
+        query.destroy
+      end
+
       # This method create a retrospective after creating the sprint,
       # this retrospective is represented as a wikipage with default content.
       public

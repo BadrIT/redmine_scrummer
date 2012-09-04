@@ -321,12 +321,9 @@ module RedmineScrummer
           # Create/Update custom fields
           #############################################################################################  
           
-          # add buffer_size custom field to versions
-          buffer_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :buffer_size)
-          buffer_custom_field.update_attributes(
-                              :name          => l(:buffer_size),
-                              :field_format  => 'float',
-                              :default_value => "0")
+          # removing buffer_size custom field to versions
+          buffer_custom_field = VersionCustomField.find_by_scrummer_caption(:buffer_size)
+          buffer_custom_field.try(:destroy)
           
           # add start_date custom field to versions
           start_date_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :start_date)

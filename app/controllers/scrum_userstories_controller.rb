@@ -455,7 +455,8 @@ class ScrumUserstoriesController < IssuesController
     @query.filters['fixed_version_id'][:operator] == '='&&
     (params[:issue].nil? || params[:issue][:parent_issue_id].empty?)
 
-      @issue.fixed_version =  Version.find(@query.filters['fixed_version_id'][:values][0].to_i)
+      id = @query.filters['fixed_version_id'][:values][0].to_i
+      @issue.fixed_version =  Version.find(id) if Version.exists?(id)
     end
   end
 

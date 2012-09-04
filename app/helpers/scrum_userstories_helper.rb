@@ -12,12 +12,16 @@ module ScrumUserstoriesHelper
 	  short_headers = {l("field_remaining_hours")        => l("short_field_remaining_hours"),
 	                   l("field_story_size")  => l("short_field_story_size"),
 	                   l("field_estimated_hours") => l("short_field_estimated_hours")}
+
+    title = {l("short_field_remaining_hours")        => l("remaining_hours"),
+             l("short_field_story_size")  => l("story_size"),
+             l("short_field_estimated_hours") => l("estimated_hours")}
 	                   
     caption = short_headers[caption] || caption
-	  
+    
     column.sortable ? sort_header_tag(column.name.to_s, :caption => caption,
                                                         :default_order => column.default_order) : 
-                      content_tag('th', caption)
+                      content_tag('th', caption, :title => title[caption])
   end
   
 	def custom_field_tag_with_add_class_to_float_inputs(name, custom_value)	

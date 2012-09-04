@@ -13,35 +13,34 @@ module RedmineScrummer
         ActiveRecord::Base.lock_optimistically = false
         safe_attributes 'story_size', 'remaining_hours', 'business_value'
         
-        after_create :initiate_remaining_hours
-        
-        after_save :update_remaining_hours
+        before_create :init_custom_fields_values
+        before_create :set_release_CF_value
+
+        before_save :update_remaining_by_estimate
+        before_save :update_remaining_hours_by_status
+
         before_save :update_children_target_versions
         before_save :update_children_release
-        
-        before_save :update_remaining_by_estimate
           
+        # set issue release by sprint release
+        # set issue sprint to nil if release changed
+        before_save :set_issue_release
+        before_save :set_done_ratio_value
+
         after_save :update_parent_status
-        after_destroy :update_parent_status
         
         after_save :update_accumulated_fields
-        after_destroy :update_parent_accumulated_fields
         
         after_save :check_history_entries
         after_save :check_points_history
 
-
         after_save :sync_custom_fields
         after_save :sync_release_custom_field
-        before_create :set_release_CF_value
-        before_create :init_custom_fields_values
+        
 
-        # set issue release by sprint release
-        # set issue sprint to nil if release changed
-        before_save :set_issue_release
-        
-        before_save :set_done_ratio_value
-        
+        after_destroy :update_parent_accumulated_fields
+        after_destroy :update_parent_status
+
         has_many :history,
 				         :class_name => 'IssueHistory',
 				         :table_name => 'issue_histories',
@@ -228,7 +227,6 @@ module RedmineScrummer
         end
       end
       
-      
       protected
       def update_parent_accumulated_fields
         [:story_size, :remaining_hours].each do |field|
@@ -238,22 +236,6 @@ module RedmineScrummer
       
       def update_parent_accumulated_field(field)
         self.parent.update_accumulated_field(field) if self.parent
-      end
-      
-      # initiate remaining hours equal to Estimate if remaining is blank
-      def initiate_remaining_hours
-        if self.remaining_hours == 0.0
-          self.remaining_hours = self.estimated_hours
-          self.save
-        end
-      end
-      
-      def update_remaining_hours
-        # reset todo hours if completed, accepted or finished
-        if status_id_changed? && self.remaining_hours.to_f > 0.0 && self.status_in?([:completed, :finished, :accepted]) 
-          self.remaining_hours = 0.0
-          self.save
-        end
       end
       
       # By Mohamed Magdy
@@ -305,8 +287,19 @@ module RedmineScrummer
         end
       end
       
+      def update_remaining_hours_by_status
+        # reset todo hours if completed, accepted or finished
+        if self.accept_remaining_hours? && status_id_changed? && 
+          self.remaining_hours.to_f > 0.0 && self.status_in?([:completed, :finished, :accepted]) 
+
+          self.remaining_hours = 0.0
+        end
+      end
+
       def update_remaining_by_estimate
-        if self.estimated_hours_changed? && self.status_defined? && !self.remaining_hours_changed?
+        if self.accept_remaining_hours? && 
+          self.estimated_hours_changed? && self.status_defined? && !self.remaining_hours_changed?
+
           self.remaining_hours = self.estimated_hours
         end
       end
@@ -428,6 +421,7 @@ module RedmineScrummer
         end
       end
 
+      # set the values of the custom values in the memory before creation to stop race from custom values
       def init_custom_fields_values
         ['story_size', 'business_value', 'remaining_hours'].each do |caption|
           if self.send("accept_#{caption}?")

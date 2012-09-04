@@ -79,6 +79,8 @@ en:
   error_sprint_update: "Error in updating the sprint"
   
   field_sprint_name: "Name"
+  field_end_date: "End Date"
+  field_revision: "Revision"
   
   field_sunday: "Sunday"
   field_monday: "Monday"

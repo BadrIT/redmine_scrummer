@@ -1,5 +1,5 @@
-  <tr id=<%= "release-#{release.id}"%>>
-    <td><%=h release.name %></td>
+  <tr id=<%= "release-#{release.id}"%> class=<%= "#{cycle 'odd', 'even'}"%> >
+    <td class="name"><%=h release.name %></td>
     <td><%=h release.start_date %></td>
     <td><%=h release.release_date %></td>
     <td><%=h release.state %></td>

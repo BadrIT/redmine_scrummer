@@ -405,5 +405,6 @@ table.fancy caption {
 	margin-right: 0.5em;
 	display: block;
 }
-
-
+table.releases {
+	text-align: center;
+}

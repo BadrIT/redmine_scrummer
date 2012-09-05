@@ -5,7 +5,7 @@ class ScrumSprintsPlanningController < IssuesController
   
   include ScrumUserstoriesController::SharedScrumConstrollers  
   
-  prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version, :sprint_info, :add_version]
+  prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version, :sprint_info, :add_version, :destroy_version]
   # By Mohamed Magdy
   # Filter before entering the index action to highlight the scrummer
   # menu tab
@@ -69,13 +69,12 @@ class ScrumSprintsPlanningController < IssuesController
 
   def destroy_version
     @version = Version.find params[:id]
-    puts @version.destroy
-    
-    debugger
-    if Version.exist?(params[:id])
-      flash[:notice] = l(:notice_successful_delete)
-    else  
+    @version.destroy
+
+    if Version.exists?(params[:id])
       flash[:error] = l(:notice_unable_delete_version)
+    else  
+      flash[:notice] = l(:notice_successful_delete)
     end
 
     @sprints = @project.versions.find(:all,:order => 'effective_date DESC')

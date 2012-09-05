@@ -25,6 +25,7 @@ en:
   short_field_estimated_hours: "1st Est."
   short_field_story_size: "Size"
   short_field_remaining_hours: "Rem."
+  short_field_business_value: "Business Val."
   field_business_value: "Business Value"
   field_remaining_hours: "Remaining"
   

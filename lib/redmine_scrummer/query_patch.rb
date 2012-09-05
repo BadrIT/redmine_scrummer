@@ -11,6 +11,7 @@ module RedmineScrummer
 				add_available_column QueryColumn.new(:business_value)	
 				add_available_column QueryColumn.new(:position, :sortable => "#{Issue.table_name}.position")
 				
+				const_set "SCRUMMER_COLUMNS", [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :actual_hours, :remaining_hours, :business_value]
 				include InstanceMethods		
 
 				# this is the way for overriding methods from modules
@@ -76,7 +77,7 @@ module RedmineScrummer
 			
 			# This method sets the default columns displayed in the scrum views 
 			def default_scrummer_columns
-        self.column_names = [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :actual_hours, :remaining_hours]
+        self.column_names = SCRUMMER_COLUMNS
 			end
 
 		end

@@ -11,7 +11,8 @@ module ScrumUserstoriesHelper
 	  
 	  short_headers = {l("field_remaining_hours")        => l("short_field_remaining_hours"),
 	                   l("field_story_size")  => l("short_field_story_size"),
-	                   l("field_estimated_hours") => l("short_field_estimated_hours")}
+	                   l("field_estimated_hours") => l("short_field_estimated_hours"),
+                     l("field_business_value") => l("short_field_business_value")}
 
     title = {l("short_field_remaining_hours")        => l("remaining_hours"),
              l("short_field_story_size")  => l("story_size"),

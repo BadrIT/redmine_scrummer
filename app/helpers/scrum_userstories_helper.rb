@@ -87,6 +87,7 @@ module ScrumUserstoriesHelper
         
         if accept_field && (!issue_has_children || value.to_f == 0.0)
           content = value.to_f > 0 ? value : ' '*3
+          content = format_story_size(content) if column.name == :story_size && content.is_a?(Float)
           css_class = 'edit' unless column.name == :story_size
           format = 'float'  unless column.name == :story_size
           "<div align='center' class='#{css_class} #{format} #{column.name}-container' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
@@ -94,7 +95,7 @@ module ScrumUserstoriesHelper
           if column.name == :remaining_hours
             output_content = "Σ" + value.to_s
           else
-            output_content = value.to_s
+            output_content = format_story_size value.to_f
           end
           content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
         end
@@ -128,7 +129,7 @@ module ScrumUserstoriesHelper
   		if (issue.direct_children.blank? || value.to_f == 0.0) && issue.time_trackable?
 				value ||= 0.0
 				
-				content = value > 0 ? value : '&nbsp;'*4
+				content = value > 0 ? value : ' '*4
 				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
 			else
 				content = (value.to_f > 0) ? "<span align='center' class='accumelated-result'>Σ#{value}</span>" : '&nbsp;';
@@ -241,5 +242,13 @@ module ScrumUserstoriesHelper
       possible_sizes += "'" + value.to_f.to_s + "':'" + value.to_s + "', "
     end
     possible_sizes
+  end
+
+  def format_story_size(value)
+    if ((value - value.to_i) == 0) 
+      value.to_i
+    else
+      value
+    end
   end
 end

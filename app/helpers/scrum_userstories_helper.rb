@@ -79,13 +79,13 @@ module ScrumUserstoriesHelper
   		
   		content
   		
-    elsif [:story_size, :remaining_hours].include?(column.name) && issue.scrum_issue?
+    elsif [:story_size, :remaining_hours, :business_value].include?(column.name) && issue.scrum_issue?
       issue_has_children = issue.direct_children.any?  
       
-      if issue_has_children || (accept_field = issue.send("accept_#{column.name}?"))
+      if (accept_field = issue.send("accept_#{column.name}?")) || issue_has_children
         value = issue.send(column.name)
         
-        if accept_field && (!issue_has_children || value.to_f == 0.0)
+        if accept_field && (column.name == :business_value || !issue_has_children || value.to_f == 0.0)
           content = value.to_f > 0 ? value : ' '*3
           content = format_story_size(content) if column.name == :story_size && content.is_a?(Float)
           css_class = 'edit' unless column.name == :story_size

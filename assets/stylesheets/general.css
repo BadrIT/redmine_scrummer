@@ -114,12 +114,13 @@ tr.open span.expander.hover {
 	background-image: url('../images/row_expanded_icon_over.png');
 }
 .edit {
-	width: 70%;
+	width: 43px;
 	min-height: 16px;
 	min-width: 10px;
-	border: solid 1px yellow;
+	border: inset 1px #F3EEEE;
 	background-color: white;
 	margin:0 auto;
+	color: black;
 }
 .edit.float input, .edit.list input {
 	width: 50px;
@@ -148,6 +149,9 @@ td.cf_5 {
 	width: 85px;
 }
 td.estimated_hours {
+	width: 85px;
+}
+td.business_value {
 	width: 85px;
 }
 .userstory-issue {

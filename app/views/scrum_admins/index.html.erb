@@ -29,10 +29,10 @@
 <% form_tag(update_scrum_trackers_path(:project_id => @project), :method => :post) do %>
 	<table class="fancy">
 		<tr>
-			<th>Tracker</th>
-			<th>Name</th>
-			<th>Short Name</th>
-			<th>Position</th>
+			<th><%= l(:tracker) %></th>
+			<th><%= l(:name) %></th>
+			<th><%= l(:short_name) %></th>
+			<th><%= l(:order) %></th>
 		</tr>
 		<% @trackers.each do |tracker| %>
 			<tr align="center">
@@ -52,10 +52,10 @@
 <% form_tag(update_scrum_tracker_statuses_path(:project_id => @project), :method => :post) do %>
 	<table class="fancy">
 		<tr>
-			<th>Tracker Status</th>
-			<th>Name</th>
-			<th>Short Name</th>
-			<th>Position</th>
+			<th><%= l(:tracker_status) %></th>
+			<th><%= l(:name) %></th>
+			<th><%= l(:short_name) %></th>
+			<th><%= l(:order) %></th>
 		</tr>
 		<% @tracker_statuses.each do |tracker_status| %>
 			<tr align="center">

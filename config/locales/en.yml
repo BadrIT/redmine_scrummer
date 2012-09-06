@@ -73,6 +73,7 @@ en:
   field_release_state: "release state"
   
   name: "Name"
+  short_name: "Short Name"
   description: "Description"
   actions: "Actions"
   number_of_points: "Number of Points"
@@ -104,3 +105,7 @@ en:
   retrospective_url: "Retrospective"
   go: "GO"
   setting_issue_done_ratio_automatic_calculation: "Automatic Calculation"
+
+  tracker: "Tracker"
+  tracker_status: "Tracker Status"
+  order: "Order"

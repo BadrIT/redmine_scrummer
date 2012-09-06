@@ -226,6 +226,11 @@ module RedmineScrummer
           self.update_parent_accumulated_field(field) 
         end
       end
+
+      def unduplicated_custom_values
+        duplicated_fields = [:story_size, :remaining_hours, :business_value, :release]
+        self.custom_field_values.delete_if {|cfv| duplicated_fields.include?(cfv.custom_field.scrummer_caption)}
+      end
       
       protected
       def update_parent_accumulated_fields

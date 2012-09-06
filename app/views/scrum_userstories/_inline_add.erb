@@ -86,7 +86,7 @@
 		
 		
 		
-		<% @issue.custom_field_values.each do |value| %>
+		<% @issue.unduplicated_custom_values.each do |value| %>
 		  <% if !@issue.new_record? %>
 			<div class='scrum_issue_inline_field'>
 				<%= custom_field_tag_with_label :issue, value %>

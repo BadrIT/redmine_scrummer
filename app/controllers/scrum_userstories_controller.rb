@@ -261,6 +261,7 @@ class ScrumUserstoriesController < IssuesController
           page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
           page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
           page.replace_html "errors_for_#{div_name}", ""
+          page.replace_html "flash-temp", render_flash_messages
         end
       end
     else

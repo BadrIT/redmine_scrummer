@@ -21,11 +21,6 @@ module RedmineScrummer
         i = self.issue
         i.actual_hours = i.spent_hours
         i.save
-        
-        self.issue.ancestors.each do |issue|
-          issue.actual_hours = i.spent_hours
-          issue.save
-        end
       end
     end
   end

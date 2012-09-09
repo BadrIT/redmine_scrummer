@@ -207,7 +207,7 @@ module RedmineScrummer
         # if the issue has children having the story size custom field
         # then sum children
         # else take issue story size custom field value
-        [:story_size, :remaining_hours].each do |field|
+        [:story_size, :remaining_hours, :actual_hours].each do |field|
           if self.send("#{field}_changed?")
             if self.direct_children.any?
               update_accumulated_field(field)
@@ -234,7 +234,7 @@ module RedmineScrummer
       
       protected
       def update_parent_accumulated_fields
-        [:story_size, :remaining_hours].each do |field|
+        [:story_size, :remaining_hours, :actual_hours].each do |field|
           update_parent_accumulated_field(field)
         end
       end

@@ -25,6 +25,7 @@ class ScrumAdminsController < ApplicationController
       tracker.name = tracker_attributes[1][:name]
       tracker.short_name = tracker_attributes[1][:short_name]
       tracker.position = tracker_attributes[1][:position]
+      tracker.color = tracker_attributes[1][:color]
       tracker.save
     end
 
@@ -41,6 +42,7 @@ class ScrumAdminsController < ApplicationController
       status.name = status_attributes[1][:name]
       status.short_name = status_attributes[1][:short_name]
       status.position = status_attributes[1][:position]
+      status.color = status_attributes[1][:color]
       status.save
     end
 

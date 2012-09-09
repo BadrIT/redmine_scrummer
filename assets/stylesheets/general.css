@@ -168,34 +168,6 @@ table#issue-table td.subject div.subject-contents {
 #statistics .value {
 	float: left;
 }
-.status.defined {
-	background-color: gray;
-	width:15px;
-}
-.status.in_progress {
-	background-color: skyBlue;
-	width:30px;
-}
-.status.completed {
-	background-color: orange;
-	width:45px;
-}
-.status.finished {
-	background-color: green;
-	width:45px;
-}
-.status.accepted {
-	background-color: green;
-	width:60px;
-}
-.status.succeeded {
-	background-color: green;
-	width:60px;
-}
-.status.failed {
-	background-color: red;
-	width:60px;
-}
 #sidebar {
 	width: 300px;
 }

@@ -32,6 +32,7 @@
 	</ul>
 </div>
 <style type="text/css">
+	/* Assigning Colors for issue trackers */
 	.userstory-issue {
 		background-color: <%= Tracker.find_by_scrummer_caption(:userstory).color %>
 	}
@@ -55,5 +56,35 @@
 	}
 	.refactor-issue {
 		background-color:<%= Tracker.find_by_scrummer_caption(:refactor).color %>
+	}
+
+	/* Assigning colors for issues statues */
+	.status.defined {
+		background-color: <%= IssueStatus.find_by_scrummer_caption(:defined).color %>;
+		width:15px;
+	}
+	.status.in_progress {
+		background-color: <%= IssueStatus.find_by_scrummer_caption(:in_progress).color %>;
+		width:30px;
+	}
+	.status.completed {
+		background-color: <%= IssueStatus.find_by_scrummer_caption(:completed).color %>;
+		width:45px;
+	}
+	.status.finished {
+		background-color: <%= IssueStatus.find_by_scrummer_caption(:finished).color %>;
+		width:45px;
+	}
+	.status.accepted {
+		background-color: <%= IssueStatus.find_by_scrummer_caption(:accepted).color %>;
+		width:60px;
+	}
+	.status.succeeded {
+		background-color: <%= IssueStatus.find_by_scrummer_caption(:succeeded).color %>;
+		width:60px;
+	}
+	.status.failed {
+		background-color: <%= IssueStatus.find_by_scrummer_caption(:failed).color %>;
+		width:60px;
 	}
 </style>

@@ -31,3 +31,29 @@
 	<% end%>
 	</ul>
 </div>
+<style type="text/css">
+	.userstory-issue {
+		background-color: <%= Tracker.find_by_scrummer_caption(:userstory).color %>
+	}
+	.task-issue {
+		background-color:<%= Tracker.find_by_scrummer_caption(:task).color %>
+	}
+	.epic-issue {
+		background-color:<%= Tracker.find_by_scrummer_caption(:epic).color %>
+	}
+	.defectsuite-issue {
+		background-color:<%= Tracker.find_by_scrummer_caption(:defectsuite).color %>
+	}
+	.defect-issue {
+		background-color:<%= Tracker.find_by_scrummer_caption(:defect).color %>
+	}
+	.test-issue {
+		background-color:<%= Tracker.find_by_scrummer_caption(:test).color %>
+	}
+	.spike-issue {
+		background-color:<%= Tracker.find_by_scrummer_caption(:spike).color %>
+	}
+	.refactor-issue {
+		background-color:<%= Tracker.find_by_scrummer_caption(:refactor).color %>
+	}
+</style>

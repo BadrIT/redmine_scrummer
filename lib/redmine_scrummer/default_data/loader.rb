@@ -38,15 +38,15 @@ module RedmineScrummer
           
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
           
-          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   },
-                             :task        => { :name => l(:scrum_task),        :short_name => 'Task' },
-                             :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' },
+          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#DBE5F1'},
+                             :task        => { :name => l(:scrum_task),        :short_name => 'Task' ,:color => '#FFFFFF' },
+                             :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' ,:color => '#95B3D7'},
                              :theme       => { :name => l(:scrum_theme),       :short_name => 'Theme'},
-                             :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   },
-                             :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   },
-                             :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   },
+                             :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   ,:color => '#F2DBDB'},
+                             :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   ,:color => '#E5B8B7'},
+                             :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   ,:color => '#D9D9D9'},
                              :test        => { :name => l(:scrum_test),        :short_name => 'Test' },
-                             :spike       => { :name => l(:scrum_spike),       :short_name => 'Spike'}}
+                             :spike       => { :name => l(:scrum_spike),       :short_name => 'Spike',:color => '#D9D9D9'}}
           
           scrum_trackers.each do |caption, options|
             options = options.merge(scrum_tracker_options)

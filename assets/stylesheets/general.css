@@ -154,30 +154,6 @@ td.estimated_hours {
 td.business_value {
 	width: 85px;
 }
-.userstory-issue {
-	background-color:#EEEE9E
-}
-.task-issue {
-	background-color:#FFFFFF
-}
-.epic-issue {
-	background-color:YellowGreen
-}
-.defectsuite-issue {
-	background-color:red
-}
-.defect-issue {
-	background-color:Salmon
-}
-.test-issue {
-	background-color:#FFFFFF
-}
-.spike-issue {
-	background-color:PaleTurquoise
-}
-.refactor-issue {
-	background-color:wheat
-}
 table#issue-table td.subject div.prefix {
 	float: left;
 }

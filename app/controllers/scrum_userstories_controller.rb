@@ -281,6 +281,9 @@ class ScrumUserstoriesController < IssuesController
   end
 
   def find_query
+    # setting up current user if this filter is called before user_setup filter
+    user_setup if User.current
+
     if session[:query].nil? || params[:set_filter] == 'clear'
       if sprint = @project.current_or_latest_sprint 
         query = @project.queries.find_by_name(sprint.name)

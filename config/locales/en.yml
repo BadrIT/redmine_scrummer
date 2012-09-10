@@ -62,7 +62,7 @@ en:
   field_release: "Release"
   field_story_size: "Story-Size"
   field_release_id: "Release"
-  field_release_date: "Release date"
+  field_release_date: "End date"
   field_state: "State"
   field_position: "Position"
   field_fixed_release: "Target release"

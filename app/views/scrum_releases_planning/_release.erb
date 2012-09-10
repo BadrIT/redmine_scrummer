@@ -1,8 +1,9 @@
-  <tr id=<%= "release-#{release.id}"%> class=<%= "#{cycle 'odd', 'even'}"%> >
+  <tr id=<%= "release-#{release.id}"%> class='<%= "release #{cycle 'odd', 'even'} #{release.state.downcase}"%>' >
     <td class="name"><%=h release.name %></td>
     <td><%=h release.start_date %></td>
     <td><%=h release.release_date %></td>
     <td><%=h release.state %></td>
+    <td><%=h release.description %></td>
     <td><%=h pluralize(release.number_of_points, "point") %></td>
     <td><%= link_to 'Show', show_scrum_release_path(:id => release.id, :project_id => @project) %></td>
     <td><%= link_to 'Edit', edit_scrum_release_path(:id => release.id, :project_id => @project),:class => 'icon icon-edit' %></td>

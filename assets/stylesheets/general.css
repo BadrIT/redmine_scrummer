@@ -360,3 +360,6 @@ table.fancy caption {
 table.releases {
 	text-align: center;
 }
+tr.release.closed, tr.release.closed a {
+	color: #999;
+}

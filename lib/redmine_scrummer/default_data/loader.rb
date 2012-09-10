@@ -71,13 +71,13 @@ module RedmineScrummer
           # Create/Update Statuses
           #############################################################################################
           statuses = [
-          {:scrummer_caption => :defined,     :position => 1, :is_scrum => true,     :name => l(:scrum_defined),     :short_name => 'D', :is_default => true, :color => '#FFFFFF'},
-          {:scrummer_caption => :in_progress, :position => 2, :is_scrum => true,     :name => l(:scrum_inProgress),  :short_name => 'P', :color => '#F3F1DD'}, 
-          {:scrummer_caption => :completed,   :position => 3, :is_scrum => true,     :name => l(:scrum_completed),   :short_name => 'C', :color => '#C2D69B'}, 
-          {:scrummer_caption => :accepted,    :position => 4, :is_scrum => true,     :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true, :color => '#76A03C'},
-          {:scrummer_caption => :succeeded,   :position => 5, :is_scrum => true,     :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true, :color => '#10BA00'},
-          {:scrummer_caption => :failed,      :position => 6, :is_scrum => true,     :name => l(:scrum_failed),      :short_name => 'F', :color => '#FF7066'},
-          {:scrummer_caption => :finished,    :position => 7, :is_scrum => true,     :name => l(:scrum_finished),    :short_name => 'F', :is_closed => true, :color => '#B8D050'}]
+          {:scrummer_caption => :defined,     :position => 1, :is_scrum => true, :width => 20, :name => l(:scrum_defined),     :short_name => 'D', :is_default => true, :color => '#FFFFFF'},
+          {:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :width => 30, :name => l(:scrum_inProgress),  :short_name => 'P', :color => '#F3F1DD'}, 
+          {:scrummer_caption => :completed,   :position => 3, :is_scrum => true, :width => 50, :name => l(:scrum_completed),   :short_name => 'C', :color => '#C2D69B'}, 
+          {:scrummer_caption => :accepted,    :position => 4, :is_scrum => true, :width => 60, :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true, :color => '#76A03C'},
+          {:scrummer_caption => :succeeded,   :position => 5, :is_scrum => true, :width => 50, :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true, :color => '#10BA00'},
+          {:scrummer_caption => :failed,      :position => 6, :is_scrum => true, :width => 40, :name => l(:scrum_failed),      :short_name => 'F', :color => '#FF7066'},
+          {:scrummer_caption => :finished,    :position => 7, :is_scrum => true, :width => 40, :name => l(:scrum_finished),    :short_name => 'F', :is_closed => true, :color => '#B8D050'}]
           
           statuses.each do |options|
             caption = options[:scrummer_caption]

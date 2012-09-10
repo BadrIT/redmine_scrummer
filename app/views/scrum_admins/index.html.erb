@@ -59,6 +59,7 @@
 			<th><%= l(:short_name) %></th>
 			<th><%= l(:order) %></th>
 			<th><%= l(:color) %></th>
+			<th><%= l(:width) %></th>
 		</tr>
 		<% @tracker_statuses.each do |tracker_status| %>
 			<tr align="center">
@@ -67,6 +68,7 @@
 				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][short_name]", tracker_status.short_name %></td>
 				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][position]", tracker_status.position %></td>
 				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][color]", tracker_status.color %></td>
+				<td><%= text_field_tag "tracker_statuses[#{tracker_status.id}][width]", tracker_status.width %></td>
 			</tr>
 		<% end %>
 	</table>

@@ -9,8 +9,8 @@ class ScrumAdminsController < ApplicationController
   # GET /scrum_admins
   # GET /scrum_admins.xml
   def index
-    @trackers = Tracker.find(:all, :conditions => ["is_scrum = ?", true])
-    @tracker_statuses = IssueStatus.find(:all, :conditions => ["is_scrum = ?", true])
+    @trackers = Tracker.find(:all, :conditions => ["is_scrum = ?", true], :order => 'position')
+    @tracker_statuses = IssueStatus.find(:all, :conditions => ["is_scrum = ?", true], :order => 'position')
     @weekly_vacation = ScrumWeeklyNonWorkingDay.first || ScrumWeeklyNonWorkingDay.new
     
     respond_to do |format|
@@ -43,6 +43,7 @@ class ScrumAdminsController < ApplicationController
       status.short_name = status_attributes[1][:short_name]
       status.position = status_attributes[1][:position]
       status.color = status_attributes[1][:color]
+      status.width = status_attributes[1][:width]
       status.save
     end
 

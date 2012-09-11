@@ -38,15 +38,15 @@ module RedmineScrummer
           
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
           
-          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#DBE5F1'},
+          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#C2D3E8'},
                              :task        => { :name => l(:scrum_task),        :short_name => 'Task' ,:color => '#FFFFFF'},
-                             :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' ,:color => '#95B3D7'},
+                             :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' ,:color => '#CCC0D9'},
                              :theme       => { :name => l(:scrum_theme),       :short_name => 'Theme',:color => '#95B3D7'},
-                             :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   ,:color => '#F2DBDB'},
-                             :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   ,:color => '#E5B8B7'},
-                             :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   ,:color => '#D9D9D9'},
+                             :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   ,:color => '#E5B8B7'},
+                             :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   ,:color => '#D99594'},
+                             :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   ,:color => '#FBD4B4'},
                              :test        => { :name => l(:scrum_test),        :short_name => 'Test' ,:color => '#D9D9D9'},
-                             :spike       => { :name => l(:scrum_spike),       :short_name => 'Spike',:color => '#D9D9D9'}}
+                             :spike       => { :name => l(:scrum_spike),       :short_name => 'Spike',:color => '#FFEC8B'}}
           
           scrum_trackers.each do |caption, options|
             options = options.merge(scrum_tracker_options)
@@ -72,7 +72,7 @@ module RedmineScrummer
           #############################################################################################
           statuses = [
           {:scrummer_caption => :defined,     :position => 1, :is_scrum => true, :width => 20, :name => l(:scrum_defined),     :short_name => 'D', :is_default => true, :color => '#FFFFFF'},
-          {:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :width => 30, :name => l(:scrum_inProgress),  :short_name => 'P', :color => '#F3F1DD'}, 
+          {:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :width => 30, :name => l(:scrum_inProgress),  :short_name => 'P', :color => '#D6E3BC'}, 
           {:scrummer_caption => :completed,   :position => 3, :is_scrum => true, :width => 50, :name => l(:scrum_completed),   :short_name => 'C', :color => '#C2D69B'}, 
           {:scrummer_caption => :accepted,    :position => 4, :is_scrum => true, :width => 60, :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true, :color => '#76A03C'},
           {:scrummer_caption => :succeeded,   :position => 5, :is_scrum => true, :width => 50, :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true, :color => '#10BA00'},

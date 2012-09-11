@@ -20,14 +20,22 @@ class Release < ActiveRecord::Base
   def number_of_points
     self.issues.inject(0){ |points, issue| points + issue.points_histories.sum(:points) } 
   end
-  
-  protected
 
+  def sprints
+    # get all sprsints that have effective_date (end date) within the time of the release
+    project.versions.find(:all,
+                          :conditions => ['effective_date >= ? and effective_date <= ?', start_date, release_date],
+                          :order => 'effective_date')
+  end
+
+  protected
+  
   def dates_overlapping
     if self.start_date and self.release_date and self.start_date > self.release_date
       errors.add :date, "Start date must be less than realse date"
       return false
     end
   end
+
   
 end

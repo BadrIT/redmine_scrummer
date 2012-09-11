@@ -55,14 +55,15 @@
 		}
 		total_points = <%= @axes[:accepted_pts].inspect %>;
 		accepted_points = <%= @axes[:total_pts].inspect %>;
-		set_data("release_container", total_points, accepted_points, "Release Burnup Chart", "Points (pt)", "Total Points", "Accepted Points", "pts");
+		set_data("release_container", total_points, accepted_points, "Release Burnup Chart", "Points (pt)", "Total Points", "Accepted Points", "pts", {categories: <%= values_sorted_by_keys(@dates_map).inspect %> });
 	});
 	
 	$j('.selectable').selectable().each( function() {
 		$j($j('li', this)[0]).addClass('ui-selected');
 	});
 	
-	function set_data(div_id, d1, d2, chart_title, y_label, legend_1, legend_2, formatter) {
+	function set_data(div_id, d1, d2, chart_title, y_label, legend_1, legend_2, formatter, settenings) {
+		settenings = typeof settenings !== 'undefined' ? settenings : {}
 		options = {
 			chart : {
 				renderTo : div_id,
@@ -76,7 +77,8 @@
 				title : {
 					text : 'Date'
 				},
-				type: 'datetime',
+				categories: settenings.categories,
+				type: typeof settenings.categories === 'undefined' ? 'datetime' : undefined,
 				dateTimeLabelFormats: {
 					second: '%e-%b-%Y',
 					minute: '%e-%b-%Y',
@@ -109,6 +111,10 @@
 			tooltip : {
 				formatter : function() {
 					point_date = Highcharts.dateFormat('%e-%b-%Y', this.x);
+					
+					if(point_date == "Invalid date")
+						point_date = this.x;
+
 					return '<b>' + this.series.name + '</b><br/>' + point_date + ': ' + this.y + formatter;
 				}
 			},

@@ -42,7 +42,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'release_container', ''
-        page << "set_data('release_container', #{@axes[:accepted_pts].inspect}, #{@axes[:total_pts].inspect}, 'Release Burnup Chart', 'Points (pts)', 'Accepted Points', 'Total Points', 'pts');"
+        page << "set_data('release_container', #{@axes[:accepted_pts].inspect}, #{@axes[:total_pts].inspect}, 'Release Burnup Chart', 'Points (pts)', 'Accepted Points', 'Total Points', 'pts', {categories: #{values_sorted_by_keys(@dates_map).inspect}});"
       end
     end
   end
@@ -70,14 +70,23 @@ class ScrumChartsController < IssuesController
     return unless @sprint
     @start_date = @sprint.start_date_custom_value
     @end_date   = @sprint.effective_date
+
+    # adding validation for the range
+    return false if @start_date.nil? || @end_date.nil? || @start_date >= @end_date
+
     @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
     
     curves = [:actual_hrs, :actual_and_remaining_hrs, :remaining_hrs]
     curves.each do |curve|
       @axes[curve] = []
     end
-    
-    gather_information(@axes, curves) do |issue, date|
+
+    # building dates map
+    dates_array = (@start_date..@end_date)
+    dates_map = {}
+    dates_array.each{|date| dates_map[date] = (date.to_time + Time.now.utc_offset).to_i * 1000}
+
+    gather_information(@axes, curves, dates_map) do |issue, date|
       # history will selects the issues in date descending order
       # steps: sort descendingly and get the first history.
       # if an issue has no history in this day, then the history will be the nearest history of this issue
@@ -85,13 +94,23 @@ class ScrumChartsController < IssuesController
       sprint_hrs = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
       [sprint_hrs.try(:actual).to_f, sprint_hrs.try(:actual).to_f + sprint_hrs.try(:remaining).to_f, sprint_hrs.try(:remaining).to_f]
     end
+    true
   end
 
   def gather_release_data
     return if @release.nil?
+
     @start_date = @release.start_date
     @end_date   = @release.release_date
-    @issues     = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]
+
+    # building dates array
+    @dates_map = {}
+    @dates_map[@start_date] = l(:start_date)
+    @release.sprints.each{|sprint| @dates_map[sprint.effective_date] = sprint.name}
+    @dates_map[@end_date] = l(:end_date)
+    @dates_map.rehash
+
+    @issues  = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]
     
     curves = [:accepted_pts, :total_pts]
     
@@ -99,7 +118,7 @@ class ScrumChartsController < IssuesController
         @axes[curve] = []
     end
       
-    gather_information(@axes, curves) do |issue, date|
+    gather_information(@axes, curves, @dates_map) do |issue, date|
       # point histories will selects the issues in date descending order
       # steps: sort descendingly and get the first point history.
       # if an issue has no point history in this day, then the history will be the nearest point history of this issue
@@ -110,20 +129,21 @@ class ScrumChartsController < IssuesController
     end
   end
   
-  def gather_information(axes, curves, &block)
-    start_date = @start_date
-    end_date   = @end_date
+  # dates_map is a map between the date and the data that will be displayed in the X axix
+  # e.g. dates_map = {Date.to_date => "Sprints - 12"}
+  def gather_information(axes, curves, dates_map, &block)
+    dates_array = dates_map.keys.sort
+    start_date = dates_array.first
+    end_date   = dates_array.last
     issues     = @issues
-    # if the sprint or the release has no specified start or end date
-    return unless start_date && end_date
     
     # loops over the days of the sprint or the release
-    (start_date..end_date).each do |date|
+    dates_array.each do |date|
       points = Array.new(curves.count, 0)
       
       # looping over all the issues every day to calculate it points (release) or the hours (sprint)
       issues.each do |issue|
-        issue_points = block.call(issue, date)
+        issue_points = block.call(issue, date.end_of_day)
         
         issue_points.each_with_index do |issue_point, i|
           points[i] += issue_point
@@ -132,7 +152,7 @@ class ScrumChartsController < IssuesController
       # Checking if the date is a vacation or the start or the end date
       if !@project.non_working_day?(date) || date == start_date || date == end_date
         curves.each_with_index do |curve, i|
-          axes[curve] << [(date.to_time + Time.now.utc_offset).to_i * 1000 , points[i]]
+          axes[curve] << [dates_map[date] , points[i]]
         end
       end
     end

@@ -58,6 +58,7 @@ en:
   business_value: "Business Value"
   buffer_size: "Traget points"
   start_date: "Start date"
+  end_date: "End date"
   
   field_release: "Release"
   field_story_size: "Story-Size"

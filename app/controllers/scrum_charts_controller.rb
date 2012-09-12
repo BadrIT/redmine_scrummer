@@ -19,7 +19,8 @@ class ScrumChartsController < IssuesController
     @release = @releases.find(params[:release_id]) if params[:release_id]
     @sprint = @sprints.find(params[:sprint_id]) if params[:sprint_id]
     
-    @axes = {:accepted_pts => [], :total_pts => [], :actual_hrs => [], :actual_and_remaining_hrs => [], :remaining_hrs => []}
+    # @axes_release = {'accepted_pts' => [], 'total_pts' => []}
+    # @axes_sprint = {'actual_hrs' => [], 'actual_and_remaining_hrs' => [], 'remaining_hrs' => []}
     
     gather_sprint_data
     gather_release_data
@@ -33,8 +34,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'sprint_container', ''
-        page << "var sprint_chart = set_data('sprint_container', #{@axes[:actual_hrs].inspect}, #{@axes[:actual_and_remaining_hrs].inspect}, 'Sprint Burn Chart', 'Time (hrs)', 'Actual', 'Actual + Remaining', 'hrs');"
-        page << "add_series('Remaining', #{@axes[:remaining_hrs].inspect}, sprint_chart)"
+        page << "var sprint_chart = set_data('sprint_container', #{map_to_charts_series(@axes_sprint).to_json}, 'Sprint Burn Chart', 'Time (hrs)', 'hrs');"
       end
     else
       get_release
@@ -42,7 +42,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'release_container', ''
-        page << "set_data('release_container', #{@axes[:accepted_pts].inspect}, #{@axes[:total_pts].inspect}, 'Release Burnup Chart', 'Points (pts)', 'Accepted Points', 'Total Points', 'pts', {categories: #{values_sorted_by_keys(@dates_map).inspect}});"
+        page << "set_data('release_container', #{map_to_charts_series(@axes_release).to_json}, 'Release Burnup Chart', 'Points (pts)', 'pts', {categories: #{values_sorted_by_keys(@dates_map).inspect}});"
       end
     end
   end
@@ -68,17 +68,19 @@ class ScrumChartsController < IssuesController
   def gather_sprint_data
     @sprint ||= @sprints.last
     return unless @sprint
+
     @start_date = @sprint.start_date_custom_value
     @end_date   = @sprint.effective_date
 
-    # adding validation for the range
+    # validation for the range
     return false if @start_date.nil? || @end_date.nil? || @start_date >= @end_date
 
-    @issues     = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
+    @issues = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
     
-    curves = [:actual_hrs, :actual_and_remaining_hrs, :remaining_hrs]
+    curves = [l(:actual_hrs), l(:actual_and_remaining_hrs), l(:remaining_hrs)]
+    @axes_sprint = {}
     curves.each do |curve|
-      @axes[curve] = []
+      @axes_sprint[curve] = []
     end
 
     # building dates map
@@ -86,14 +88,25 @@ class ScrumChartsController < IssuesController
     dates_map = {}
     dates_array.each{|date| dates_map[date] = (date.to_time + Time.now.utc_offset).to_i * 1000}
 
-    gather_information(@axes, curves, dates_map) do |issue, date|
+    gather_information(@axes_sprint, curves, dates_map) do |issue, date|
       # history will selects the issues in date descending order
       # steps: sort descendingly and get the first history.
       # if an issue has no history in this day, then the history will be the nearest history of this issue
       # before the given date 
       sprint_hrs = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
-      [sprint_hrs.try(:actual).to_f, sprint_hrs.try(:actual).to_f + sprint_hrs.try(:remaining).to_f, sprint_hrs.try(:remaining).to_f]
+      
+      # filling an array that will contain the value for each curve
+      [sprint_hrs.try(:actual).to_f,
+       sprint_hrs.try(:actual).to_f + sprint_hrs.try(:remaining).to_f,
+       sprint_hrs.try(:remaining).to_f]
     end
+
+    # manually add ideal burn down
+    actual_and_remaining_hrs = @axes_sprint[l(:actual_and_remaining_hrs)]
+    ar = []
+    ar << actual_and_remaining_hrs[0]
+    ar << [actual_and_remaining_hrs.last[0],0]
+    @axes_sprint[(:ideal_burn)] = ar
     true
   end
 
@@ -108,29 +121,48 @@ class ScrumChartsController < IssuesController
     @dates_map[@start_date] = l(:start_date)
     @release.sprints.each{|sprint| @dates_map[sprint.effective_date] = sprint.name}
     @dates_map[@end_date] = l(:end_date)
-    @dates_map.rehash
 
     @issues  = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]
     
-    curves = [:accepted_pts, :total_pts]
+    curves = [l(:accepted_pts), l(:total_pts)]
     
+    @axes_release = {}
     curves.each do |curve|
-        @axes[curve] = []
+        @axes_release[curve] = []
     end
-      
-    gather_information(@axes, curves, @dates_map) do |issue, date|
+    
+    accepted_id =  IssueStatus.find_by_scrummer_caption(:accepted).id  
+    gather_information(@axes_release, curves, @dates_map) do |issue, date|
       # point histories will selects the issues in date descending order
       # steps: sort descendingly and get the first point history.
       # if an issue has no point history in this day, then the history will be the nearest point history of this issue
       # before the given date 
-      accepted_id =  IssueStatus.find_by_scrummer_caption(:accepted).id
       release_points = issue.points_histories.find(:first, :conditions => ['date <= ?', date])
-      [release_points.try(:issue).try(:status_id).to_i == accepted_id ? release_points.points : 0.0, release_points.try(:points).to_f]
+      
+      [release_points.try(:issue).try(:status_id) == accepted_id ? release_points.points : 0.0,
+       release_points.try(:points).to_f]
     end
+
+    # manually adding remaing points curve
+    ar = []
+    accepted_points = @axes_release[l(:accepted_pts)]
+    total_points = @axes_release[l(:total_pts)]
+    accepted_points.each_with_index do |element, i|
+      ar << [element[0], (total_points[i][1] - accepted_points[i][1])]
+    end
+    @axes_release[l(:remaining_pts)] = ar
+
+    # manually add ideal burn down
+    ar = []
+    ar << total_points[0]
+    ar << [(@dates_map.length - 1), 0]
+    @axes_release[l(:ideal_burn)] = ar
+
   end
   
-  # dates_map is a map between the date and the data that will be displayed in the X axix
-  # e.g. dates_map = {Date.to_date => "Sprints - 12"}
+  # attributes:
+  # - dates_map is a map between the date and the data that will be displayed in the X axix
+  #   e.g. dates_map = {Date.to_date => "Sprints - 12"}
   def gather_information(axes, curves, dates_map, &block)
     dates_array = dates_map.keys.sort
     start_date = dates_array.first

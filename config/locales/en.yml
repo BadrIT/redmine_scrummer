@@ -112,3 +112,12 @@ en:
   order: "Order"
   color: "Color"
   width: "Width"
+
+  accepted_pts: "Accepted pts"
+  total_pts: "Total pts"
+  remaining_pts: "Remaining pts"
+  ideal_burn: "Ideal Burn"
+
+  actual_hrs: "Actual hrs"
+  actual_and_remaining_hrs: "Actual & Remaining hrs"
+  remaining_hrs: "Remaining hrs"

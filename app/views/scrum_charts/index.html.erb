@@ -47,22 +47,16 @@
 
 <script type="text/javascript">
 	$j(document).ready(function() {
-		actual = <%= @axes[:actual_hrs].inspect %>;
-		actual_and_todo = <%= @axes[:actual_and_remaining_hrs].inspect %>;
-		sprint_chart = set_data("sprint_container", actual, actual_and_todo, "Sprint Burn Chart", "Time (hrs)", "Actual", "Actual + Remaining", "hrs");
-		if(actual.length > 0 || actual_and_todo.length > 0) {
-			add_series("Remaining", <%= @axes[:remaining_hrs].inspect %>, sprint_chart)
-		}
-		total_points = <%= @axes[:accepted_pts].inspect %>;
-		accepted_points = <%= @axes[:total_pts].inspect %>;
-		set_data("release_container", total_points, accepted_points, "Release Burnup Chart", "Points (pt)", "Total Points", "Accepted Points", "pts", {categories: <%= values_sorted_by_keys(@dates_map).inspect %> });
+		sprint_chart = set_data("sprint_container", <%= map_to_charts_series(@axes_sprint).to_json %>, "Sprint Burn Chart", "Time (hrs)", "hrs");
+		
+		set_data("release_container", <%= map_to_charts_series(@axes_release).to_json %>, "Release Burnup Chart", "Points (pt)", "pts", {categories: <%= values_sorted_by_keys(@dates_map).inspect %> });
 	});
 	
 	$j('.selectable').selectable().each( function() {
 		$j($j('li', this)[0]).addClass('ui-selected');
 	});
 	
-	function set_data(div_id, d1, d2, chart_title, y_label, legend_1, legend_2, formatter, settenings) {
+	function set_data(div_id, _series, chart_title, y_label, formatter, settenings) {
 		settenings = typeof settenings !== 'undefined' ? settenings : {}
 		options = {
 			chart : {
@@ -126,18 +120,9 @@
 				y : 100,
 				borderWidth : 0
 			},
-			series : [{
-				name : legend_1,
-				data : d1
-			}, {
-				name : legend_2,
-				data : d2
-			}]
+			series: _series
 		}
-		// removing the chart if it has no data
-		if(d1.length > 0 || d2.length > 0){
-			return new Highcharts.Chart(options);
-		}
+		return new Highcharts.Chart(options);
 	}
 	
 	function add_series(name, data, chart){

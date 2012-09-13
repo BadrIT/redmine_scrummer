@@ -67,27 +67,31 @@ class ScrumUserstoriesController < IssuesController
         render :text => 'Errors in saving'
       end
 
-    elsif params[:id] =~ /actual_hours/ && params[:value] =~ /^\+(.*)/
-      # virtual fields like actual
-      matched_groups = params[:id].match(/issue-(\d+)-actual_hours/)
-      issue_id       = matched_groups[1]
-      value          = params[:value].match(/^\+(.*)/)[1]
+    elsif params[:id] =~ /actual_hours/ 
+      if params[:value] =~ /^\+(.*)/
+        # virtual fields like actual
+        matched_groups = params[:id].match(/issue-(\d+)-actual_hours/)
+        issue_id       = matched_groups[1]
+        value          = params[:value].match(/^\+(.*)/)[1]
 
-      @issue      = Issue.find(issue_id)
-      @issue.init_journal(User.current)
-      @time_entry = TimeEntry.new(:hours => value,
-      :issue => @issue,
-      :user => User.current,
-      :project => @issue.project,
-      :spent_on => User.current.today,
-      :activity_id => TimeEntryActivity.find_by_name('Development').id )
+        @issue      = Issue.find(issue_id)
+        @issue.init_journal(User.current)
+        @time_entry = TimeEntry.new(:hours => value,
+        :issue => @issue,
+        :user => User.current,
+        :project => @issue.project,
+        :spent_on => User.current.today,
+        :activity_id => TimeEntryActivity.find_by_name('Development').id )
 
-      if @time_entry.hours > 0 && @time_entry.save
-        render :update do |page|
-          update_issue_and_parents(page)
+        if @time_entry.hours > 0 && @time_entry.save
+          render :update do |page|
+            update_issue_and_parents(page)
+          end
+        else
+          render :text => 'Errors in saving'
         end
       else
-        render :text => 'Errors in saving'
+        render :text => ''
       end
 
     elsif params[:id] =~ /-field-/

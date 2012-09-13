@@ -9,7 +9,7 @@ class ScrumReleasesPlanningController < IssuesController
   # By Mohamed Magdy
   # Filter before entering the index action to highlight the scrummer
   # menu tab
-  before_filter :current_page_setter, :only => [:index]
+  before_filter :current_page_setter
   before_filter :build_new_issue_from_params, :only => :index
   
   # GET /releases

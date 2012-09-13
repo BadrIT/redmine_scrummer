@@ -5,13 +5,13 @@
 <!-- Rendering the scrummer menu --> 
 <%= render :partial => "scrum/scrummer_menu" %>
 
-<h2>Show Release</h2>
+<div class="contextual">
+<%= link_to l(:button_edit), edit_scrum_release_path(:id => @release.id, :project_id => @project), :class => 'icon icon-edit' %>
+</div>
 
-<p>
-  <b><%= l(:name) %></b>
-  <%=h @release.name %>
-</p>
+<h2><%= @release.name %></h2>
 
+<div id="roadmap">
 <p>
   <b><%= l(:start_date) %></b>
   <%=h @release.start_date %>
@@ -35,7 +35,5 @@
   <b><%= l(:description) %></b><br/>
   <%=h @release.description %>
 </p>
+</div>
 
-
-<%= link_to 'Edit',  edit_scrum_release_path(:id => @release.id, :project_id => @project) %> |
-<%= link_to 'Back', scrum_release_planing_path(:project_id => @project) %>

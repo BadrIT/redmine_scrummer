@@ -70,7 +70,7 @@ en:
   field_date: ""
   release: "Release"
   
-  label_add_release_inline: "Inline add release"
+  label_add_release_inline: "New Release"
   field_release_state: "release state"
   
   name: "Name"

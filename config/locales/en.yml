@@ -1,7 +1,7 @@
 # English strings go here for Rails i18n
 en:
   label_scrum_index: "Managing Scrum"
-  label_scrum_stories_inline_add: "In-line Add"
+  label_scrum_stories_inline_add: "New Issue"
   label_stories_plural: "User Stories"
   
   error_no_default_scrum_issue_priority: "System has no default issue priority, you must add it from Admin interface"

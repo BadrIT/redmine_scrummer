@@ -73,7 +73,7 @@ class ScrumSprintsPlanningController < IssuesController
   end
 
   def destroy_version
-    @version = Version.find params[:id]
+    @version = @project.versions.find params[:id]
     @version.destroy
 
     if Version.exists?(params[:id])
@@ -83,7 +83,8 @@ class ScrumSprintsPlanningController < IssuesController
     end
 
     @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
-    render :index
+    
+    redirect_to scrum_sprint_planing_path(:project_id => @project.identifier)
   end
 
   protected

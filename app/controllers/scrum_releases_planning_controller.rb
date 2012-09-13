@@ -102,13 +102,18 @@ class ScrumReleasesPlanningController < IssuesController
   # DELETE /releases/1
   # DELETE /releases/1.xml
   def destroy_release
-    @release = Release.find(params[:id])
+    @release = @project.releases.find(params[:id])
     @release.destroy
 
-    render :update do |page|
-      page.remove "release-#{params[:id]}"
-      page.remove "header-#{params[:id]}"
-      page.remove "#{params[:id]}"
+    respond_to do |format|
+      format.html { redirect_to scrum_release_planing_path(:project_id => @project.identifier) }
+      format.js do
+        render :update do |page|
+          page.remove "release-#{params[:id]}"
+          page.remove "header-#{params[:id]}"
+          page.remove "#{params[:id]}"
+        end
+      end
     end
   end
   

@@ -332,7 +332,20 @@ class ScrumUserstoriesController < IssuesController
     # but having the same objects in order not to calcluate statistics twice
     @issues = @all_issues.map
 
-    load_issues_ancestors
+    unless params[:set_filter] == '1'
+      # don't load ancestors if applying filter to avoid some scenarios...
+
+      # I want to see bugs only
+      # I want to see tasks of a sprint only
+      # I don't want to see epics
+      # I want to see features only. I don't want to see technical tasks (tasks, bugs, and refactorings)
+      # I want to see tasks which are still 'defined'
+      # I want to see stories which are still 'defined'
+      # I want to see user stories (and their tasks) which has remaining effort more than x hours
+      # I want to filter by workitem (subject) name
+      # I want to see all workitems assigned to one developer
+      load_issues_ancestors
+    end
 
     #build tree heirarachy
     @issues = scrum_issues_list(@issues)

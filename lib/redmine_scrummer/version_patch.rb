@@ -80,7 +80,7 @@ module RedmineScrummer
 
       def destroy_custom_query
         query = Query.find_by_name(self.name)
-        query.destroy
+        query.try(:destroy)
       end
 
       # This method create a retrospective after creating the sprint,

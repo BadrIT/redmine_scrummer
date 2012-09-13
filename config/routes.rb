@@ -14,6 +14,7 @@ ActionController::Routing::Routes.draw do |map|
   
   # Sprint Planning path
   map.scrum_sprint_planing '/scrum_sprints_planning', :controller => 'scrum_sprints_planning', :action => 'index'
+  map.edit_scrum_sprint '/scrum_sprints_planning/:id/edit_version', :controller => 'scrum_sprints_planning', :action => 'edit_version'
   
   # User Stories path
   map.scrum_user_stories '/scrum_userstories', :controller => 'scrum_userstories', :action => 'index'

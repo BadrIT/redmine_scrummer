@@ -5,11 +5,11 @@ class ScrumSprintsPlanningController < IssuesController
   
   include ScrumUserstoriesController::SharedScrumConstrollers  
   
-  prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version, :sprint_info, :add_version, :destroy_version]
+  prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version, :sprint_info, :add_version, :destroy_version, :edit_version]
   # By Mohamed Magdy
   # Filter before entering the index action to highlight the scrummer
   # menu tab
-  before_filter :current_page_setter, :only => [:index, :add_version, :destroy_version]
+  before_filter :current_page_setter
   before_filter :build_new_issue_from_params, :only => :index
   
   def index
@@ -44,6 +44,11 @@ class ScrumSprintsPlanningController < IssuesController
         page.replace_html 'version_errors', errors
       end
     end
+  end
+
+  # GET /sprints/1/edit
+  def edit_version
+    @version = @project.versions.find(params[:id])
   end
   
   def sprint_info
@@ -133,7 +138,7 @@ class ScrumSprintsPlanningController < IssuesController
   # Updating an existing sprint with passed parameters
   def update_sprint
     if @sprint.update_attributes(params[:version])
-      flash[:notice] = l(:notice_successful_create)
+      flash[:notice] = l(:notice_successful_update)
       true
     else
       flash[:notice] = l(:error_sprint_update)

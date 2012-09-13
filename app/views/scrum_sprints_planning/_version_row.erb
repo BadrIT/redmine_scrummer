@@ -11,12 +11,12 @@
 	
 	<td class="buttons">
 		<% if version.project == @project %>
-			<%= link_to_remote l(:button_edit), 
-					 :url => { :controller => :scrum_sprints_planning,
-					 :action => :sprint_info, 
+			<%= link_to l(:button_edit), 
+					 { :controller => :scrum_sprints_planning,
+					 :action => :edit_version, 
 					 :id => version.id,
 					 :project_id => @project.identifier},
-					 :html => {:id =>"edit-sprint-#{version.id}", :class => 'icon icon-edit'}, :success => 'populate_version_data(request)' %>
+					 :class => 'icon icon-edit' %>
     		<%= link_to l(:button_delete), {:controller => 'scrum_sprints_planning', :action => 'destroy_version',:project_id => @project.identifier, :id => version.id}, :confirm => l(:text_are_you_sure), :class => 'icon icon-del' %>
 		<% end %>
 	</td>

@@ -10,9 +10,9 @@ More details can be found at in the doc directory or on the official website htt
   cd vendor/plugins/
   git clone https://github.com/mahkhaled/redmine_scrummer.git
   cd ../../  
-	git submodule add https://github.com/shuber/event_calendar.git vendor/plugins/event_calendar
-	git submodule add https://github.com/ixti/redmine_tags.git vendor/plugins/redmine_tags
-	git submodule add https://github.com/mbleigh/acts-as-taggable-on.git acts-as-taggable-on
+  git submodule add https://github.com/shuber/event_calendar.git vendor/plugins/event_calendar
+  git submodule add https://github.com/ixti/redmine_tags.git vendor/plugins/redmine_tags
+  git submodule add https://github.com/mbleigh/acts-as-taggable-on.git acts-as-taggable-on
   script/generate acts_as_taggable_on_migration
   rake db:migrate
   rake db:migrate_plugins

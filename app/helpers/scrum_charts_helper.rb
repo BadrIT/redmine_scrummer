@@ -13,7 +13,8 @@ module ScrumChartsHelper
   # to array of for [{name => hash, data => [data array]}, ...]
   # TODO: i think we can add this fuction to hash class
   def map_to_charts_series(hash)
-  	keys = hash.keys
+  	hash ||= {}
+    keys = hash.keys
   	ar = []
   	keys.each do |k|
   		h = {}

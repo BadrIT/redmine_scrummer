@@ -41,7 +41,6 @@ module RedmineScrummer
           scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#C2D3E8'},
                              :task        => { :name => l(:scrum_task),        :short_name => 'Task' ,:color => '#FFFFFF'},
                              :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' ,:color => '#CCC0D9'},
-                             :theme       => { :name => l(:scrum_theme),       :short_name => 'Theme',:color => '#95B3D7'},
                              :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   ,:color => '#E5B8B7'},
                              :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   ,:color => '#D99594'},
                              :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   ,:color => '#FBD4B4'},
@@ -94,20 +93,10 @@ module RedmineScrummer
           end
           new_status.update_attributes({:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :name => I18n.translate(:scrum_inProgress), :short_name => 'P'})
 
-          # update all tasks from completed or accepted to finished
-          # TEMP
-          task_id = Tracker.find_by_scrummer_caption(:task).id
-          tasks = Issue.find_all_by_tracker_id(task_id)
-          
-          tasks.select{|t| t.status == IssueStatus.accepted || t.status == IssueStatus.completed }.each do |task|
-            task.status = IssueStatus.finished
-            task.save            
-          end
-          
           #############################################################################################
           # Create/Update Workflow
           #############################################################################################                    
-          Workflow.destroy_all
+          # Workflow.destroy_all
           
           # trackers
           test_id = Tracker.find_by_scrummer_caption(:test).id
@@ -321,9 +310,15 @@ module RedmineScrummer
           # Create/Update custom fields
           #############################################################################################  
           
-          # removing buffer_size custom field to versions
-          buffer_custom_field = VersionCustomField.find_by_scrummer_caption(:buffer_size)
-          buffer_custom_field.try(:destroy)
+          if ScrumWeeklyNonWorkingDay.first.nil?
+            ScrumWeeklyNonWorkingDay.create(:sunday => 1,
+              :monday => 0,
+              :tuesday => 0,
+              :wednesday => 0,
+              :thursday => 0,
+              :friday => 0,
+              :saturday => 1)
+          end
           
           # add start_date custom field to versions
           start_date_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :start_date)
@@ -413,7 +408,6 @@ module RedmineScrummer
             
           trackers_custom_fields = {:userstory => [:story_size, :business_value, :release],
                                    :epic      => [:story_size, :business_value, :release],
-                                   :theme     => [:story_size, :business_value, :release],
                                    :defectsuite => [:story_size, :business_value, :release],
                                    :task      => [:remaining_hours, :release],
                                    :defect    => [:remaining_hours, :release],
@@ -429,13 +423,13 @@ module RedmineScrummer
           end
           
           # Create points history entry for all the issues as a strat point
-          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|
+          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.find_by_scrummer_caption(:userstory).id]).each do |issue|
             issue.build_points_history_entry.save
           end
           
 
           # Create points history entry for all the issues as a strat point
-          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]).each do |issue|
+          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.find_by_scrummer_caption(:userstory).id]).each do |issue|
             if issue.points_histories.blank?
               issue.build_points_history_entry.save
             end

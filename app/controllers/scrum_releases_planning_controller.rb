@@ -16,7 +16,7 @@ class ScrumReleasesPlanningController < IssuesController
   # GET /releases.xml
   def index
     @query = Query.find_by_scrummer_caption("Release-Planning")
-    initialize_sort
+    # initialize_sort
     
     @release  = Release.new
     @releases = @project.releases
@@ -47,7 +47,7 @@ class ScrumReleasesPlanningController < IssuesController
   # POST /releases.xml
   def create
     @query = Query.find_by_scrummer_caption("Release-Planning")
-    initialize_sort
+    # initialize_sort
     @release = Release.new(params[:release])
     @release.project_id = @project.id
     
@@ -56,7 +56,7 @@ class ScrumReleasesPlanningController < IssuesController
         page.insert_html :bottom, 'releases', :partial => 'release', :object => @release
         page.visual_effect :highlight, "release-#{@release.id}", :duration => 2
         if @release.state == 'Planning'
-          page.insert_html :bottom, 'accordion', :partial => 'release_as_list', :object => @release
+          # page.insert_html :bottom, 'accordion', :partial => 'release_as_list', :object => @release
           page.visual_effect :highlight, "header-#{@release.id}", :duration => 2
           page.call 'init_release_planning'
           page.call 'add_last_element_to_accordion'

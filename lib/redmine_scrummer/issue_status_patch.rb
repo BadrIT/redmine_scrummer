@@ -16,7 +16,7 @@ module RedmineScrummer
             end
           } unless status.scrummer_caption.blank?
           
-        end
+        end if base.column_names.include?("scrummer_caption")
       end
       
     end

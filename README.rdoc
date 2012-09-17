@@ -5,12 +5,28 @@ Redmine is a flexible project management web application written using Ruby on R
 More details can be found at in the doc directory or on the official website http://www.redmine.org
 
 = Installation
+  
+  Install Redmine if not already installed http://www.redmine.org/projects/redmine/wiki/RedmineInstall
+  cd vendor/plugins/
+  git clone https://github.com/mahkhaled/redmine_scrummer.git
+  cd ../../  
+	git submodule add https://github.com/shuber/event_calendar.git vendor/plugins/event_calendar
+	git submodule add https://github.com/ixti/redmine_tags.git vendor/plugins/redmine_tags
+	git submodule add https://github.com/mbleigh/acts-as-taggable-on.git acts-as-taggable-on
+  script/generate acts_as_taggable_on_migration
+  rake db:migrate
+  rake db:migrate_plugins
+  rake redmine_scrummer:load_default_data
 
-gem install wkhtmltopdf-binary
-rake db:create
-rake db:migrate
-rake redmine:load_default_data
-rake db:migrate_plugins
-rake redmine_scrummer:load_default_data
+= New/Existing Projects Setup
+- Include scrummer module in the your redmine projects
+- Include Custom Fields (Story-Size, Business Value, Release, Remaining) in your redmein projects
 
-Include scrummer module in the your redmine projects
+= Cucumber Initializtion
+
+  rake db:test:prepare db:fixtures:load redmine_scrummer:load_default_data RAILS_ENV=test
+  cucumber
+
+= Notes:
+- redmine pagination is by default (25,50,100). You can update it from config/settings.yml
+- Done Ratio is calculated automatically by default. You can change it from (Adminstration > Settings > Issue Tracking > Calculate the issue done ratio with)

@@ -99,6 +99,7 @@ module ScrumUserstoriesHelper
           end
           content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
         end
+        content = ''
       else
         # tasks, defects etc shouldn't display story size
         content = ''

@@ -11,7 +11,7 @@ module RedmineScrummer
 				add_available_column QueryColumn.new(:business_value)	
 				add_available_column QueryColumn.new(:position, :sortable => "#{Issue.table_name}.position")
 				
-				const_set "SCRUMMER_COLUMNS", [:subject, :fixed_version, :assigned_to, :story_size, :status, :actual_hours, :remaining_hours, :business_value]
+				const_set "SCRUMMER_COLUMNS", [:subject, :fixed_version, :assigned_to, :story_size, :business_value, :status, :actual_hours, :remaining_hours]
 				include InstanceMethods		
 
 				# this is the way for overriding methods from modules

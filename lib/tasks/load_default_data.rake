@@ -26,9 +26,9 @@ namespace :redmine_scrummer do
       RedmineScrummer::DefaultData::Loader.load(current_language)
       puts "Default configuration data loaded."
     rescue RedmineScrummer::DefaultData::DataAlreadyLoaded => error
-      puts error
+      puts error.message
     rescue => error
-      puts "Error: " + error
+      puts "Error: " + error.message
       puts "Default configuration data was not loaded."
     end
   end

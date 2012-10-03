@@ -1,8 +1,7 @@
 require 'redmine'
-require 'dispatcher'
-require "scrummer_constants"
+require 'scrummer_constants'
 
-Dispatcher.to_prepare :redmine_scrummer do
+Rails.configuration.to_prepare do
 	require_dependency 'issue'
 	require_dependency 'query'
 	require_dependency 'tracker'

@@ -8,7 +8,7 @@ module RedmineScrummer
 	      serialize :scrummer_caption
         validate :color, :format => { :with => /^#([A-Fa-f0-9]{6})$/}
 
-         named_scope :scrummer, :conditions => {:is_scrum => true}
+         scope :scrummer, :conditions => {:is_scrum => true}
 			end
 			
       base.all.each do |tracker|

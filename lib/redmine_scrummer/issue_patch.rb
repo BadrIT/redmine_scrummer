@@ -60,22 +60,22 @@ module RedmineScrummer
         belongs_to :release
         
         # backlog issues
-        named_scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
+        scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
             Tracker.scrum_userstory_tracker.id,
             Tracker.scrum_defect_tracker.id,
             Tracker.scrum_defectsuite_tracker.id,
             Tracker.scrum_refactor_tracker.id,
             Tracker.scrum_spike_tracker.id]} }
         
-        named_scope :by_tracker, lambda { |*args| {:conditions => ['tracker_id = ?', args.first]} }
+        scope :by_tracker, lambda { |*args| {:conditions => ['tracker_id = ?', args.first]} }
         
-        named_scope :backlog, :conditions => {:fixed_version_id => nil}
+        scope :backlog, :conditions => {:fixed_version_id => nil}
         
-        named_scope :active, lambda { |*args| {:conditions => ["status_id = ? OR status_id = ?",
+        scope :active, lambda { |*args| {:conditions => ["status_id = ? OR status_id = ?",
             IssueStatus.in_progress.id,
             IssueStatus.defined.id]} }
         
-        named_scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
+        scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
             Tracker.scrum_task_tracker.id,
             Tracker.scrum_defect_tracker.id,
             Tracker.scrum_refactor_tracker.id,

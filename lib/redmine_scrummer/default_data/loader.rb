@@ -94,9 +94,9 @@ module RedmineScrummer
           new_status.update_attributes({:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :name => I18n.translate(:scrum_inProgress), :short_name => 'P'})
 
           #############################################################################################
-          # Create/Update Workflow
+          # Create/Update WorkflowRule
           #############################################################################################                    
-          # Workflow.destroy_all
+          # WorkflowRule.destroy_all
           
           # trackers
           test_id = Tracker.find_by_scrummer_caption(:test).id
@@ -127,14 +127,14 @@ module RedmineScrummer
                                     :old_status_id => old_status.id, 
                                     :new_status_id => new_status.id}
                     
-                    Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                    WorkflowRule.find(:first, :conditions => conditions) || WorkflowRule.create(conditions)
                   end
                 end
               end
             end
           end
           
-          # workflow for Scrum_Test
+          # WorkflowRule for Scrum_Test
           Role.find_all_by_is_scrum(true).each do |role|
             [:defined,:succeeded,:failed].each do |old_status|
               [:defined,:succeeded,:failed].each do |new_status|
@@ -142,7 +142,7 @@ module RedmineScrummer
                               :tracker_id    => test_id, 
                               :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
                               :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
-                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                WorkflowRule.find(:first, :conditions => conditions) || WorkflowRule.create(conditions)
               end
             end
           end
@@ -155,7 +155,7 @@ module RedmineScrummer
                                   :tracker_id    => tracker_id, 
                                   :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
                                   :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
-                  Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                  WorkflowRule.find(:first, :conditions => conditions) || WorkflowRule.create(conditions)
                 end
               end
             end

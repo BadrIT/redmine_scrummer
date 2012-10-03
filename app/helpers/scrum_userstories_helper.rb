@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module ScrumUserstoriesHelper
 			
 	#unloadable # prevent it from being unloaded in development mode

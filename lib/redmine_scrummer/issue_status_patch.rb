@@ -4,8 +4,6 @@ module RedmineScrummer
 		def self.included(base)
 			base.class_eval do
 				unloadable # Send unloadable so it will not be unloaded in development
-				
-			  serialize :scrummer_caption
 
 		    validate :color, :format => { :with => /^#([A-Fa-f0-9]{6})$/}
 			  

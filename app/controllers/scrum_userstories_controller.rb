@@ -24,7 +24,6 @@ class ScrumUserstoriesController < IssuesController
 
   module SharedScrumConstrollers
 
-    include ActionView::Helpers::ActiveRecordHelper
     include ActionView::Helpers::TagHelper
 
     protected

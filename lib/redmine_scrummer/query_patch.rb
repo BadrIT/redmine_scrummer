@@ -62,7 +62,7 @@ module RedmineScrummer
 		    add_to_available_filters("remaining_hours", :integer)
 		    add_to_available_filters("business_value", :integer)
 		    add_to_available_filters("story_size", :integer)
-		    add_to_available_filters("release_id", :list, :values => @project.releases.collect{|r| [r.name, r.id]})
+		    add_to_available_filters("release_id", :list, :values => self.project.releases.collect{|r| [r.name, r.id]}) if self.project
 		  end
 
 		  def available_filters_with_scrum_filters

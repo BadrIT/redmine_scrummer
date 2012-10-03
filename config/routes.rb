@@ -31,7 +31,7 @@ RedmineApp::Application.routes.draw do
   # Vacations
   match '/vacations' => 'vacations#index', :as => :vacations
   match '/vacations/add_weekly_vacation' => 'vacations#weekly_vacation', :as => :weekly_vacation
-  match '/calendar/:year/:month' => 'calendar#index', :constraints => { :year => /\d{4}/, :month => /\d{1,2}/ }, :year => nil, :month => nil, :as => :calendar
+  match '/calendar(/:year(/:month))' => 'calendar#index', :as => :calendar, :constraints => {:year => /\d{4}/, :month => /\d{1,2}/}
   match '/vacations/add_vacation' => 'vacations#add_vacation', :as => :add_vacation
   match '/vacations/:id/delete_vacation' => 'vacations#delete_vacation', :as => :delete_vacation, :via => :delete
 end

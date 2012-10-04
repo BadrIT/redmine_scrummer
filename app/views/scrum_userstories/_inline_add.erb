@@ -14,8 +14,8 @@
 
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id= <%="errors_for_#{inline_issue_div_id}"%> ></div>
-	<% remote_form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add, :list_id => list_id, :from_sprint => from_sprint},
-														 :html => {:id => inline_form_id}, :oncomplete => "$j('#selected_sprint').remove();" do |f|%>
+	<%= form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add, :list_id => list_id, :from_sprint => from_sprint},
+														 :html => {:id => inline_form_id}, :oncomplete => "$j('#selected_sprint').remove();", :remote => true do |f|%>
 	
 	<%= hidden_field_tag :id, @issue.id unless @issue.new_record? %>
 	<%= f.hidden_field :project_id, :value => @project.id %>

@@ -26,7 +26,10 @@
 
 	<% if User.current.allowed_to?(:scrum_charts, @project)%>
 		<li>
-			<%= link_to "Charts", scrum_charts_path(:project_id => @project.identifier), :class => class_attr[:charts] %>
+			<%
+				# TODO check out
+			%>
+			<%= link_to "Charts", :url => {:controller => "scrum_charts", :action => "index", :project_id => @project.identifier}, :class => class_attr[:charts] %>
 		</li>
 	<% end%>
 	</ul>

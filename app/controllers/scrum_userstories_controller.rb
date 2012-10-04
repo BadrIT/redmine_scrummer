@@ -431,7 +431,7 @@ class ScrumUserstoriesController < IssuesController
   end
 
   def scrum_issues_list(issues, &block)
-    issues = issues.reverse
+    issues = issues.to_a.reverse
 
     last_processed_level = 0
 

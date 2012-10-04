@@ -7,7 +7,6 @@
     <%= javascript_tag "var task_tracker_id = #{Tracker.scrum_task_tracker.id}"%>    
     <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.jeditable.js', :plugin => 'redmine_scrummer' %>
-    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
     <%= javascript_include_tag 'context_menu.js'%>
     
     <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
@@ -113,13 +112,13 @@
 <% end %>
 
 <script type='text/javascript'>
-$j(function() {
-  $j("#sidebar").sidebar({  
+$(function() {
+  $("#sidebar").sidebar({  
     position:"right",  
     open:"click",
     onOpen: function(){
-	    	$j.get("/scrum_userstories/statistics?project_id=" + '<%= @project.identifier %>', function(data) {
-					$j("#statistics").replaceWith(data);
+	    	$.get("/scrum_userstories/statistics?project_id=" + '<%= @project.identifier %>', function(data) {
+					$("#statistics").replaceWith(data);
 				});
     }
   });

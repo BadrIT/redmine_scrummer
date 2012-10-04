@@ -57,7 +57,7 @@ module ScrumUserstoriesHelper
   	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
       else
-        "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$j(this).addClass('hover')\" onmouseout=\"$j(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
+        "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$(this).addClass('hover')\" onmouseout=\"$(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
       end
       
       tracker_name = issue.tracker.short_name.empty? ?  issue.tracker.name : issue.tracker.short_name

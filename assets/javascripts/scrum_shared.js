@@ -3,30 +3,30 @@ function toggleScrumRowGroup(el) {
 		 'tr');
 	var n = Element.next(tr);
 	tr.toggleClassName('open');
-	var isOpened = $j(tr).hasClass('open')
+	var isOpened = $(tr).hasClass('open')
 	
-	trLevel = parseInt($j(tr).attr('level'));
+	trLevel = parseInt($(tr).attr('level'));
 	nLevel = trLevel + 1;
 	
 	while (n != undefined && nLevel > trLevel) {
 		if(isOpened){			
-			$j(n).show();
-			if($j(n).hasClass('group'))
-				$j(n).addClass('open')
+			$(n).show();
+			if($(n).hasClass('group'))
+				$(n).addClass('open')
 		} else {
-			$j(n).hide();
-			if($j(n).hasClass('group'))
-				$j(n).removeClass('open')
+			$(n).hide();
+			if($(n).hasClass('group'))
+				$(n).removeClass('open')
 		}
 		
 		n = Element.next(n);
-		nLevel = parseInt($j(n).attr('level'));
+		nLevel = parseInt($(n).attr('level'));
 		
 	}
 }
 
 function cancelInlineChild(elem){
-	$j(elem).parents('.inline_child_container').each(function(index, element){
+	$(elem).parents('.inline_child_container').each(function(index, element){
 		element.innerHTML = '';
 	});
 }
@@ -50,7 +50,7 @@ ContextMenu.prototype.showMenu = function(e) {
   
   // collect ids
   ids_params_string = '';
-  selected_id = $j('#issue-table input[name="ids[]"]').each(
+  selected_id = $('#issue-table input[name="ids[]"]').each(
 									function(index, element){
 										if(element.checked)
 											ids_params_string += 'ids[]=' + element.value + '&';
@@ -96,20 +96,20 @@ ContextMenu.prototype.showMenu = function(e) {
 }
 
 function clear_form_elements(ele) {
-    $j(ele).find(':input').each(function() {
+    $(ele).find(':input').each(function() {
         switch(this.type) {
         	case 'select-one':
         		if(default_issue_target_version=="")
-        			$j(this).val('');
+        			$(this).val('');
             	break;
             case 'password':
             case 'select-multiple':
             case 'text':
-              $j(this).val('');
+              $(this).val('');
               break;
             case 'textarea':
                 value = typeof(default_issue_description) == "undefined" ? "" : default_issue_description;
-                $j(this).val(value);
+                $(this).val(value);
                 break;
             case 'checkbox':
             case 'radio':
@@ -119,18 +119,18 @@ function clear_form_elements(ele) {
 
 }
 function select_menu_item(scrum_label_class){
-	$j(function(){
-		$j('#main-menu ul li a.' + scrum_label_class).addClass('selected');
+	$(function(){
+		$('#main-menu ul li a.' + scrum_label_class).addClass('selected');
 	})
 }
 
 
 function toggleScrumIssuesSelection(el) {
-  var checkStatus = $j("#issue-table input:checkbox").is(":checked");
-  $j("#issue-table input:checkbox").attr("checked", !checkStatus);
+  var checkStatus = $("#issue-table input:checkbox").is(":checked");
+  $("#issue-table input:checkbox").attr("checked", !checkStatus);
   if(!checkStatus) 
-    $j("#issue-table input:checkbox").parent().parent().addClass("context-menu-selection")  
+    $("#issue-table input:checkbox").parent().parent().addClass("context-menu-selection")  
   else
-    $j("#issue-table input:checkbox").parent().parent().removeClass("context-menu-selection")
+    $("#issue-table input:checkbox").parent().parent().removeClass("context-menu-selection")
   
 }

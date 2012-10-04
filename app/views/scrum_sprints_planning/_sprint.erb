@@ -93,32 +93,32 @@
 	</div>
 </div>
 <script>
-  	$j('#edit-sprint-<%= sprint.id %>').click(function() {
-		var fieldset = $j('#inline-version-add');
+  	$('#edit-sprint-<%= sprint.id %>').click(function() {
+		var fieldset = $('#inline-version-add');
 		fieldset.children('div').slideDown("slow");
-		$j('#version-control-label').text('<%= l(:label_version_edit) %>');
+		$('#version-control-label').text('<%= l(:label_version_edit) %>');
 	});
 
-	$j('#version-control-label').click(function(event){
-		$j('#version-control-label').text('<%= l(:label_version_new) %>');
-		$j('#version-form').find(':input').each(function() { 
+	$('#version-control-label').click(function(event){
+		$('#version-control-label').text('<%= l(:label_version_new) %>');
+		$('#version-form').find(':input').each(function() { 
 			if (this.type != 'submit') {
-				$j(this).val('');
+				$(this).val('');
 			}
 		});
-		$j("#version-name").attr('disabled', false);
+		$("#version-name").attr('disabled', false);
 		// removing retrospective url field when creating new sprint.
-		$j('#version_custom_field_values_<%= VersionCustomField.find_by_scrummer_caption(:retrospective_url).id%>').parent().remove();
+		$('#version_custom_field_values_<%= VersionCustomField.find_by_scrummer_caption(:retrospective_url).id%>').parent().remove();
 	});
 	
 	function hide_field(){
-		var fieldset = $j('#inline-version-add');
+		var fieldset = $('#inline-version-add');
 		fieldset.toggleClass('collapsed');
 		fieldset.children('div').slideUp("slow");
-		$j('#version-control-label').text('<%= l(:label_version_new) %>');
+		$('#version-control-label').text('<%= l(:label_version_new) %>');
 	}
 	
 	function populate_version_data(request){
-		$j('#version-form').replaceWith(request.responseText);
+		$('#version-form').replaceWith(request.responseText);
 	}
 </script>

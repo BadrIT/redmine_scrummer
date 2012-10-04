@@ -21,10 +21,10 @@
 		<% end %>
 	</td>
 	<script>
-	  	$j('#edit-sprint-<%= version.id %>').click(function() {
-			var fieldset = $j('#inline-version-add');
+	  	$('#edit-sprint-<%= version.id %>').click(function() {
+			var fieldset = $('#inline-version-add');
 			fieldset.children('div').slideDown("slow");
-			$j('#version-control-label').text('<%= l(:label_version_edit) %>');
+			$('#version-control-label').text('<%= l(:label_version_edit) %>');
 		});
 	</script>
 </tr>

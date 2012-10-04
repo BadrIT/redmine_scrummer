@@ -2,7 +2,6 @@
 <% content_for :header_tags do %>
 <%= stylesheet_link_tag 'general', :media => "all", :plugin => 'redmine_scrummer' %>
 <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
-<%= javascript_tag "$.noConflict(); $j = jQuery;"%>
 
 <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
 <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
@@ -46,14 +45,14 @@
 </div>
 
 <script type="text/javascript">
-	$j(document).ready(function() {
+	$(document).ready(function() {
 		sprint_chart = set_data("sprint_container", <%= map_to_charts_series(@axes_sprint).to_json %>, "Sprint Burn Chart", "Time (hrs)", "hrs");
 		
 		set_data("release_container", <%= map_to_charts_series(@axes_release).to_json %>, "Release Burnup Chart", "Points (pt)", "pts", {categories: <%= values_sorted_by_keys(@dates_map).inspect %> });
 	});
 	
-	$j('.selectable').selectable().each( function() {
-		$j($j('li', this)[0]).addClass('ui-selected');
+	$('.selectable').selectable().each( function() {
+		$($('li', this)[0]).addClass('ui-selected');
 	});
 	
 	function set_data(div_id, _series, chart_title, y_label, formatter, settenings) {

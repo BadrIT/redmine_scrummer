@@ -4,12 +4,12 @@
 	<div class="status-bar"></div>
 	<div class="size"></div>
 	
-	<%= link_to_remote image_tag(scrummer_image_path('edit.png')), 
+	<%= link_to image_tag(scrummer_image_path('edit.png')), 
 							 :url => { :controller => :scrum_sprints_planning,
 							 :action => :sprint_info, 
 							 :id => sprint.id,
 							 :project_id => @project.identifier},
-							 :html => {:id =>"edit-sprint-#{sprint.id}"}, :success => 'populate_version_data(request)' %>
+							 :html => {:id =>"edit-sprint-#{sprint.id}"}, :success => 'populate_version_data(request)', :remote => true %>
 
 </div>
 <div id=<%="sprint-#{sprint.id}"%> class='sprint'>
@@ -55,25 +55,25 @@
 		    				<td class='issue-actions'>
 						    	<!--Remove 'add_child' form task and test trackers -->
 						    	<%if !(issue.task? || issue.test? || issue.spike?)%>
-						    		<%= link_to_remote image_tag( scrummer_image_path('add_issue.gif') ), 
+						    		<%= link_to image_tag( scrummer_image_path('add_issue.gif') ), 
 						    										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id},
 						    										 :with => "'parent_issue_id=#{issue.id}&project_id=#{@project.id}'",
-						    										 :update => "issue-#{issue.id}-inline-child" %>
+						    										 :update => "issue-#{issue.id}-inline-child", :remote => true %>
 						  		<% end %>
 		    					
-								<%= link_to_remote image_tag( scrummer_image_path('edit_issue.gif') ), 
+								<%= link_to image_tag( scrummer_image_path('edit_issue.gif') ), 
 		    										 :url => {:controller => :scrum_userstories, :action => 'get_inline_issue_form', :list_id => list_id, :from_sprint => "sprint-" + sprint.id.to_s},
 		    										 :with => "'issue_id=#{issue.id}&project_id=#{@project.id}'",
-		    										 :update => "issue-#{issue.id}-inline-child" %>
+		    										 :update => "issue-#{issue.id}-inline-child", :remote => true %>
 						    	
 								<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list) %>
 						    	
-								<%= link_to_remote image_tag( scrummer_image_path('remove_issue.gif') ), 
+								<%= link_to image_tag( scrummer_image_path('remove_issue.gif') ), 
 		    										 :url => (issue_path issue.id),
 		    										 :method => :delete,
 												     :confirm => "Are you sure?",
 		    										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ @query.id }&project_id=#{@project.identifier}&list_id=#{list_id}')",
-		    										 :update => list_id %>
+		    										 :update => list_id, :remote => true %>
 		    				</td>	    
 						<!-- The following Tr is sued as a place holder for inline-add-child -->
 						</tr>

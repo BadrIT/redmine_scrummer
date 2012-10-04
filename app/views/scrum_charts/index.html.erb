@@ -20,10 +20,10 @@
 	<ul class='selectable'>
 		<% @sprints.each do |sprint|%>
 		<li class='ui-widget-content'>
-			<%= link_to_remote sprint.name,
+			<%= link_to sprint.name,
 			:url => {:action => 'update_chart', :project_id => @project, :chart => 'sprint',  :id => sprint.id},
 			:success => "alterPDFLink(#{sprint.id}, null); eval(data);",
-			:method => 'GET'%>
+			:method => 'GET', :remote => true %>
 		</li>
 		<%end%>
 	</ul>
@@ -35,10 +35,10 @@
 	<ul style='float:left;' class='selectable'>
 		<% @releases.each do |release|%>
 		<li class='ui-widget-content'>
-			<%= link_to_remote release.name,
+			<%= link_to release.name,
 			:url => {:action => 'update_chart', :project_id => @project, :chart => 'release', :id => release.id},
 			:success => "alterPDFLink(null, #{release.id}); eval(data);",
-			:method => 'GET' %>
+			:method => 'GET', :remote => true %>
 		</li>
 		<%end%>
 	</ul>

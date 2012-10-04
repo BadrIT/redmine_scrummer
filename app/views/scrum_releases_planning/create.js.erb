@@ -1,0 +1,7 @@
+<%- if @release.save %>
+	$(".releases tr:last").after("<%= escape_javascript(render('release', :release => @release)) %>");
+	$("#release_errors").html("");
+	$(".releases tr:last").effect("highlight", {color:"#FFA"}, 3000);
+<%- else %>
+	$("#release_errors").html("<%= escape_javascript(error_messages_for('release')) %>");
+<%- end %>

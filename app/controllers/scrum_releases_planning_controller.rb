@@ -50,24 +50,6 @@ class ScrumReleasesPlanningController < IssuesController
     # initialize_sort
     @release = Release.new(params[:release])
     @release.project_id = @project.id
-    
-    if @release.save
-      render :update do |page|
-        page.insert_html :bottom, 'releases', :partial => 'release', :object => @release
-        page.visual_effect :highlight, "release-#{@release.id}", :duration => 2
-        if @release.state == 'Planning'
-          # page.insert_html :bottom, 'accordion', :partial => 'release_as_list', :object => @release
-          page.visual_effect :highlight, "header-#{@release.id}", :duration => 2
-          page.call 'init_release_planning'
-          page.call 'add_last_element_to_accordion'
-          page.replace_html "release_errors", ""
-        end
-      end
-    else
-      render :update do |page|
-        page.replace_html 'release_errors', error_messages_for('release')
-      end
-    end
   end
 
   # PUT /releases/1
@@ -107,13 +89,7 @@ class ScrumReleasesPlanningController < IssuesController
 
     respond_to do |format|
       format.html { redirect_to scrum_release_planing_path(:project_id => @project.identifier) }
-      format.js do
-        render :update do |page|
-          page.remove "release-#{params[:id]}"
-          page.remove "header-#{params[:id]}"
-          page.remove "#{params[:id]}"
-        end
-      end
+      format.js
     end
   end
   

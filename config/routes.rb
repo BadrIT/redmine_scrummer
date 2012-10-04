@@ -10,15 +10,18 @@ RedmineApp::Application.routes.draw do
   match '/scrum_releases_planning/create' => 'scrum_releases_planning#create', :as => :create_scrum_release, :via => :post
   match '/scrum_releases_planning/set_issue_release' => 'scrum_releases_planning#set_issue_release', :as => :set_issue_release
   match '/scrum_releases_planning/:id' => 'scrum_releases_planning#update_release', :as => :update_scrum_release, :via => :put
+  match '/scrum_releases_planning/:id/destroy_release' => 'scrum_releases_planning#destroy_release', :as => :destroy_scrum_release, :via => :delete
   
   # Sprint Planning path
   match '/scrum_sprints_planning' => 'scrum_sprints_planning#index', :as => :scrum_sprint_planing
   match '/scrum_sprints_planning/:id/edit_version' => 'scrum_sprints_planning#edit_version', :as => :edit_scrum_sprint
-  
+  match '/scrum_sprints_planning/add_version' => 'scrum_sprints_planning#add_version', :as => :add_scrum_sprint
+
   # User Stories path
   match '/scrum_userstories' => 'scrum_userstories#index', :as => :scrum_user_stories
   match '/scrum_userstories/statistics' => 'scrum_userstories#calculate_statistics', :as => :scrum_statistics
-  
+  match '/scrum_userstories/inline_add' => 'scrum_userstories#inline_add', :as => :inline_add, :via => :post
+
   # Scrum Admin path
   match '/scrum_admin' => 'scrum_admins#index', :as => :scrum_admins
   match '/scrum_admin/update_custom_fields' => "scrum_admins#update_scrum_tracker_statuses", :as => :update_scrum_tracker_statuses, :via => :post

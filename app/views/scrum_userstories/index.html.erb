@@ -1,5 +1,5 @@
 <%= context_menu issues_context_menu_path %>
-<% content_for :header_tags do %>
+<%= content_for :header_tags do %>
     <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
     <%= stylesheet_link_tag 'tipsy', :plugin => 'redmine_scrummer' %>
     <%= stylesheet_link_tag 'sidebar', :plugin => 'redmine_scrummer' %>
@@ -45,7 +45,7 @@
 
 
 
-<% form_tag({:controller => 'scrum_userstories', :action => 'index'}, :method => :get, :id => 'query_form') do |f|%>
+<%= form_tag({:controller => 'scrum_userstories', :action => 'index'}, :method => :get, :id => 'query_form') do |f|%>
     <%= hidden_field_tag 'set_filter', '1' %>
     <div id="query_form_content" class="hide-when-print">
       
@@ -92,7 +92,7 @@
   <% else %>
   
     <div id='issues_list'>
-      <%= render :partial => 'list', :locals => {:issues => @issues, :query => @query} %>
+      <%= render 'list', :issues => @issues, :query => @query %>
     </div>
     
     <p class="pagination"><%= pagination_links_full @issue_pages, @issue_count %></p>
@@ -106,7 +106,7 @@
 
 <% end %>
 
-<% content_for :sidebar do %>
+<%= content_for :sidebar do %>
     <%= render :partial => 'issues/sidebar' %>
     <%= render :partial => 'statistics', :locals => {:issues => @all_issues, :query => @query} %>
 <% end %>

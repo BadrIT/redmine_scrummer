@@ -5,7 +5,7 @@
 	  
 	  <% query.columns.each do |column| %>
 	  	<td class='<%= column.css_classes%>'>
-	  		<%= scrum_column_content(column, issue) %>
+	  		<%= scrum_column_content(column, issue).html_safe %>
 	  	</td>
 	  <% end %>    
 	  

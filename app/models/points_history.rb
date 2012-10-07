@@ -10,6 +10,7 @@ class PointsHistory < ActiveRecord::Base
   
   def nil_attributes?
     self.points.nil?
+    self.date.nil?
   end
 
   protected
@@ -19,5 +20,7 @@ class PointsHistory < ActiveRecord::Base
   
   def check_nil_attributes
     self.points ||= 0.0
+    # It was throwing ActiveRecord::StatementInvalid (Mysql2::Error: Column 'date' cannot be null
+    self.date ||= Date.today
   end
 end

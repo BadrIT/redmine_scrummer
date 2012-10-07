@@ -245,7 +245,7 @@ class ScrumUserstoriesController < IssuesController
   # inline add action
   def inline_add
     initialize_sort
-    div_name = get_inline_issue_div_id
+    @div_name = get_inline_issue_div_id
 
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
 
@@ -259,20 +259,13 @@ class ScrumUserstoriesController < IssuesController
       if @issues.length > 0
         set_issues_and_query_for_list unless params[:list_id] == 'issues_list'
         @partial_list ||= "list"
-
-        render :update do |page|
-          page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
-          page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
-          page.replace_html "errors_for_#{div_name}", ""
-          page.replace_html "flash-temp", render_flash_messages
-        end
       end
     else
       render_error_html_for_inline_add(error_messages_for :issue)
     end
   rescue ActiveRecord::RecordNotFound
     render_404
-    end
+  end
 
   protected
 

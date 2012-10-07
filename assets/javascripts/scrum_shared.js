@@ -1,8 +1,7 @@
 function toggleScrumRowGroup(el) {
-	var tr = Element.up(el,
-		 'tr');
-	var n = Element.next(tr);
-	tr.toggleClassName('open');
+	var tr = $(el).closest('tr');
+	var n = $(tr).next();
+	$(tr).toggleClass('open');
 	var isOpened = $(tr).hasClass('open')
 	
 	trLevel = parseInt($(tr).attr('level'));
@@ -19,9 +18,8 @@ function toggleScrumRowGroup(el) {
 				$(n).removeClass('open')
 		}
 		
-		n = Element.next(n);
+		n = $(n).next();;
 		nLevel = parseInt($(n).attr('level'));
-		
 	}
 }
 

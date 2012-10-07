@@ -1,0 +1,4 @@
+$("#<%= params[:list_id] %>").html("<%= escape_javascript(render(@partial_list, :issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]).html_safe) %>");
+$("#errors_for_<%= @div_name %>").html("");       
+$("#flash-temp").html("<%= escape_javascript(render_flash_messages) %>");
+$("#flash_notice").remove();

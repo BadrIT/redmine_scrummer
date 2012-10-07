@@ -36,7 +36,7 @@
 	});
 </script>
 
-<% form_tag('', {:id => 'context_menu_form'}) do -%>
+<%= form_tag('', {:id => 'context_menu_form'}) do -%>
 	<%= hidden_field_tag 'back_url', url_for(build_params_for_context_menu) %>
 <% end %>
 
@@ -52,7 +52,7 @@
 	<%= hidden_field_tag("first_index", issues.first.position) %>
 <% else %>
 	<%= hidden_field_tag("first_index", 0) %>
-<%- end -%>
+<%- end %>
 
 <table id='issue-table' class="list issues sprint-<%= from_sprint %>">
     <thead>

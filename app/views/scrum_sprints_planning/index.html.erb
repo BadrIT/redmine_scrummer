@@ -61,7 +61,7 @@
 	$('#version-control-label').click(function(event){
 		$('#version-control-label').text('<%= l(:label_version_new) %>');
 		$('#version-form').find(':input').each(function() { 
-			if (this.type != 'submit') {
+			if (this.type != 'submit' && this.name != 'authenticity_token') {
 				$(this).val('');
 			}
 		});

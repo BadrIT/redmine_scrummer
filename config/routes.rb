@@ -15,8 +15,9 @@ RedmineApp::Application.routes.draw do
   # Sprint Planning path
   match '/scrum_sprints_planning' => 'scrum_sprints_planning#index', :as => :scrum_sprint_planing
   match '/scrum_sprints_planning/:id/edit_version' => 'scrum_sprints_planning#edit_version', :as => :edit_scrum_sprint
-  match '/scrum_sprints_planning/add_version' => 'scrum_sprints_planning#add_version', :as => :add_scrum_sprint
-
+  post '/scrum_sprints_planning/add_version' => 'scrum_sprints_planning#add_version', :as => :add_scrum_sprint
+  match '/scrum_sprints_planning/:id/destroy_version' => 'scrum_sprints_planning#destroy_version', :as => :destroy_scrum_sprint
+  
   # User Stories path
   match '/scrum_userstories' => 'scrum_userstories#index', :as => :scrum_user_stories
   match '/scrum_userstories/statistics' => 'scrum_userstories#calculate_statistics', :as => :scrum_statistics

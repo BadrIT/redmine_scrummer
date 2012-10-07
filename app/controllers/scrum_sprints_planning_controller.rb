@@ -5,7 +5,7 @@ class ScrumSprintsPlanningController < IssuesController
   
   include ScrumUserstoriesController::SharedScrumConstrollers  
   
-  prepend_before_filter :find_scrum_project, :only => [:index, :inline_add_version, :sprint_info, :add_version, :destroy_version, :edit_version]
+  prepend_before_filter :find_scrum_project
   # By Mohamed Magdy
   # Filter before entering the index action to highlight the scrummer
   # menu tab

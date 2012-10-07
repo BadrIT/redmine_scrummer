@@ -7,7 +7,12 @@
 <h2>Weekly Non Working Days</h2>
 
 <% form_for(@weekly_vacation, :url => admin_weekly_vacation_path) do |f| %>
-  <%= f.error_messages %>
+  <% if @weekly_vacation.errors.any? %>
+	  <% @weekly_vacation.errors.full_messages.each do |msg| %>
+	      <li><%= msg %></li>
+	  <% end %>
+  <% end %>
+  
   <table class="fancy">
   	<tr>
   	  <% Date::DAYNAMES.each do |day| %>

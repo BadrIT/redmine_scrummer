@@ -69,7 +69,7 @@ class ScrumSprintsPlanningController < IssuesController
     end
     
     @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
-    render :index
+    redirect_to scrum_sprint_planing_path(:project_id => @project)
   end
 
   def destroy_version

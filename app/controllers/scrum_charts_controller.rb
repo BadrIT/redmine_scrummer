@@ -34,7 +34,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'sprint_container', ''
-        page << "var sprint_chart = set_data('sprint_container', #{map_to_charts_series(@axes_sprint).to_json}, 'Sprint Burn Chart', 'Time (hrs)', 'hrs');"
+        page << "var sprint_chart = set_data('sprint_container', #{map_to_charts_series(@axes_sprint)}, 'Sprint Burn Chart', 'Time (hrs)', 'hrs');"
       end
     else
       get_release
@@ -42,7 +42,7 @@ class ScrumChartsController < IssuesController
       
       render :update do |page|
         page.replace_html 'release_container', ''
-        page << "set_data('release_container', #{map_to_charts_series(@axes_release).to_json}, 'Release Burnup Chart', 'Points (pts)', 'pts', {categories: #{values_sorted_by_keys(@dates_map).inspect}});"
+        page << "set_data('release_container', #{map_to_charts_series(@axes_release)}, 'Release Burnup Chart', 'Points (pts)', 'pts', {categories: #{values_sorted_by_keys(@dates_map)}});"
       end
     end
   end

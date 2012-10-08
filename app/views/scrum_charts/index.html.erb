@@ -46,9 +46,9 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		sprint_chart = set_data("sprint_container", <%= map_to_charts_series(@axes_sprint).to_json %>, "Sprint Burn Chart", "Time (hrs)", "hrs");
+		sprint_chart = set_data("sprint_container", <%= map_to_charts_series(@axes_sprint) %>, "Sprint Burn Chart", "Time (hrs)", "hrs");
 		
-		set_data("release_container", <%= map_to_charts_series(@axes_release).to_json %>, "Release Burnup Chart", "Points (pt)", "pts", {categories: <%= values_sorted_by_keys(@dates_map).inspect %> });
+		set_data("release_container", <%= map_to_charts_series(@axes_release) %>, "Release Burnup Chart", "Points (pt)", "pts", {categories: <%= values_sorted_by_keys(@dates_map) %> });
 	});
 	
 	$('.selectable').selectable().each( function() {

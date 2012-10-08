@@ -32,8 +32,8 @@ RedmineApp::Application.routes.draw do
   match '/scrum_admin/update_scrum_trackers' => "scrum_admins#update_scrum_trackers", :as => :update_scrum_trackers, :via => :post
   match '/scrum_admin/update_weekly_vacations' => "scrum_admins#update_weekly_vacation", :as => :admin_weekly_vacation
   
-  # This is just for adjusting the url to generate PDFs 
-  match '/projects/:project_id/scrum_charts.:format' => 'scrum_charts#index', :as => :scrum_charts
+  # Scrum Charts
+  match '/projects/:project_id/scrum_charts(.:format)' => 'scrum_charts#index', :as => :scrum_charts
   
   # Vacations
   match '/vacations' => 'vacations#index', :as => :vacations

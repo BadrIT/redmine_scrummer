@@ -1,9 +1,14 @@
-GEM
+GIT
+  remote: git@github.com:mohamagdy/event_calendar.git
+  revision: ebb9c9442ba3a1d9722be3dbf143282c92c921cc
   specs:
     event-calendar (2.3.3)
+
+GEM
+  specs:
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  event-calendar
+  event-calendar!

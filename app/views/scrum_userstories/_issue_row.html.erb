@@ -19,13 +19,10 @@
 	  	<%= link_to image_tag(scrummer_image_path('edit_issue.gif') ), get_inline_issue_form_path(:list_id => list_id, :from_sprint => from_sprint, :project_id => @project.id, :issue_id => issue.id), :remote => true if scrum_user_stories_manipulate_inline %>
 	
 	  	<% if scrum_user_stories_manipulate_inline %>	
-		  	<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list) %>
+		  	<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list, :project_id => @project, :list_id => 'issues_list', :update => list_id) %>
 		  	<%= link_to image_tag( scrummer_image_path('remove_issue.gif') ), 
-		  										 :url => (issue_path issue.id),
-		  										 :method => :delete,
-											     :confirm => "Are you sure?",
-		  										 :with => "'back_url=' + encodeURIComponent('#{issues_list_url}?query_id=#{ query.id }&project_id=#{@project.identifier}&list_id=#{list_id}')",
-		  										 :update => list_id, :remote => true %>
+		  										 issue_path(issue.id, :back_url => URI.encode(issues_list_url), :query_id => query.id, :project_id => @project, :list_id => list_id),
+		  										 :method => :delete, :confirm => "Are you sure?", :remote => true %>
 	  	<% end%>
 	  </td>	    
 	<!-- The following Tr is sued as a place holder for inline-add-child -->

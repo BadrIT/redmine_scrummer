@@ -80,7 +80,7 @@ function contextMenuShow(event) {
       $('#context-menu').css('top', (render_y + 'px'));
       $('#context-menu').show();
 
-      //if (window.parseStylesheets) { window.parseStylesheets(); } // IE
+      if (window.parseStylesheets) { window.parseStylesheets(); } // IE
 
     }
   });

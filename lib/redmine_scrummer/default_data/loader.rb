@@ -393,16 +393,13 @@ module RedmineScrummer
                                     :default_value    => "0")
 
           Issue.all.each do |issue|
+            CustomValue.reset_callbacks(:save)
             if issue.accept_remaining_hours? && issue.remaining_hours
               field_value = issue.custom_values.find_by_custom_field_id(remaining_hours_custom_field.id)
               field_value = issue.custom_values.build(:custom_field_id => remaining_hours_custom_field.id) unless field_value
 
               field_value.value = issue.remaining_hours
-              if field_value.new_record?
-                field_value.send(:create_without_callbacks)
-              else
-                field_value.send(:update_without_callbacks)
-              end
+              field_value.save
             end
           end
             

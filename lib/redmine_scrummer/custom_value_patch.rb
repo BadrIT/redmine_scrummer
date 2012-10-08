@@ -40,8 +40,9 @@ module RedmineScrummer
 
         issue = self.customized
         issue.release_id = issue.project.releases.find_by_name(self.value).try(:id)
-
-        issue.send(:update_without_callbacks)
+        
+        Issue.reset_callbacks(:save)
+        issue.save
       end
 
       protected

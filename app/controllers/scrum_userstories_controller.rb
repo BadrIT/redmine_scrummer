@@ -2,7 +2,8 @@ class ScrumUserstoriesController < IssuesController
   unloadable
 
   include ScrumUserstoriesHelper
-
+  include ERB::Util
+  
   prepend_before_filter :check_for_default_scrum_issue_status_for_inline, :only => [:inline_add]
   prepend_before_filter :check_for_default_scrum_issue_priority_for_inline, :only => [:inline_add]
 
@@ -233,8 +234,6 @@ class ScrumUserstoriesController < IssuesController
     else
       set_issues_and_query_for_list
     end
-
-    render :partial => 'list', :locals=>{:list_id => params[:list_id]}
   end
 
   def refresh_inline_add_form
@@ -264,7 +263,7 @@ class ScrumUserstoriesController < IssuesController
         @partial_list ||= "list"
       end
     else
-      render_error_html_for_inline_add(error_messages_for :issue)
+      render_error_html_for_inline_add(error_messages_for 'issue')
     end
   rescue ActiveRecord::RecordNotFound
     render_404
@@ -390,10 +389,9 @@ class ScrumUserstoriesController < IssuesController
     end
   end
 
-  def render_error_html_for_inline_add error_html
-    render :update do |page|
-      page.replace_html "errors_for_#{get_inline_issue_div_id}", error_html
-    end
+  def render_error_html_for_inline_add(error_html)
+    @error_html = error_html
+    render :render_error_html_for_inline_add
   end
 
   def check_for_default_issue_status

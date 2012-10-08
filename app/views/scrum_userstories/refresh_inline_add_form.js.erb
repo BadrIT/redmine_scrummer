@@ -1,0 +1,1 @@
+$("#<%= @div %>").html("<%= escape_javascript(render(:partial => 'inline_add', :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint], :hide_cancel => params[:hide_cancel]}))%>")

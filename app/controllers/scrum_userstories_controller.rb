@@ -165,9 +165,11 @@ class ScrumUserstoriesController < IssuesController
   def get_inline_issue_form
     issue_id = params[:issue_id] if params[:issue_id]
     @issue = Issue.find(issue_id) if issue_id
-
+    
+    @issue_id = params[:issue_id] || params[:parent_issue_id]
+    
     respond_to do |format|
-      format.js { render :partial => 'inline_add',  :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint]}}
+      format.js
     end
   end
 

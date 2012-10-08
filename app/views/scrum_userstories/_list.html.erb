@@ -107,7 +107,7 @@
   var authenticity_token = '<%= form_authenticity_token %>';
   
   function enableInlineEdit(){
-    $(".sprint-<%=from_sprint%> .story_size-container").editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+    $(".sprint-<%=from_sprint%> .story_size-container").editable('<%= url_for(:controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}).html_safe %>',
       {
         onblur     : 'submit',
         placeholder: '<span class="edit-placeholder">Edit</span>',
@@ -123,7 +123,7 @@
         ignoreResponse: true
       }); 
   
-    $('.sprint-<%=from_sprint%> .edit').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+    $('.sprint-<%=from_sprint%> .edit').editable('<%= url_for(:controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}).html_safe %>',
       {
         onblur     : 'submit',
         placeholder: '<span class="edit-placeholder">Edit</span>',
@@ -137,7 +137,7 @@
         ignoreResponse: true
       });
   
-    $('.sprint-<%= from_sprint %> div.status').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+    $('.sprint-<%= from_sprint %> div.status').editable('<%= url_for(:controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}).html_safe %>',
       {
         onblur     : 'submit',
         submitdata : {

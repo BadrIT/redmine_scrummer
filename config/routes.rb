@@ -25,6 +25,7 @@ RedmineApp::Application.routes.draw do
   match '/scrum_userstories/issues_list' => 'scrum_userstories#issues_list', :as => :issues_list, :via => :post
   match '/scrum_userstories/update_single_field' => 'scrum_userstories#update_single_field', :as => :update_single_field
   match '/scrum_userstories/get_inline_issue_form' => 'scrum_userstories#get_inline_issue_form', :as => :get_inline_issue_form
+  match '/scrum_userstories/refresh_inline_add_form' => 'scrum_userstories#refresh_inline_add_form', :as => :refresh_inline_add_form
   
   # Scrum Admin path
   match '/scrum_admin' => 'scrum_admins#index', :as => :scrum_admins

@@ -112,6 +112,10 @@
 	<%end%>
 </div>
 <script>
+  $("#<%= tracker_field_id %>").observe_field(0, function() {
+    $.get("<%= refresh_inline_add_form_path(:project_id => @project, :id => @issue, :list_id => list_id, :from_sprint => from_sprint, :hide_cancel => hide_cancel, :div => inline_issue_div_id) %>", $(this).closest("form").serialize());
+  });
+    
 	$(".sprint_select").change(function(){
 		$('#selected_sprint').remove();
 		var hiddenField;

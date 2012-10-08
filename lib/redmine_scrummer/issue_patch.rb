@@ -153,15 +153,15 @@ module RedmineScrummer
       end
       
       def accept_story_size?
-        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
+        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption.to_sym)
       end
 
       def accept_business_value?
-        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
+        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption.to_sym)
       end
       
       def accept_remaining_hours?
-        [:task, :defect, :refactor, :spike].include?(self.tracker.scrummer_caption)
+        [:task, :defect, :refactor, :spike].include?(self.tracker.scrummer_caption.to_sym)
       end
       
       def has_custom_field?(field_name)
@@ -173,7 +173,7 @@ module RedmineScrummer
       end
       
       def tracker_in?(trackers)
-        trackers.include?(self.tracker.scrummer_caption)
+        trackers.include?(self.tracker.scrummer_caption.to_sym)
       end
       
       def method_missing(m, *args, &block)

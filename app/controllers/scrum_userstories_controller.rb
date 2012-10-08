@@ -238,9 +238,10 @@ class ScrumUserstoriesController < IssuesController
   end
 
   def refresh_inline_add_form
-
+    @div = params[:div]
+    
     respond_to do |format|
-      format.js {render :partial => 'inline_add', :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint], :hide_cancel => params[:hide_cancel]}}
+      format.js
     end
   end
 
@@ -359,7 +360,7 @@ class ScrumUserstoriesController < IssuesController
 
       # can't user ||= because there is before filter set issue default tracker
       if params[:issue].blank? || params[:issue][:tracker_id].blank?
-        @issue.tracker = case @parent_issue.tracker.scrummer_caption
+        @issue.tracker = case @parent_issue.tracker.scrummer_caption.to_sym
         when :epic
           Tracker.scrum_userstory_tracker
         when :userstory

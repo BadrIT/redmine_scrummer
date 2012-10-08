@@ -38,7 +38,7 @@
 		</tr>
 		<% @trackers.each do |tracker| %>
 			<tr align="center">
-				<td><%= tracker.scrummer_caption.to_s.gsub("-", " ").titleize %></td>
+				<td><%= tracker.scrummer_caption.gsub("-", " ").titleize %></td>
 				<td><%= text_field_tag "trackers[#{tracker.id}][name]", tracker.name %></td>
 				<td><%= text_field_tag "trackers[#{tracker.id}][short_name]", tracker.short_name %></td>
 				<td><%= text_field_tag "trackers[#{tracker.id}][position]", tracker.position %></td>

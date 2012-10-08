@@ -15,13 +15,13 @@ module RedmineScrummer
         unless caption.blank?
           base.instance_eval %Q{
             def scrum_#{caption}_tracker
-              Tracker.find_by_scrummer_caption(:#{caption})
+              Tracker.find_by_scrummer_caption("#{caption}")
             end
           } 
           
           base.class_eval %Q{
             def #{caption}?
-              scrummer_caption == :#{caption}
+              scrummer_caption == "#{caption}"
             end
           } 
         end

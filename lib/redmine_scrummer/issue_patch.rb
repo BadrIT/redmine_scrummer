@@ -396,8 +396,7 @@ module RedmineScrummer
             if field_value.value.nil? || (self.send("#{caption}_changed?") && field_value.value.to_f != self.send(caption))
               field_value.value = self.send(caption).to_s
               
-              field_value.class.reset_callbacks(:save)
-              field_value.save
+              field_value.sneaky_save
             end
           end
         end
@@ -411,13 +410,10 @@ module RedmineScrummer
 
         if field_value.nil?
           field_value = self.custom_values.build(:custom_field_id => field.id, :value => self.release.try(:name))
-          field_value.send(:create_without_callbacks)
         else
           field_value.value = self.release.try(:name)
-          
-          field_value.class.reset_callbacks(:save)
-          field_value.save
         end
+        field_value.sneaky_save
       end
 
       def set_release_CF_value

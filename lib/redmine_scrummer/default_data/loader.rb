@@ -94,7 +94,7 @@ module RedmineScrummer
           new_status.update_attributes({:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :name => I18n.translate(:scrum_inProgress), :short_name => 'P'})
 
           #############################################################################################
-          # Create/Update WorkflowRule
+          # Create/Update WorkflowTransition
           #############################################################################################                    
           # WorkflowRule.destroy_all
           
@@ -127,7 +127,7 @@ module RedmineScrummer
                                     :old_status_id => old_status.id, 
                                     :new_status_id => new_status.id}
                     
-                    WorkflowRule.find(:first, :conditions => conditions) || WorkflowRule.create(conditions)
+                    WorkflowTransition.find(:first, :conditions => conditions) || WorkflowTransition.create(conditions)
                   end
                 end
               end
@@ -142,7 +142,7 @@ module RedmineScrummer
                               :tracker_id    => test_id, 
                               :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
                               :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
-                WorkflowRule.find(:first, :conditions => conditions) || WorkflowRule.create(conditions)
+                WorkflowTransition.find(:first, :conditions => conditions) || WorkflowTransition.create(conditions)
               end
             end
           end
@@ -155,7 +155,7 @@ module RedmineScrummer
                                   :tracker_id    => tracker_id, 
                                   :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
                                   :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
-                  WorkflowRule.find(:first, :conditions => conditions) || WorkflowRule.create(conditions)
+                  WorkflowTransition.find(:first, :conditions => conditions) || WorkflowTransition.create(conditions)
                 end
               end
             end

@@ -437,6 +437,8 @@ module RedmineScrummer
 
           true
         end
+        
+        TimeEntryActivity.create(:name => 'Scrum')
       end
     end
   end

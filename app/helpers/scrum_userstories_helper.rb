@@ -218,15 +218,8 @@ module ScrumUserstoriesHelper
     @scrum_user_stories_add_inline ||= User.current.allowed_to?(:scrum_user_stories_add_inline, @project)
   end
 
-  def update_issue_and_parents(page)
-    level = params[:hierarchy] == "true" ? @issue.level: 0
-    page.replace 'issue-' + @issue.id.to_s, :partial => "issue_row", :locals => {:issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-    @issue.ancestors.each do |parent|
-      level = params[:hierarchy] == "true" ? parent.level: 0
-      page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-    end
-    
-    page << "enableInlineEdit();"
+  def update_issue_and_parents
+    render :update_issue_and_parents
   end
   
   def issue_allowed_statuses(issue)

@@ -60,9 +60,7 @@ class ScrumUserstoriesController < IssuesController
       @issue.custom_field_values = {custom_field_id => new_value}
 
       if @issue.save
-        render :update do |page|
-          update_issue_and_parents(page)
-        end
+        update_issue_and_parents
       else
         render :text => 'Errors in saving'
       end
@@ -81,12 +79,10 @@ class ScrumUserstoriesController < IssuesController
         :user => User.current,
         :project => @issue.project,
         :spent_on => User.current.today,
-        :activity_id => TimeEntryActivity.find_by_name('Development').id )
+        :activity_id => TimeEntryActivity.find_by_name('Scrum').id )
 
         if @time_entry.hours > 0 && @time_entry.save
-          render :update do |page|
-            update_issue_and_parents(page)
-          end
+          update_issue_and_parents
         else
           render :text => 'Errors in saving'
         end
@@ -105,9 +101,7 @@ class ScrumUserstoriesController < IssuesController
       @issue.update_attributes(column_name => new_value)
 
       if @issue.save
-        render :update do |page|
-          update_issue_and_parents(page)
-        end
+        update_issue_and_parents
       else
         render :text => 'Errors in saving'
       end
@@ -134,9 +128,7 @@ class ScrumUserstoriesController < IssuesController
       elsif !@issue.save
         render :text => 'Errors in saving'
       else
-        render :update do |page|
-          update_issue_and_parents(page)
-        end
+        update_issue_and_parents
       end
 
     elsif params[:id] =~ /-version/
@@ -157,11 +149,11 @@ class ScrumUserstoriesController < IssuesController
     else
       render :text => 'Errors in saving'
     end
-
+    
   rescue Exception => e
     puts e.inspect
     render :text => "Exception occured"
-    end
+  end
 
   def get_inline_issue_form
     issue_id = params[:issue_id] if params[:issue_id]

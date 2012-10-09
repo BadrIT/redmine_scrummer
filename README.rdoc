@@ -5,18 +5,13 @@ Redmine is a flexible project management web application written using Ruby on R
 More details can be found at in the doc directory or on the official website http://www.redmine.org
 
 = Installation
-  
-  Install Redmine if not already installed http://www.redmine.org/projects/redmine/wiki/RedmineInstall
-  cd vendor/plugins/
-  git clone https://github.com/mahkhaled/redmine_scrummer.git
-  cd ../../  
-  git submodule add https://github.com/shuber/event_calendar.git vendor/plugins/event_calendar
-  git submodule add https://github.com/ixti/redmine_tags.git vendor/plugins/redmine_tags
-  git submodule add https://github.com/mbleigh/acts-as-taggable-on.git acts-as-taggable-on
-  script/generate acts_as_taggable_on_migration
-  rake db:migrate
-  rake db:migrate_plugins
-  rake redmine_scrummer:load_default_data
+  1. Install Redmine if not already installed http://www.redmine.org/projects/redmine/wiki/RedmineInstall
+  1. Run `bundle`
+  1. Run `rake db:migrate`
+  1. cd to `plugins`
+  1. Clone the scrummer plugin `git clone -b rails_3 https://github.com/mahkhaled/redmine_scrummer.git`
+  1. Run `rake redmine:plugins:migrate`
+  1. Run `redmine_scrummer:load_default_data`
 
 = New/Existing Projects Setup
 - Include scrummer module in the your redmine projects

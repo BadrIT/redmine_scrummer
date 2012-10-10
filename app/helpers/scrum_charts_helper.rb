@@ -6,6 +6,7 @@ module ScrumChartsHelper
   # returns hash values sorted with the same order of sorted keys
   # TODO move this function to Hash class or file an alternative way to do this
   def values_sorted_by_keys(hash)
+    hash ||= {}
   	hash.keys.sort.map{|k| hash[k]}.inspect.html_safe
   end
 

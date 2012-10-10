@@ -6,12 +6,11 @@ More details can be found at in the doc directory or on the official website htt
 
 = Installation
   1. Install Redmine if not already installed http://www.redmine.org/projects/redmine/wiki/RedmineInstall
-  2. Run `bundle`
-  3. Run `rake db:migrate`
-  4. cd to `plugins`
-  5. Clone the scrummer plugin `git clone -b rails_3 https://github.com/mahkhaled/redmine_scrummer.git`
-  6. Run `rake redmine:plugins:migrate`
-  7. Run `redmine_scrummer:load_default_data`
+  2. cd to `plugins`
+  3. Clone the scrummer plugin `git clone -b rails_3 https://github.com/mahkhaled/redmine_scrummer.git`
+  4. cd ..
+  5. Run `rake redmine:plugins:migrate`
+  6. Run `rake redmine_scrummer:load_default_data`
 
 = New/Existing Projects Setup
 - Include scrummer module in the your redmine projects

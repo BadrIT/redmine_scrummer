@@ -11,7 +11,7 @@ module RedmineScrummer
 			end
 			
       base.all.each do |tracker|
-        caption = tracker.scrummer_caption.to_sym
+        caption = tracker.scrummer_caption.try(:to_sym)
         unless caption.blank?
           base.instance_eval %Q{
             def scrum_#{caption}_tracker

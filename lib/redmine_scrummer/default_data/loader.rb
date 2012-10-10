@@ -10,12 +10,12 @@ module RedmineScrummer
         def load(lang=nil)
           set_language_if_valid(lang)
           
-          filters = {"status_id"=>{:values=>["1"], :operator=>"o"}} #TODO should have empty spaces
+          filters = {"status_id"=>{:values => [], :operator=>"o"}} #TODO should have empty spaces
           columns =  [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :actual_hours, :remaining_hours] 
           Query.find_or_create_by_scrummer_caption(:scrummer_caption => "User-Stories", 
                                                    :sort_criteria    => [:id],
                                                    :column_names     => columns,                                                   
-                                                   :name             => l(:label_scrum_user_stories),
+                                                   :name             => I18n.translate(:label_scrum_user_stories),
                                                    :filters          => filters, 
                                                    :is_public        => true)
           
@@ -38,7 +38,7 @@ module RedmineScrummer
           
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
           
-          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#C2D3E8'},
+          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#C2D3E8', :position => 0},
                              :task        => { :name => l(:scrum_task),        :short_name => 'Task' ,:color => '#FFFFFF'},
                              :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' ,:color => '#CCC0D9'},
                              :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   ,:color => '#E5B8B7'},

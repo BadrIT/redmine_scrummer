@@ -506,12 +506,19 @@ class ScrumUserstoriesController < IssuesController
   # load the sidebar query. The query sorts the sprints by id not by name
   def load_sidebar_query
     # User can see public queries and his own queries
-    visible = ARCondition.new(["is_public = ? OR user_id = ?", true, (User.current.logged? ? User.current.id : 0)])
+    conditions = ["is_public = ? OR user_id = ?", true, (User.current.logged? ? User.current.id : 0)]
+
     # Project specific queries and global queries
-    visible << (@project.nil? ? ["project_id IS NULL"] : ["project_id IS NULL OR project_id = ?", @project.id])
+    if @project.nil? 
+      conditions[0] = conditions[0] + " AND project_id IS NULL"
+    else
+      conditions[0] = conditions[0] + " AND project_id IS NULL OR project_id = ?"
+      conditions << @project.id
+    end
+
     @sidebar_queries = Query.find(:all,
                             :select => 'id, name, is_public',
                             :order => "id DESC",
-                            :conditions => visible.conditions)
+                            :conditions => conditions)
   end
 end

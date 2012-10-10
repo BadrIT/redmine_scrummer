@@ -15,7 +15,7 @@ More details can be found at in the doc directory or on the official website htt
 
 = New/Existing Projects Setup
 - Include scrummer module in the your redmine projects
-- Include Custom Fields (Story-Size, Business Value, Release, Remaining) in your redmein projects
+- Include Custom Fields (Story-Size, Business Value, Release, Remaining) in your redmine projects
 
 = Cucumber Initializtion
 

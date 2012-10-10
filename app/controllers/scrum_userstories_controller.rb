@@ -332,7 +332,8 @@ class ScrumUserstoriesController < IssuesController
     # but having the same objects in order not to calcluate statistics twice
     @issues = @all_issues.map
 
-    unless params[:set_filter] == '1'
+    session[:set_filter] ||= params[:set_filter]
+    unless session[:set_filter] == '1'
       # don't load ancestors if applying filter to avoid some scenarios...
 
       # I want to see bugs only

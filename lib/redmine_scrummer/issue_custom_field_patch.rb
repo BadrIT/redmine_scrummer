@@ -23,6 +23,10 @@ module RedmineScrummer
 				super
 			end
 		end
+
+		def scrummer_caption
+      read_attribute(:scrummer_caption).try(:to_sym)
+    end
 	end
 end
 

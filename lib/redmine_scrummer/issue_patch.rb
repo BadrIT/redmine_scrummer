@@ -153,15 +153,15 @@ module RedmineScrummer
       end
       
       def accept_story_size?
-        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption.to_sym)
+        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
       end
 
       def accept_business_value?
-        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption.to_sym)
+        [:userstory, :epic, :theme, :defectsuite].include?(self.tracker.scrummer_caption)
       end
       
       def accept_remaining_hours?
-        [:task, :defect, :refactor, :spike].include?(self.tracker.scrummer_caption.to_sym)
+        [:task, :defect, :refactor, :spike].include?(self.tracker.scrummer_caption)
       end
       
       def has_custom_field?(field_name)
@@ -173,7 +173,7 @@ module RedmineScrummer
       end
       
       def tracker_in?(trackers)
-        trackers.include?(self.tracker.scrummer_caption.to_sym)
+        trackers.include?(self.tracker.scrummer_caption)
       end
       
       def method_missing(m, *args, &block)
@@ -230,6 +230,10 @@ module RedmineScrummer
       def unduplicated_custom_values
         duplicated_fields = [:story_size, :remaining_hours, :business_value, :release]
         self.custom_field_values.delete_if {|cfv| duplicated_fields.include?(cfv.custom_field.scrummer_caption)}
+      end
+
+      def scrummer_caption
+        read_attribute(:scrummer_caption).try(:to_sym)
       end
       
       protected

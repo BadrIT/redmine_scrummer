@@ -17,6 +17,9 @@ module RedmineScrummer
         end if base.column_names.include?("scrummer_caption")
       end
       
+      def scrummer_caption
+        read_attribute(:scrummer_caption).try(:to_sym)
+      end
     end
   end
 end

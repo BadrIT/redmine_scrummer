@@ -21,12 +21,16 @@ module RedmineScrummer
           
           base.class_eval %Q{
             def #{caption}?
-              scrummer_caption == "#{caption}"
+              scrummer_caption == "#{caption}".to_sym
             end
           } 
         end
       end if base.column_names.include?("scrummer_caption")
       
+
+      def scrummer_caption
+        read_attribute(:scrummer_caption).try(:to_sym)
+      end
 		end
 		
 	end

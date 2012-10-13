@@ -36,9 +36,6 @@
 	});
 </script>
 
-<%= form_tag('', {:id => 'context_menu_form'}) do -%>
-	<%= hidden_field_tag 'back_url', url_for(build_params_for_context_menu) %>
-<% end %>
 
 <%if hierarchy%>
 	<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($('.expander')[0]); $('.issue.parent').removeClass('open');", :class => 'toggle-all') %>
@@ -46,6 +43,8 @@
 	<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($('.expander')[0]); $('.issue.parent').addClass('open');", :class => 'toggle-all') %>
 <%end%>
 
+<%= form_tag('', {:id => 'context_menu_form'}) do -%>
+  <%= hidden_field_tag 'back_url', url_for(build_params_for_context_menu) %>
 <div class="autoscroll">
 
 <% if issues.length > 0 %>
@@ -94,6 +93,7 @@
 	</tbody>
 </table>
 </div>
+<% end %>
 <% unless hierarchy %>
 	<script>
 		$('span.expander').css('display','none');

@@ -13,7 +13,8 @@ class ScrumUserstoriesController < IssuesController
   prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :calculate_statistics]						# must be called after find_scrum_project
   prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :sprint_planing, :inline_add_version, :calculate_statistics]
 
-  before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
+  before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :get_inline_issue_form]
+  before_filter :build_new_issue_or_find_from_params, :only => [:inline_add]
   before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form, :inline_add ]
   before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
   before_filter :set_default_values, :only => [:refresh_inline_add_form, :index]
@@ -240,12 +241,14 @@ class ScrumUserstoriesController < IssuesController
   def inline_add
     initialize_sort
     @div_name = get_inline_issue_div_id
-
-    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
-
-    @issue.release_id = params[:issue][:release_id] if params[:issue] && params[:issue][:release_id]
     
-    if @query.valid? && @issue.save
+    saved = if @issue.new_record?
+      inline_add_issue
+    else
+      inline_edit_issue
+    end
+
+    if @query.valid? && saved
       load_issues_for_query
       flash[:notice] = l(:notice_successful_create)
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})
@@ -257,11 +260,35 @@ class ScrumUserstoriesController < IssuesController
     else
       render_error_html_for_inline_add(error_messages_for 'issue')
     end
+
   rescue ActiveRecord::RecordNotFound
     render_404
   end
 
   protected
+
+  def inline_add_issue
+    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
+
+    @issue.release_id = params[:issue][:release_id] if params[:issue] && !params[:issue][:release_id].blank?
+    
+    @issue.save
+  end
+
+  def inline_edit_issue
+    return unless update_issue_from_params
+    begin
+      saved = @issue.save_issue_with_child_records(params)
+    rescue ActiveRecord::StaleObjectError
+      @conflict = true
+      if params[:last_journal_id]
+        @conflict_journals = @issue.journals_after(params[:last_journal_id]).all
+        @conflict_journals.reject!(&:private_notes?) unless User.current.allowed_to?(:view_private_notes, @issue.project)
+      end
+    end
+
+    saved
+  end
 
   def find_parent_issue
     parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
@@ -520,5 +547,13 @@ class ScrumUserstoriesController < IssuesController
                             :select => 'id, name, is_public',
                             :order => "id DESC",
                             :conditions => conditions)
+  end
+
+  def build_new_issue_or_find_from_params
+    if params[:id].blank?
+      build_new_issue_from_params
+    else
+      find_issue
+    end
   end
 end

@@ -46,6 +46,10 @@ Rails.configuration.to_prepare do
     CustomValue.send :include, RedmineScrummer::CustomValuePatch
   end
 
+  unless CustomField.included_modules.include? RedmineScrummer::CustomFieldPatch
+    CustomField.send :include, RedmineScrummer::CustomFieldPatch
+  end
+
   unless VersionCustomField.included_modules.include? RedmineScrummer::VersionCustomFieldPatch
     VersionCustomField.send :include, RedmineScrummer::VersionCustomFieldPatch
   end

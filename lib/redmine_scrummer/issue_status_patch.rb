@@ -9,8 +9,12 @@ module RedmineScrummer
 			  
 			  base.all.each do |status|
           base.instance_eval %Q{
-            def #{'status_' if status.scrummer_caption==:defined}#{status.scrummer_caption}
+            def #{status.scrummer_caption}
               IssueStatus.find_by_scrummer_caption(:#{status.scrummer_caption})
+            end
+
+            def status_defined
+              IssueStatus.find_by_scrummer_caption(:defined)
             end
           } unless status.scrummer_caption.blank?
           

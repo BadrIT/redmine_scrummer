@@ -438,6 +438,23 @@ module RedmineScrummer
         end
         
         TimeEntryActivity.create(:name => 'Scrum')
+
+
+        custom_field = CustomField.find_by_scrummer_caption(:story_size)
+
+        Issue.all.each do |i|
+          if i.story_size.nil?
+            i.update_attribute(:story_size, 0)
+          end
+          
+          i.update_story_size(custom_field)
+
+          # Create history entry for all time trackable issues
+          if issue.time_trackable? && issue.issue_histories.blank?
+            issue.build_history_entry.save 
+          end
+        end
+
       end
     end
   end

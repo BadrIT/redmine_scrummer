@@ -8,9 +8,9 @@
 
 <h2>Sprint</h2>
 
-<% form_for :version, :url => {:action => 'add_version',:id => @version.id, :project_id => @project} do |f| %>
+<%= form_for :version, :url => add_scrum_sprint_path(@version.id, :project_id => @project) do |f| %>
 
-  <%= f.error_messages %>
+	<%= render 'scrum/errors', :object => @version %>
 
   <div class="box">
   <%= render :partial => 'form', :locals => {:f => f} %>

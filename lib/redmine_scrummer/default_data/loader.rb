@@ -10,12 +10,12 @@ module RedmineScrummer
         def load(lang=nil)
           set_language_if_valid(lang)
           
-          filters = {"status_id"=>{:values=>["1"], :operator=>"o"}} #TODO should have empty spaces
+          filters = {"status_id"=>{:values => [], :operator=>"o"}} #TODO should have empty spaces
           columns =  [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :actual_hours, :remaining_hours] 
           Query.find_or_create_by_scrummer_caption(:scrummer_caption => "User-Stories", 
                                                    :sort_criteria    => [:id],
                                                    :column_names     => columns,                                                   
-                                                   :name             => l(:label_scrum_user_stories),
+                                                   :name             => I18n.translate(:label_scrum_user_stories),
                                                    :filters          => filters, 
                                                    :is_public        => true)
           
@@ -38,7 +38,7 @@ module RedmineScrummer
           
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
           
-          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#C2D3E8'},
+          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#C2D3E8', :position => 0},
                              :task        => { :name => l(:scrum_task),        :short_name => 'Task' ,:color => '#FFFFFF'},
                              :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' ,:color => '#CCC0D9'},
                              :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   ,:color => '#E5B8B7'},
@@ -94,9 +94,9 @@ module RedmineScrummer
           new_status.update_attributes({:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :name => I18n.translate(:scrum_inProgress), :short_name => 'P'})
 
           #############################################################################################
-          # Create/Update Workflow
+          # Create/Update WorkflowTransition
           #############################################################################################                    
-          # Workflow.destroy_all
+          # WorkflowRule.destroy_all
           
           # trackers
           test_id = Tracker.find_by_scrummer_caption(:test).id
@@ -127,14 +127,14 @@ module RedmineScrummer
                                     :old_status_id => old_status.id, 
                                     :new_status_id => new_status.id}
                     
-                    Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                    WorkflowTransition.find(:first, :conditions => conditions) || WorkflowTransition.create(conditions)
                   end
                 end
               end
             end
           end
           
-          # workflow for Scrum_Test
+          # WorkflowRule for Scrum_Test
           Role.find_all_by_is_scrum(true).each do |role|
             [:defined,:succeeded,:failed].each do |old_status|
               [:defined,:succeeded,:failed].each do |new_status|
@@ -142,7 +142,7 @@ module RedmineScrummer
                               :tracker_id    => test_id, 
                               :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
                               :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
-                Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                WorkflowTransition.find(:first, :conditions => conditions) || WorkflowTransition.create(conditions)
               end
             end
           end
@@ -155,7 +155,7 @@ module RedmineScrummer
                                   :tracker_id    => tracker_id, 
                                   :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
                                   :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
-                  Workflow.find(:first, :conditions => conditions) || Workflow.create(conditions)
+                  WorkflowTransition.find(:first, :conditions => conditions) || WorkflowTransition.create(conditions)
                 end
               end
             end
@@ -398,11 +398,7 @@ module RedmineScrummer
               field_value = issue.custom_values.build(:custom_field_id => remaining_hours_custom_field.id) unless field_value
 
               field_value.value = issue.remaining_hours
-              if field_value.new_record?
-                field_value.send(:create_without_callbacks)
-              else
-                field_value.send(:update_without_callbacks)
-              end
+              field_value.sneaky_save
             end
           end
             
@@ -440,6 +436,8 @@ module RedmineScrummer
 
           true
         end
+        
+        TimeEntryActivity.create(:name => 'Scrum')
       end
     end
   end

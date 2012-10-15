@@ -1,0 +1,1 @@
+$("#issue-<%= @issue_id %>-inline-child").html("<%= escape_javascript(render('inline_add', :list_id => params[:list_id], :from_sprint => params[:from_sprint])) %>");

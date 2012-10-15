@@ -1,4 +1,4 @@
-<% content_for :header_tags do %>
+<%= content_for :header_tags do %>
     <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jscolor', :plugin => 'redmine_scrummer' %>
 <% end %>
@@ -7,8 +7,9 @@
 
 <h2>Weekly Non Working Days</h2>
 
-<% form_for(@weekly_vacation, :url => weekly_vacation_path(:project_id => @project.identifier)) do |f| %>
-  <%= f.error_messages %>
+<%= form_for(@weekly_vacation, :url => weekly_vacation_path(:project_id => @project.identifier)) do |f| %>
+  <%= render 'scrum/errors', :object => @weekly_vacation %>
+  
   <table class="fancy">
   	<tr>
   	  <% Date::DAYNAMES.each do |day| %>
@@ -26,15 +27,15 @@
   </p>
 <% end %>
 
-<% content_for :header_tags do %>
+<%= content_for :header_tags do %>
     <%= stylesheet_link_tag 'event_calendar', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'event_calendar', :plugin => 'redmine_scrummer'  %>
 <% end %>
 
 <h2>Calendar</h2>
-<% form_for(@vacation || Vacation.new, :url => add_vacation_path(:project_id => @project.identifier)) do |f| %>
+<%= form_for(@vacation || Vacation.new, :url => add_vacation_path(:project_id => @project.identifier)) do |f| %>
   <div id='vacation_errors'>
-  	<%= f.error_messages %>
+  	<%= render 'scrum/errors', :object => @weekly_vacation %>
   </div>
 	<p>
 		<%= f.label :vacation, l(:field_name) , :class => "fancy_label" %>
@@ -60,5 +61,5 @@
 		<%= f.submit l(:save) %>
 	</p>
 <% end %>
-<%= event_calendar %>
+<%= event_calendar.html_safe %>
 

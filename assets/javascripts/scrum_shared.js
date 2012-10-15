@@ -1,39 +1,38 @@
 function toggleScrumRowGroup(el) {
-	var tr = Element.up(el,
-		 'tr');
-	var n = Element.next(tr);
-	tr.toggleClassName('open');
-	var isOpened = $j(tr).hasClass('open')
+	var tr = $(el).closest('tr');
+	var n = $(tr).next();
+	$(tr).toggleClass('open');
+	var isOpened = $(tr).hasClass('open')
 	
-	trLevel = parseInt($j(tr).attr('level'));
+	trLevel = parseInt($(tr).attr('level'));
 	nLevel = trLevel + 1;
 	
 	while (n != undefined && nLevel > trLevel) {
 		if(isOpened){			
-			$j(n).show();
-			if($j(n).hasClass('group'))
-				$j(n).addClass('open')
+			$(n).show();
+			if($(n).hasClass('group'))
+				$(n).addClass('open')
 		} else {
-			$j(n).hide();
-			if($j(n).hasClass('group'))
-				$j(n).removeClass('open')
+			$(n).hide();
+			if($(n).hasClass('group'))
+				$(n).removeClass('open')
 		}
 		
-		n = Element.next(n);
-		nLevel = parseInt($j(n).attr('level'));
-		
+		n = $(n).next();;
+		nLevel = parseInt($(n).attr('level'));
 	}
 }
 
 function cancelInlineChild(elem){
-	$j(elem).parents('.inline_child_container').each(function(index, element){
+	$(elem).parents('.inline_child_container').each(function(index, element){
 		element.innerHTML = '';
 	});
 }
 
-ContextMenu.prototype.showMenu = function(e) {
-  var mouse_x = Event.pointerX(e);
-  var mouse_y = Event.pointerY(e);
+
+function contextMenuShow(event) {
+  var mouse_x = event.pageX;
+  var mouse_y = event.pageY;
   var render_x = mouse_x;
   var render_y = mouse_y;
   var dims;
@@ -44,72 +43,64 @@ ContextMenu.prototype.showMenu = function(e) {
   var max_width;
   var max_height;
 
-  $('context-menu').style['left'] = (render_x + 'px');
-  $('context-menu').style['top'] = (render_y + 'px');     
-  Element.update('context-menu', '');
-  
-  // collect ids
-  ids_params_string = '';
-  selected_id = $j('#issue-table input[name="ids[]"]').each(
-									function(index, element){
-										if(element.checked)
-											ids_params_string += 'ids[]=' + element.value + '&';
-									});
+  $('#context-menu').css('left', (render_x + 'px'));
+  $('#context-menu').css('top', (render_y + 'px'));
+  $('#context-menu').html('');
 
-  new Ajax.Updater({success:'context-menu'}, this.url, 
-    {asynchronous:true,
-     method: 'get',
-     evalScripts:true,
-     parameters: ids_params_string + Form.serialize($('context_menu_form')),
-     onComplete:function(request){
-               dims = $('context-menu').getDimensions();
-               menu_width = dims.width;
-               menu_height = dims.height;
-               max_width = mouse_x + 2*menu_width;
-               max_height = mouse_y + menu_height;
-          
-               var ws = window_size();
-               window_width = ws.width;
-               window_height = ws.height;
-          
-               /* display the menu above and/or to the left of the click if needed */
-               if (max_width > window_width) {
-                 render_x -= menu_width;
-                 $('context-menu').addClassName('reverse-x');
-               } else {
-                   $('context-menu').removeClassName('reverse-x');
-               }
-               if (max_height > window_height) {
-                 render_y -= menu_height;
-                 $('context-menu').addClassName('reverse-y');
-               } else {
-                   $('context-menu').removeClassName('reverse-y');
-               }
-               if (render_x <= 0) render_x = 1;
-               if (render_y <= 0) render_y = 1;
-               $('context-menu').style['left'] = (render_x + 'px');
-               $('context-menu').style['top'] = (render_y + 'px');
-               
-       Effect.Appear('context-menu', {duration: 0.20});
-       if (window.parseStylesheets) { window.parseStylesheets(); } // IE
-    }});
+  $.ajax({
+    url: contextMenuUrl,
+    data: $(event.target).parents('form').first().serialize(),
+    success: function(data, textStatus, jqXHR) {
+      $('#context-menu').html(data);
+      menu_width = $('#context-menu').width();
+      menu_height = $('#context-menu').height();
+      max_width = mouse_x + 2*menu_width;
+      max_height = mouse_y + menu_height;
+
+      var ws = window_size();
+      window_width = ws.width;
+      window_height = ws.height;
+
+      /* display the menu above and/or to the left of the click if needed */
+      if (max_width > window_width) {
+       render_x -= menu_width;
+       $('#context-menu').addClass('reverse-x');
+      } else {
+       $('#context-menu').removeClass('reverse-x');
+      }
+      if (max_height > window_height) {
+       render_y -= menu_height;
+       $('#context-menu').addClass('reverse-y');
+      } else {
+       $('#context-menu').removeClass('reverse-y');
+      }
+      if (render_x <= 0) render_x = 1;
+      if (render_y <= 0) render_y = 1;
+      $('#context-menu').css('left', (render_x + 'px'));
+      $('#context-menu').css('top', (render_y + 'px'));
+      $('#context-menu').show();
+
+      if (window.parseStylesheets) { window.parseStylesheets(); } // IE
+
+    }
+  });
 }
 
 function clear_form_elements(ele) {
-    $j(ele).find(':input').each(function() {
+    $(ele).find(':input').each(function() {
         switch(this.type) {
         	case 'select-one':
         		if(default_issue_target_version=="")
-        			$j(this).val('');
+        			$(this).val('');
             	break;
             case 'password':
             case 'select-multiple':
             case 'text':
-              $j(this).val('');
+              $(this).val('');
               break;
             case 'textarea':
                 value = typeof(default_issue_description) == "undefined" ? "" : default_issue_description;
-                $j(this).val(value);
+                $(this).val(value);
                 break;
             case 'checkbox':
             case 'radio':
@@ -119,18 +110,18 @@ function clear_form_elements(ele) {
 
 }
 function select_menu_item(scrum_label_class){
-	$j(function(){
-		$j('#main-menu ul li a.' + scrum_label_class).addClass('selected');
+	$(function(){
+		$('#main-menu ul li a.' + scrum_label_class).addClass('selected');
 	})
 }
 
 
 function toggleScrumIssuesSelection(el) {
-  var checkStatus = $j("#issue-table input:checkbox").is(":checked");
-  $j("#issue-table input:checkbox").attr("checked", !checkStatus);
+  var checkStatus = $("#issue-table input:checkbox").is(":checked");
+  $("#issue-table input:checkbox").attr("checked", !checkStatus);
   if(!checkStatus) 
-    $j("#issue-table input:checkbox").parent().parent().addClass("context-menu-selection")  
+    $("#issue-table input:checkbox").parent().parent().addClass("context-menu-selection")  
   else
-    $j("#issue-table input:checkbox").parent().parent().removeClass("context-menu-selection")
+    $("#issue-table input:checkbox").parent().parent().removeClass("context-menu-selection")
   
 }

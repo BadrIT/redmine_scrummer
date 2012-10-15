@@ -5,9 +5,7 @@
     <%= stylesheet_link_tag 'jquery-ui_patched.css', :plugin => 'redmine_scrummer' %>
     <%= stylesheet_link_tag 'jquery.cluetip.css', :plugin => 'redmine_scrummer' %>
     <%= javascript_tag "var task_tracker_id = #{Tracker.scrum_task_tracker.id}"%>    
-    <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.jeditable.js', :plugin => 'redmine_scrummer' %>
-    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
     <%= javascript_include_tag 'context_menu.js'%>
     
     <%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
@@ -59,26 +57,26 @@
 	</table>
 </div>
 <script>
-	$j('#version-control-label').click(function(event){
-		$j('#version-control-label').text('<%= l(:label_version_new) %>');
-		$j('#version-form').find(':input').each(function() { 
-			if (this.type != 'submit') {
-				$j(this).val('');
+	$('#version-control-label').click(function(event){
+		$('#version-control-label').text('<%= l(:label_version_new) %>');
+		$('#version-form').find(':input').each(function() { 
+			if (this.type != 'submit' && this.name != 'authenticity_token') {
+				$(this).val('');
 			}
 		});
-		$j("#version-name").attr('disabled', false);
+		$("#version-name").attr('disabled', false);
 		// removing retrospective url field when creating new sprint.
-		$j('#version_custom_field_values_<%= VersionCustomField.find_by_scrummer_caption(:retrospective_url).id%>').parent().remove();
+		$('#version_custom_field_values_<%= VersionCustomField.find_by_scrummer_caption(:retrospective_url).id%>').parent().remove();
 	});
 	
 	function hide_field(){
-		var fieldset = $j('#inline-version-add');
+		var fieldset = $('#inline-version-add');
 		fieldset.toggleClass('collapsed');
 		fieldset.children('div').slideUp("slow");
-		$j('#version-control-label').text('<%= l(:label_version_new) %>');
+		$('#version-control-label').text('<%= l(:label_version_new) %>');
 	}
 	
 	function populate_version_data(request){
-		$j('#version-form').replaceWith(request.responseText);
+		$('#version-form').replaceWith(request.responseText);
 	}
 </script>

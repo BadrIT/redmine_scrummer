@@ -12,7 +12,6 @@ module RedmineScrummer
 
         ActiveRecord::Base.lock_optimistically = false
         safe_attributes 'story_size', 'remaining_hours', 'business_value'
-        
         before_create :init_custom_fields_values
         before_create :set_release_CF_value
 
@@ -27,16 +26,22 @@ module RedmineScrummer
         before_save :set_issue_release
         before_save :set_done_ratio_value
 
+        # for unknow reason field_changed? doesn't work in after_save callbacks
+        # ONLY when using init_journal
+        # so that we can them before save and destroy
+        # and read the cached changed in the after_save callbacks
+        before_save :cache_changes
+        before_destroy :cache_changes
+
+        def cache_changes
+          @cached_changes = self.changes
+        end
+
         after_save :update_parent_status
-        
         after_save :update_accumulated_fields
         
         after_save :check_history_entries
         after_save :check_points_history
-
-        after_save :sync_custom_fields
-        after_save :sync_release_custom_field
-        
 
         after_destroy :update_parent_accumulated_fields
         after_destroy :update_parent_status
@@ -60,22 +65,22 @@ module RedmineScrummer
         belongs_to :release
         
         # backlog issues
-        named_scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
+        scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
             Tracker.scrum_userstory_tracker.id,
             Tracker.scrum_defect_tracker.id,
             Tracker.scrum_defectsuite_tracker.id,
             Tracker.scrum_refactor_tracker.id,
             Tracker.scrum_spike_tracker.id]} }
         
-        named_scope :by_tracker, lambda { |*args| {:conditions => ['tracker_id = ?', args.first]} }
+        scope :by_tracker, lambda { |*args| {:conditions => ['tracker_id = ?', args.first]} }
         
-        named_scope :backlog, :conditions => {:fixed_version_id => nil}
+        scope :backlog, :conditions => {:fixed_version_id => nil}
         
-        named_scope :active, lambda { |*args| {:conditions => ["status_id = ? OR status_id = ?",
+        scope :active, lambda { |*args| {:conditions => ["status_id = ? OR status_id = ?",
             IssueStatus.in_progress.id,
             IssueStatus.defined.id]} }
         
-        named_scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
+        scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
             Tracker.scrum_task_tracker.id,
             Tracker.scrum_defect_tracker.id,
             Tracker.scrum_refactor_tracker.id,
@@ -192,7 +197,7 @@ module RedmineScrummer
         self.status = if self.children.all?(&:status_defined?)
           IssueStatus.status_defined 
           # In-Progress if at least one child is in progress OR defined
-        elsif self.children.any?{|c| c.in_progress? || c.status_defined?} && !self.test?
+        elsif self.children.any?{|x| x.in_progress? || x.status_defined?} && !self.test?
           IssueStatus.in_progress
           # Completed if all children are completed, accepted OR finished
           # if user story is accepted don't move to completed, keep it accepted
@@ -208,7 +213,7 @@ module RedmineScrummer
         # then sum children
         # else take issue story size custom field value
         [:story_size, :remaining_hours, :actual_hours].each do |field|
-          if self.send("#{field}_changed?")
+          if !@cached_changes["#{field}"].blank?
             if self.direct_children.any?
               update_accumulated_field(field)
             else
@@ -231,6 +236,30 @@ module RedmineScrummer
         duplicated_fields = [:story_size, :remaining_hours, :business_value, :release]
         self.custom_field_values.delete_if {|cfv| duplicated_fields.include?(cfv.custom_field.scrummer_caption)}
       end
+
+      def scrummer_caption
+        read_attribute(:scrummer_caption).try(:to_sym)
+      end
+
+      def story_size=(value)
+        write_attribute(:story_size, value)
+        self.custom_field_values = {CustomField.scrum_story_size.id.to_s => value.to_f.to_s}
+      end
+
+      def remaining_hours=(value)
+        write_attribute(:remaining_hours, value)
+        self.custom_field_values = {CustomField.scrum_remaining_hours.id.to_s => value.to_s}
+      end
+
+      def business_value=(value)
+        write_attribute(:business_value, value)
+        self.custom_field_values = {CustomField.scrum_business_value.id.to_s => value.to_s}
+      end
+
+      def release_id=(value)
+        write_attribute(:release_id, value)
+        self.custom_field_values = {CustomField.scrum_release.id.to_s => project.releases.find_by_id(value).try(:name)}
+      end
       
       protected
       def update_parent_accumulated_fields
@@ -252,16 +281,16 @@ module RedmineScrummer
       
       def update_parent_status
         # check for id_changed to handle after_create
-        if self.status_id_changed? || self.id_changed?
+        if !@cached_changes['status_id'].blank? || !@cached_changes['id'].blank?
           # when a story goes to completed OR accepted, all its children should be completed
           if self.status_in?([:completed, :accepted])
             self.children.each do |child|
               child_tracker = child.tracker
               
-              if (child_tracker.task? || child_tracker.spike?) && child.status_in?([:defined, :in_progress])
+              if (child_tracker.task? || child_tracker.spike?) && child.status_in?([:defined, :in_progress]) && child.status != IssueStatus.finished
                 child.status = IssueStatus.finished
                 child.save
-              elsif child_tracker.userstory? && child.status_in?([:defined, :in_progress, :completed])
+              elsif child_tracker.userstory? && child.status_in?([:defined, :in_progress, :completed]) && child.status != self.status
                 # if moved to completed, move children to completed
                 # if moved to accepted, move children to accepted
                 child.status = self.status
@@ -382,38 +411,6 @@ module RedmineScrummer
               self.fixed_version = nil
             end
           end
-        end
-      end
-      
-      def sync_custom_fields
-        ['story_size', 'business_value', 'remaining_hours'].each do |caption|
-          if self.send("accept_#{caption}?")
-            next unless (field = IssueCustomField.find_by_scrummer_caption(caption.to_sym))
-            
-            field_value = self.custom_values.find_by_custom_field_id(field.id)
-            field_value = self.custom_values.build(:custom_field_id => field.id) unless field_value
-
-            if field_value.value.nil? || (self.send("#{caption}_changed?") && field_value.value.to_f != self.send(caption))
-              field_value.value = self.send(caption).to_s
-              save_method = field_value.new_record? ? :create_without_callbacks : :update_without_callbacks
-              field_value.send(save_method)
-            end
-          end
-        end
-      end
-
-      def sync_release_custom_field
-        return unless release_id_changed?
-        field = IssueCustomField.find_by_scrummer_caption(:release)
-        return unless field
-        field_value = self.custom_values.find_by_custom_field_id(field.id)
-
-        if field_value.nil?
-          field_value = self.custom_values.build(:custom_field_id => field.id, :value => self.release.try(:name))
-          field_value.send(:create_without_callbacks)
-        else
-          field_value.value = self.release.try(:name)
-          field_value.send(:update_without_callbacks)
         end
       end
 

@@ -8,15 +8,15 @@
 	</ul>
 </div>
 <script>
-	$j("#<%= release_as_list.id%>").bind("DOMSubtreeModified", function() {
-	   	var issuesCount = $j(this).children().children().length;
+	$("#<%= release_as_list.id%>").bind("DOMSubtreeModified", function() {
+	   	var issuesCount = $(this).children().children().length;
 		if(issuesCount > 0){
-			$j('#<%= release_as_list.id%>').css('min-height', '');
-			$j('#<%= release_as_list.id%>').css('float', 'left');
+			$('#<%= release_as_list.id%>').css('min-height', '');
+			$('#<%= release_as_list.id%>').css('float', 'left');
 		} else {
-			$j('#<%= release_as_list.id%>').css('min-height', '100px'); 
-			$j('#<%= release_as_list.id%>').css('min-width', '100%');
-			$j('#<%= release_as_list.id%>').css('float', '');
+			$('#<%= release_as_list.id%>').css('min-height', '100px'); 
+			$('#<%= release_as_list.id%>').css('min-width', '100%');
+			$('#<%= release_as_list.id%>').css('float', '');
 		}
 	});
 </script>

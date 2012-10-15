@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module ScrumUserstoriesHelper
 			
 	#unloadable # prevent it from being unloaded in development mode
@@ -55,7 +57,7 @@ module ScrumUserstoriesHelper
   	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
       else
-        "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$j(this).addClass('hover')\" onmouseout=\"$j(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
+        "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$(this).addClass('hover')\" onmouseout=\"$(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
       end
       
       tracker_name = issue.tracker.short_name.empty? ?  issue.tracker.name : issue.tracker.short_name
@@ -99,7 +101,7 @@ module ScrumUserstoriesHelper
           end
           content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
         end
-        content = ''
+        # content = ''
       else
         # tasks, defects etc shouldn't display story size
         content = ''
@@ -216,15 +218,8 @@ module ScrumUserstoriesHelper
     @scrum_user_stories_add_inline ||= User.current.allowed_to?(:scrum_user_stories_add_inline, @project)
   end
 
-  def update_issue_and_parents(page)
-    level = params[:hierarchy] == "true" ? @issue.level: 0
-    page.replace 'issue-' + @issue.id.to_s, :partial => "issue_row", :locals => {:issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-    @issue.ancestors.each do |parent|
-      level = params[:hierarchy] == "true" ? parent.level: 0
-      page.replace 'issue-' + parent.id.to_s, :partial => "issue_row", :locals => {:issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]}
-    end
-    
-    page << "enableInlineEdit();"
+  def update_issue_and_parents
+    render :update_issue_and_parents
   end
   
   def issue_allowed_statuses(issue)

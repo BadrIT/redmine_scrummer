@@ -1,4 +1,4 @@
-<% content_for :header_tags do %>
+<%= content_for :header_tags do %>
     <%= stylesheet_link_tag 'general', :plugin => 'redmine_scrummer' %>
 <% end %>
 
@@ -6,8 +6,9 @@
 
 <h2>Weekly Non Working Days</h2>
 
-<% form_for(@weekly_vacation, :url => admin_weekly_vacation_path) do |f| %>
-  <%= f.error_messages %>
+<%= form_for(@weekly_vacation, :url => admin_weekly_vacation_path) do |f| %>
+	<%= render 'scrum/errors', :object => @weekly_vacation %>
+  
   <table class="fancy">
   	<tr>
   	  <% Date::DAYNAMES.each do |day| %>
@@ -26,7 +27,7 @@
 <% end %>
 
 <h2>Trackers</h2>
-<% form_tag(update_scrum_trackers_path(:project_id => @project), :method => :post) do %>
+<%= form_tag(update_scrum_trackers_path(:project_id => @project), :method => :post) do %>
 	<table class="fancy">
 		<tr>
 			<th><%= l(:tracker) %></th>
@@ -51,7 +52,7 @@
 <% end %>
 
 <h2>Tracker Statuses</h2>
-<% form_tag(update_scrum_tracker_statuses_path(:project_id => @project), :method => :post) do %>
+<%= form_tag(update_scrum_tracker_statuses_path(:project_id => @project), :method => :post) do %>
 	<table class="fancy">
 		<tr>
 			<th><%= l(:tracker_status) %></th>

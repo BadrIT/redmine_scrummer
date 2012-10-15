@@ -7,12 +7,12 @@
 <% hierarchy = (list_id == 'issues_list') %>
 
 <script type='text/javascript'>
-	$j(function() {
-	  $j('.subject-tipsy').tipsy();
+	$(function() {
+	  $('.subject-tipsy').tipsy();
 	  default_issue_target_version = "<%=@issue.try(:fixed_version).try(:id)%>";
-	  clear_form_elements($j(".inline-issue-add"));	
+	  clear_form_elements($(".inline-issue-add"));	
     
-	$j('.subject-contents').cluetip({
+	$('.subject-contents').cluetip({
 		splitTitle: '|',
 		positionBy: 'mouse',
 		sticky: true,
@@ -36,23 +36,22 @@
 	});
 </script>
 
-<% form_tag('', {:id => 'context_menu_form'}) do -%>
-	<%= hidden_field_tag 'back_url', url_for(build_params_for_context_menu) %>
-<% end %>
 
 <%if hierarchy%>
-	<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($j('.expander')[0]); $j('.issue.parent').removeClass('open');", :class => 'toggle-all') %>
+	<%= link_to_function(l(:button_collapse_all), "collapseAllRowGroups($('.expander')[0]); $('.issue.parent').removeClass('open');", :class => 'toggle-all') %>
 	<%= " / " %>
-	<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($j('.expander')[0]); $j('.issue.parent').addClass('open');", :class => 'toggle-all') %>
+	<%= link_to_function(l(:button_expand_all), "expandAllRowGroups($('.expander')[0]); $('.issue.parent').addClass('open');", :class => 'toggle-all') %>
 <%end%>
 
+<%= form_tag('', {:id => 'context_menu_form'}) do -%>
+  <%= hidden_field_tag 'back_url', url_for(build_params_for_context_menu) %>
 <div class="autoscroll">
 
 <% if issues.length > 0 %>
 	<%= hidden_field_tag("first_index", issues.first.position) %>
 <% else %>
 	<%= hidden_field_tag("first_index", 0) %>
-<%- end -%>
+<%- end %>
 
 <table id='issue-table' class="list issues sprint-<%= from_sprint %>">
     <thead>
@@ -94,10 +93,11 @@
 	</tbody>
 </table>
 </div>
+<% end %>
 <% unless hierarchy %>
 	<script>
-		$j('span.expander').css('display','none');
-		$j('.prefix > span').css('display','none');
+		$('span.expander').css('display','none');
+		$('.prefix > span').css('display','none');
 		if (typeof(init_sortable) == 'function')
 			init_sortable();
 	</script>
@@ -107,7 +107,7 @@
   var authenticity_token = '<%= form_authenticity_token %>';
   
   function enableInlineEdit(){
-    $j(".sprint-<%=from_sprint%> .story_size-container").editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+    $(".sprint-<%=from_sprint%> .story_size-container").editable('<%= url_for(:controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}).html_safe %>',
       {
         onblur     : 'submit',
         placeholder: '<span class="edit-placeholder">Edit</span>',
@@ -123,7 +123,7 @@
         ignoreResponse: true
       }); 
   
-    $j('.sprint-<%=from_sprint%> .edit').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+    $('.sprint-<%=from_sprint%> .edit').editable('<%= url_for(:controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}).html_safe %>',
       {
         onblur     : 'submit',
         placeholder: '<span class="edit-placeholder">Edit</span>',
@@ -132,12 +132,12 @@
                      },
         indicator  : '<%= image_tag 'loading.gif'%>' ,
         data: function(value, settings) {
-          return $j(this).hasClass("addition") ? "+0" : value;
+          return $(this).hasClass("addition") ? "+0" : value;
         },
         ignoreResponse: true
       });
   
-    $j('.sprint-<%= from_sprint %> div.status').editable('<%= url_for :controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}%>',
+    $('.sprint-<%= from_sprint %> div.status').editable('<%= url_for(:controller => :scrum_userstories, :action => :update_single_field, :params => {:project_id => @project.id, :hierarchy => hierarchy, :query => query, :list_id => list_id, :from_sprint => from_sprint}).html_safe %>',
       {
         onblur     : 'submit',
         submitdata : {
@@ -145,7 +145,7 @@
                      },
         indicator  : '<%= image_tag 'loading.gif'%>' ,
         data: function(value, settings) {
-          return $j(this).attr('data-statuses');
+          return $(this).attr('data-statuses');
         },
         type: 'select',
         ignoreResponse: true

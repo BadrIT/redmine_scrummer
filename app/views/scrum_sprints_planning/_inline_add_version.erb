@@ -1,7 +1,6 @@
 <% @version = @project.versions.build %>
 
-<% form_for :version, :url => {:controller => :scrum_sprints_planning, 
-									  :action => :add_version, :project_id => @project},
+<%= form_for :version, :url => add_scrum_sprint_path(:project_id => @project),
 									  :html => {:id => 'version-form'}, :success => 'hide_field()' do |f| %>
 
 	<div id='version_errors'> <%= error_messages_for 'sprint' %></div>

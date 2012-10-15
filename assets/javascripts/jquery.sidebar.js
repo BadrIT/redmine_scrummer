@@ -27,8 +27,8 @@
             //default setting
             options = $.extend(true, {
                 position : "left",
-                width : $j(this).width(),
-                height : $j(this).height(),
+                width : $(this).width(),
+                height : $(this).height(),
                 injectWidth : 20,
                 events: {
                     item : {

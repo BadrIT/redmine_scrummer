@@ -6,7 +6,6 @@ module RedmineScrummer
 				unloadable # Send unloadable so it will not be unloaded in development
 
 				include InstanceMethods
-	      serialize :scrummer_caption
 			end	
 			
 		end
@@ -24,6 +23,10 @@ module RedmineScrummer
 				super
 			end
 		end
+
+		def scrummer_caption
+      read_attribute(:scrummer_caption).try(:to_sym)
+    end
 	end
 end
 

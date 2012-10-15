@@ -2,7 +2,8 @@ class ScrumUserstoriesController < IssuesController
   unloadable
 
   include ScrumUserstoriesHelper
-
+  include ERB::Util
+  
   prepend_before_filter :check_for_default_scrum_issue_status_for_inline, :only => [:inline_add]
   prepend_before_filter :check_for_default_scrum_issue_priority_for_inline, :only => [:inline_add]
 
@@ -12,7 +13,8 @@ class ScrumUserstoriesController < IssuesController
   prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :calculate_statistics]						# must be called after find_scrum_project
   prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :sprint_planing, :inline_add_version, :calculate_statistics]
 
-  before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :inline_add, :get_inline_issue_form]
+  before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :get_inline_issue_form]
+  before_filter :build_new_issue_or_find_from_params, :only => [:inline_add]
   before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form, :inline_add ]
   before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
   before_filter :set_default_values, :only => [:refresh_inline_add_form, :index]
@@ -24,7 +26,6 @@ class ScrumUserstoriesController < IssuesController
 
   module SharedScrumConstrollers
 
-    include ActionView::Helpers::ActiveRecordHelper
     include ActionView::Helpers::TagHelper
 
     protected
@@ -60,9 +61,7 @@ class ScrumUserstoriesController < IssuesController
       @issue.custom_field_values = {custom_field_id => new_value}
 
       if @issue.save
-        render :update do |page|
-          update_issue_and_parents(page)
-        end
+        update_issue_and_parents
       else
         render :text => 'Errors in saving'
       end
@@ -81,12 +80,10 @@ class ScrumUserstoriesController < IssuesController
         :user => User.current,
         :project => @issue.project,
         :spent_on => User.current.today,
-        :activity_id => TimeEntryActivity.find_by_name('Development').id )
+        :activity_id => TimeEntryActivity.find_by_name('Scrum').id )
 
         if @time_entry.hours > 0 && @time_entry.save
-          render :update do |page|
-            update_issue_and_parents(page)
-          end
+          update_issue_and_parents
         else
           render :text => 'Errors in saving'
         end
@@ -105,9 +102,7 @@ class ScrumUserstoriesController < IssuesController
       @issue.update_attributes(column_name => new_value)
 
       if @issue.save
-        render :update do |page|
-          update_issue_and_parents(page)
-        end
+        update_issue_and_parents
       else
         render :text => 'Errors in saving'
       end
@@ -134,9 +129,7 @@ class ScrumUserstoriesController < IssuesController
       elsif !@issue.save
         render :text => 'Errors in saving'
       else
-        render :update do |page|
-          update_issue_and_parents(page)
-        end
+        update_issue_and_parents
       end
 
     elsif params[:id] =~ /-version/
@@ -157,18 +150,20 @@ class ScrumUserstoriesController < IssuesController
     else
       render :text => 'Errors in saving'
     end
-
+    
   rescue Exception => e
     puts e.inspect
     render :text => "Exception occured"
-    end
+  end
 
   def get_inline_issue_form
     issue_id = params[:issue_id] if params[:issue_id]
     @issue = Issue.find(issue_id) if issue_id
-
+    
+    @issue_id = params[:issue_id] || params[:parent_issue_id]
+    
     respond_to do |format|
-      format.js { render :partial => 'inline_add',  :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint]}}
+      format.js
     end
   end
 
@@ -232,27 +227,28 @@ class ScrumUserstoriesController < IssuesController
     else
       set_issues_and_query_for_list
     end
-
-    render :partial => 'list', :locals=>{:list_id => params[:list_id]}
   end
 
   def refresh_inline_add_form
-
+    @div = params[:div]
+    
     respond_to do |format|
-      format.js {render :partial => 'inline_add', :locals => {:list_id => params[:list_id], :from_sprint => params[:from_sprint], :hide_cancel => params[:hide_cancel]}}
+      format.js
     end
   end
 
   # inline add action
   def inline_add
     initialize_sort
-    div_name = get_inline_issue_div_id
-
-    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
-
-    @issue.release_id = params[:issue][:release_id] if params[:issue] && params[:issue][:release_id]
+    @div_name = get_inline_issue_div_id
     
-    if @query.valid? && @issue.save
+    saved = if @issue.new_record?
+      inline_add_issue
+    else
+      inline_edit_issue
+    end
+
+    if @query.valid? && saved
       load_issues_for_query
       flash[:notice] = l(:notice_successful_create)
       call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})
@@ -260,22 +256,39 @@ class ScrumUserstoriesController < IssuesController
       if @issues.length > 0
         set_issues_and_query_for_list unless params[:list_id] == 'issues_list'
         @partial_list ||= "list"
-
-        render :update do |page|
-          page.replace_html params[:from_sprint], :partial => "list", :locals => {:issues => @old_sprint_issues, :query => @query, :list_id => params[:list_id]} if params[:from_sprint]
-          page.replace_html params[:list_id], :partial => @partial_list, :locals => {:issues => @issues, :query => @query, :list_id => params[:list_id], :from_sprint => params[:list_id]}
-          page.replace_html "errors_for_#{div_name}", ""
-          page.replace_html "flash-temp", render_flash_messages
-        end
       end
     else
-      render_error_html_for_inline_add(error_messages_for :issue)
-    end
-  rescue ActiveRecord::RecordNotFound
-    render_404
+      render_error_html_for_inline_add(error_messages_for 'issue')
     end
 
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+
   protected
+
+  def inline_add_issue
+    call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
+
+    @issue.release_id = params[:issue][:release_id] if params[:issue] && !params[:issue][:release_id].blank?
+    
+    @issue.save
+  end
+
+  def inline_edit_issue
+    return unless update_issue_from_params
+    begin
+      saved = @issue.save_issue_with_child_records(params)
+    rescue ActiveRecord::StaleObjectError
+      @conflict = true
+      if params[:last_journal_id]
+        @conflict_journals = @issue.journals_after(params[:last_journal_id]).all
+        @conflict_journals.reject!(&:private_notes?) unless User.current.allowed_to?(:view_private_notes, @issue.project)
+      end
+    end
+
+    saved
+  end
 
   def find_parent_issue
     parent_issue_id = params[:parent_issue_id] if params[:parent_issue_id]
@@ -366,7 +379,7 @@ class ScrumUserstoriesController < IssuesController
 
       # can't user ||= because there is before filter set issue default tracker
       if params[:issue].blank? || params[:issue][:tracker_id].blank?
-        @issue.tracker = case @parent_issue.tracker.scrummer_caption
+        @issue.tracker = case @parent_issue.tracker.scrummer_caption.to_sym
         when :epic
           Tracker.scrum_userstory_tracker
         when :userstory
@@ -396,10 +409,9 @@ class ScrumUserstoriesController < IssuesController
     end
   end
 
-  def render_error_html_for_inline_add error_html
-    render :update do |page|
-      page.replace_html "errors_for_#{get_inline_issue_div_id}", error_html
-    end
+  def render_error_html_for_inline_add(error_html)
+    @error_html = error_html
+    render :render_error_html_for_inline_add
   end
 
   def check_for_default_issue_status
@@ -433,7 +445,7 @@ class ScrumUserstoriesController < IssuesController
   end
 
   def scrum_issues_list(issues, &block)
-    issues = issues.reverse
+    issues = issues.to_a.reverse
 
     last_processed_level = 0
 
@@ -522,12 +534,27 @@ class ScrumUserstoriesController < IssuesController
   # load the sidebar query. The query sorts the sprints by id not by name
   def load_sidebar_query
     # User can see public queries and his own queries
-    visible = ARCondition.new(["is_public = ? OR user_id = ?", true, (User.current.logged? ? User.current.id : 0)])
+    conditions = ["is_public = ? OR user_id = ?", true, (User.current.logged? ? User.current.id : 0)]
+
     # Project specific queries and global queries
-    visible << (@project.nil? ? ["project_id IS NULL"] : ["project_id IS NULL OR project_id = ?", @project.id])
+    if @project.nil? 
+      conditions[0] = conditions[0] + " AND project_id IS NULL"
+    else
+      conditions[0] = conditions[0] + " AND project_id IS NULL OR project_id = ?"
+      conditions << @project.id
+    end
+
     @sidebar_queries = Query.find(:all,
                             :select => 'id, name, is_public',
                             :order => "id DESC",
-                            :conditions => visible.conditions)
+                            :conditions => conditions)
+  end
+
+  def build_new_issue_or_find_from_params
+    if params[:id].blank?
+      build_new_issue_from_params
+    else
+      find_issue
+    end
   end
 end

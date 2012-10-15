@@ -17,14 +17,14 @@
 					 :id => version.id,
 					 :project_id => @project.identifier},
 					 :class => 'icon icon-edit' %>
-    		<%= link_to l(:button_delete), {:controller => 'scrum_sprints_planning', :action => 'destroy_version',:project_id => @project.identifier, :id => version.id}, :confirm => l(:text_are_you_sure), :class => 'icon icon-del' %>
+    		<%= link_to l(:button_delete), destroy_scrum_sprint_path(version.id, :project_id => @project.identifier), :confirm => l(:text_are_you_sure), :class => 'icon icon-del' %>
 		<% end %>
 	</td>
 	<script>
-	  	$j('#edit-sprint-<%= version.id %>').click(function() {
-			var fieldset = $j('#inline-version-add');
+	  	$('#edit-sprint-<%= version.id %>').click(function() {
+			var fieldset = $('#inline-version-add');
 			fieldset.children('div').slideDown("slow");
-			$j('#version-control-label').text('<%= l(:label_version_edit) %>');
+			$('#version-control-label').text('<%= l(:label_version_edit) %>');
 		});
 	</script>
 </tr>

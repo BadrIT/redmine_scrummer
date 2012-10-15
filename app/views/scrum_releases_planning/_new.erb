@@ -1,7 +1,6 @@
-<% remote_form_for @release, :url => {:controller => :scrum_releases_planning, :action => :create, :project_id => @project} do |f| %>
+<%= form_for @release, :url => {:controller => :scrum_releases_planning, :action => :create, :project_id => @project}, :remote => true do |f| %>
 
 <div id='release_errors'>
-<%= f.error_messages %>
 </div>
 
 <div class="box">

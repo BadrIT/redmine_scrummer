@@ -14,8 +14,8 @@
 
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id= <%="errors_for_#{inline_issue_div_id}"%> ></div>
-	<% remote_form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add, :list_id => list_id, :from_sprint => from_sprint},
-														 :html => {:id => inline_form_id}, :oncomplete => "$j('#selected_sprint').remove();" do |f|%>
+	<%= form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add, :list_id => list_id, :from_sprint => from_sprint},
+														 :html => {:id => inline_form_id}, :oncomplete => "$('#selected_sprint').remove();", :remote => true do |f|%>
 	
 	<%= hidden_field_tag :id, @issue.id unless @issue.new_record? %>
 	<%= f.hidden_field :project_id, :value => @project.id %>
@@ -26,9 +26,7 @@
 			
 			
 			<%= select_tag "issue[tracker_id]", options_from_collection_for_select(@project.trackers.scrummer, 'id', 'name', @issue.tracker.try(:id)), :id => tracker_field_id %>
-			<%= observe_field tracker_field_id, :url => {:controller => :scrum_userstories, :action => :refresh_inline_add_form, :project_id => @project, :id => @issue, :list_id => list_id, :from_sprint => from_sprint, :hide_cancel => hide_cancel}, 
-											   :update => inline_issue_div_id,
-											   :with => "Form.serialize('#{inline_form_id}')" %>
+
       <%= f.select :assigned_to_id, @project.members.map{|m| [m.name, m.user.id]}, :include_blank => l("field_assigned_to") %>
       
       <%= f.select :fixed_version_id, @issue.project.versions.map{|v| [v.name, v.id]}, {:include_blank => l("field_fixed_version")}, :class => "sprint_select" %>
@@ -114,21 +112,25 @@
 	<%end%>
 </div>
 <script>
-	$j(".sprint_select").change(function(){
-		$j('#selected_sprint').remove();
+  $("#<%= tracker_field_id %>").observe_field(0, function() {
+    $.get("<%= refresh_inline_add_form_path(:project_id => @project, :id => @issue, :list_id => list_id, :from_sprint => from_sprint, :hide_cancel => hide_cancel, :div => inline_issue_div_id) %>", $(this).closest("form").serialize());
+  });
+    
+	$(".sprint_select").change(function(){
+		$('#selected_sprint').remove();
 		var hiddenField;
-		if($j(this).find(":selected").text() == "Target version" && $j("#backlog").length > 0){
+		if($(this).find(":selected").text() == "Target version" && $("#backlog").length > 0){
 			hiddenField = '<input type="hidden" id= "selected_sprint" name="selected_sprint" value="backlog" />';
-			$j(this).parent().parent().parent().append(hiddenField);
+			$(this).parent().parent().parent().append(hiddenField);
 		} else{
-			hiddenField = '<input type="hidden" id= "selected_sprint" name="selected_sprint" value="sprint-' + $j(this).val() + '" />';
+			hiddenField = '<input type="hidden" id= "selected_sprint" name="selected_sprint" value="sprint-' + $(this).val() + '" />';
 		}
-		$j(this).parent().parent().parent().append(hiddenField);
+		$(this).parent().parent().parent().append(hiddenField);
 	});
 	
-	$j(document).ready(function () {
-		if($j("#backlog").length > 0){
-			$j("#<%= inline_form_id %>").append('<input type="hidden" id= "selected_sprint" name="selected_sprint" value="backlog" />')
+	$(document).ready(function () {
+		if($("#backlog").length > 0){
+			$("#<%= inline_form_id %>").append('<input type="hidden" id= "selected_sprint" name="selected_sprint" value="backlog" />')
 		}
 	});
 </script>

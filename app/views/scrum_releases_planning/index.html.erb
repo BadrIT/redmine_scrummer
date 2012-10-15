@@ -3,22 +3,19 @@
 
 <h2>Releases Planning</h2>
 <% content_for :header_tags do %>
-    <%= stylesheet_link_tag 'general.css', :plugin => 'redmine_scrummer' %>
-    <%= stylesheet_link_tag 'sticky_notes.css', :plugin => 'redmine_scrummer' %>
-    <%= javascript_include_tag 'jquery-1.6.1.js', :plugin => 'redmine_scrummer' %>
-    <%= javascript_tag "$.noConflict(); $j = jQuery;"%>
+	<%= stylesheet_link_tag 'general.css', :plugin => 'redmine_scrummer' %>
+	<%= stylesheet_link_tag 'sticky_notes.css', :plugin => 'redmine_scrummer' %>
    	
 	<%= javascript_include_tag 'context_menu.js'%>
 	<%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
-    <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
+  <%= javascript_include_tag 'jquery-ui.min.js', :plugin => 'redmine_scrummer' %>
 	<%= javascript_include_tag 'scrum_shared', :plugin => 'redmine_scrummer' %>
-    <%= javascript_include_tag 'jquery.cluetip.js', :plugin => 'redmine_scrummer' %>
-    <%= javascript_include_tag 'jquery.cluetip.min.js', :plugin => 'redmine_scrummer' %>
-    <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
-    <%= javascript_tag "select_menu_item('scrum-release-planing');"%>
-
-    
+  <%= javascript_include_tag 'jquery.cluetip.js', :plugin => 'redmine_scrummer' %>
+  <%= javascript_include_tag 'jquery.cluetip.min.js', :plugin => 'redmine_scrummer' %>
+  <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
+  <%= javascript_tag "select_menu_item('scrum-release-planing');"%>
 <% end %>
+
 <br/>
 <div>
   <fieldset id="inline-add" class="collapsible collapsed">
@@ -42,10 +39,9 @@
       </tr>
     </thead>
     <tbody id='releases'>
-    <%= render :partial => 'release', :collection => @releases%>
+    <%= render :partial => 'release', :collection => @releases %>
     </tbody>
   </table>
 </div>
-
 
 <br/>

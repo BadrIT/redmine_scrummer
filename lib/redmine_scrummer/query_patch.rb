@@ -22,29 +22,6 @@ module RedmineScrummer
 				# end
 				alias_method_chain  :available_filters, :scrum_filters 
 				
-			  def add_custom_fields_filters(custom_fields)
-			    @available_filters ||= {}
-
-			    custom_fields.select(&:is_filter?).each do |field|
-			      case field.field_format
-			      when "text"
-			        options = { :type => :text, :order => 20 }
-			      when "list"
-			        options = { :type => :list_optional, :values => field.possible_values, :order => 20}
-			      when "date"
-			        options = { :type => :date, :order => 20 }
-			      when "bool"
-			        options = { :type => :list, :values => [[l(:general_text_yes), "1"], [l(:general_text_no), "0"]], :order => 20 }
-			      when "user", "version", "release"
-			        next unless project
-			        options = { :type => :list_optional, :values => field.possible_values_options(project), :order => 20}
-			      else
-			        options = { :type => :string, :order => 20 }
-			      end
-			      @available_filters["cf_#{field.id}"] = options.merge({ :name => field.name })
-			    end
-			  end
-
 			end
 			
 		end
@@ -54,15 +31,17 @@ module RedmineScrummer
 		  def add_to_available_filters(field, type, options={})
 		    @available_filters_patcheds ||= {}
 		    @available_filters[field] = {:type => type,
+		    														 :format => type.to_s,
 		                                 :order => (options[:order] || 21),
-		                                 :values => options[:values]}       
+		                                 :values => options[:values],
+		                                 :name => I18n.translate("field_#{field}")}       
 		  end
 
 		  def add_scrum_columns_available_filters
 		    add_to_available_filters("remaining_hours", :integer)
 		    add_to_available_filters("business_value", :integer)
 		    add_to_available_filters("story_size", :integer)
-		    add_to_available_filters("release_id", :list, :values => self.project.releases.collect{|r| [r.name, r.id]}) if self.project
+		    add_to_available_filters("release_id", :list_optional, :values => self.project.releases.collect{|r| [r.name, r.id]}) if self.project
 		  end
 
 		  def available_filters_with_scrum_filters

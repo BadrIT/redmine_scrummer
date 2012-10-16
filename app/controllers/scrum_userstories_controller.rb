@@ -343,7 +343,7 @@ class ScrumUserstoriesController < IssuesController
     :order => sort_clause)
     # clone all issues in a new array
     # but having the same objects in order not to calcluate statistics twice
-    @issues = @all_issues.map
+    @issues = @all_issues.map{|i| i}
 
     session[:set_filter] ||= params[:set_filter]
     unless session[:set_filter] == '1'

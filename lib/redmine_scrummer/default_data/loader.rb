@@ -443,15 +443,15 @@ module RedmineScrummer
         custom_field = CustomField.find_by_scrummer_caption(:story_size)
 
         Issue.all.each do |i|
-          if i.story_size.nil?
-            i.update_attribute(:story_size, 0)
+          if i.accept_story_size?
+            if i.story_size.nil?
+              i.update_attribute(:story_size, 0)
+            end
           end
-          
-          i.update_story_size(custom_field)
 
           # Create history entry for all time trackable issues
-          if issue.time_trackable? && issue.issue_histories.blank?
-            issue.build_history_entry.save 
+          if i.time_trackable? && i.history.blank?
+            i.build_history_entry.save 
           end
         end
 

@@ -13,6 +13,17 @@ More details can be found at in the doc directory or on the official website htt
   6. Run `RAILS_ENV=production rake redmine:plugins:migrate`
   7. Run `RAILS_ENV=production rake redmine_scrummer:load_default_data`
 
+= Theme Support
+  You can use redmine tags plugin to support themes.
+
+  = Theme Installation
+    1. cd plugins
+    2. git clone git://github.com/ixti/redmine_tags.git -b redmine-2.1.x
+    3. cd ..
+    4. bundle install 
+    5. rails generate acts_as_taggable_on:migration
+    6. rake db:migrate
+
 = Update Scrummer Plugin
   1. cd plugins/redmine_scrummer
   2. git pull origin master

@@ -47,6 +47,9 @@ module RedmineScrummer
 		  def available_filters_with_scrum_filters
 		  	available_filters_without_scrum_filters
 		  	add_scrum_columns_available_filters
+		  	@available_filters.each do |field, value|
+		  		value[:name] ||= field.to_s.titleize if value
+		  	end
 		  	@available_filters
 		  end
 

@@ -10,7 +10,7 @@ module RedmineScrummer
         def load(lang=nil)
           set_language_if_valid(lang)
           
-          filters = {} #TODO should have empty spaces
+          filters = {"status_id"=>{:operator=>"*", :values=>[""]}} #TODO should have empty spaces
           columns =  [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :actual_hours, :remaining_hours] 
           options = {:scrummer_caption => "User-Stories", 
                                                    :sort_criteria    => [:id],

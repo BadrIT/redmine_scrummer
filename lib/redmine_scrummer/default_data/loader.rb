@@ -10,14 +10,16 @@ module RedmineScrummer
         def load(lang=nil)
           set_language_if_valid(lang)
           
-          filters = {"status_id"=>{:values => [""], :operator=>"o"}} #TODO should have empty spaces
+          filters = {} #TODO should have empty spaces
           columns =  [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :actual_hours, :remaining_hours] 
-          Query.find_or_create_by_scrummer_caption(:scrummer_caption => "User-Stories", 
+          options = {:scrummer_caption => "User-Stories", 
                                                    :sort_criteria    => [:id],
                                                    :column_names     => columns,                                                   
                                                    :name             => I18n.translate(:label_scrum_user_stories),
                                                    :filters          => filters, 
-                                                   :is_public        => true)
+                                                   :is_public        => true}
+          q = Query.find_or_create_by_scrummer_caption(options)
+          q.update_attributes(options)
           
           columns =  [:subject, :assigned_to, :story_size, :status, :estimated_hours, :business_value] 
           sprint_query = Query.find_or_create_by_scrummer_caption(:scrummer_caption => "Sprint-Planning", 

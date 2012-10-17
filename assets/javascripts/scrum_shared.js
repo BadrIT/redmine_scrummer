@@ -47,9 +47,19 @@ function contextMenuShow(event) {
   $('#context-menu').css('top', (render_y + 'px'));
   $('#context-menu').html('');
 
+  // collect ids
+  ids_params_string = '';
+  $('#issue-table input[name="ids[]"]').each(
+                  function(index, element){
+                    if(element.checked)
+                      ids_params_string += 'ids[]=' + element.value + '&';
+                  });
+
+  data = ids_params_string + $(event.target).parents('form').first().serialize() + $('#context_menu_form').serialize();
+
   $.ajax({
     url: contextMenuUrl,
-    data: $(event.target).parents('form').first().serialize(),
+    data: data,
     success: function(data, textStatus, jqXHR) {
       $('#context-menu').html(data);
       menu_width = $('#context-menu').width();

@@ -23,7 +23,7 @@ module RedmineScrummer
           sprint_query = Query.find_or_create_by_scrummer_caption(:scrummer_caption => "Sprint-Planning", 
                                                    :sort_criteria    => [],
                                                    :column_names     => columns,                                                   
-                                                   :name             => l(:label_scrum_sprint_planing),
+                                                   :name             => I18n.translate(:label_scrum_sprint_planing),
                                                    :is_public        => true)
 
           sprint_query.sort_criteria = []
@@ -38,14 +38,14 @@ module RedmineScrummer
           
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
           
-          scrum_trackers = { :userstory   => { :name => l(:scrum_userStory),   :short_name => 'US'   ,:color => '#C2D3E8', :position => 0},
-                             :task        => { :name => l(:scrum_task),        :short_name => 'Task' ,:color => '#FFFFFF'},
-                             :epic        => { :name => l(:scrum_epic),        :short_name => 'Epic' ,:color => '#CCC0D9'},
-                             :defect      => { :name => l(:scrum_defect),      :short_name => 'DE'   ,:color => '#E5B8B7'},
-                             :defectsuite => { :name => l(:scrum_defectSuite), :short_name => 'DS'   ,:color => '#D99594'},
-                             :refactor    => { :name => l(:scrum_refactor),    :short_name => 'RE'   ,:color => '#FBD4B4'},
-                             :test        => { :name => l(:scrum_test),        :short_name => 'Test' ,:color => '#D9D9D9'},
-                             :spike       => { :name => l(:scrum_spike),       :short_name => 'Spike',:color => '#FFEC8B'}}
+          scrum_trackers = { :userstory   => { :name => I18n.translate(:scrum_userStory),   :short_name => 'US'   ,:color => '#C2D3E8', :position => 0},
+                             :task        => { :name => I18n.translate(:scrum_task),        :short_name => 'Task' ,:color => '#FFFFFF'},
+                             :epic        => { :name => I18n.translate(:scrum_epic),        :short_name => 'Epic' ,:color => '#CCC0D9'},
+                             :defect      => { :name => I18n.translate(:scrum_defect),      :short_name => 'DE'   ,:color => '#E5B8B7'},
+                             :defectsuite => { :name => I18n.translate(:scrum_defectSuite), :short_name => 'DS'   ,:color => '#D99594'},
+                             :refactor    => { :name => I18n.translate(:scrum_refactor),    :short_name => 'RE'   ,:color => '#FBD4B4'},
+                             :test        => { :name => I18n.translate(:scrum_test),        :short_name => 'Test' ,:color => '#D9D9D9'},
+                             :spike       => { :name => I18n.translate(:scrum_spike),       :short_name => 'Spike',:color => '#FFEC8B'}}
           
           scrum_trackers.each do |caption, options|
             options = options.merge(scrum_tracker_options)
@@ -57,9 +57,9 @@ module RedmineScrummer
           #############################################################################################
           # Create/Update Roles
           #############################################################################################
-          scrum_roles = { :project_member => l(:scrum_projectMember),
-                          :scrum_master   => l(:scrum_scrumMaster),
-                          :product_owner  => l(:scrum_productOwner)}
+          scrum_roles = { :project_member => I18n.translate(:scrum_projectMember),
+                          :scrum_master   => I18n.translate(:scrum_scrumMaster),
+                          :product_owner  => I18n.translate(:scrum_productOwner)}
           
           scrum_roles.each do |caption, name|
             role = Role.find_or_create_by_scrummer_caption(caption);
@@ -70,13 +70,13 @@ module RedmineScrummer
           # Create/Update Statuses
           #############################################################################################
           statuses = [
-          {:scrummer_caption => :defined,     :position => 1, :is_scrum => true, :width => 20, :name => l(:scrum_defined),     :short_name => 'D', :is_default => true, :color => '#FFFFFF'},
-          {:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :width => 30, :name => l(:scrum_inProgress),  :short_name => 'P', :color => '#D6E3BC'}, 
-          {:scrummer_caption => :completed,   :position => 3, :is_scrum => true, :width => 50, :name => l(:scrum_completed),   :short_name => 'C', :color => '#C2D69B'}, 
-          {:scrummer_caption => :accepted,    :position => 4, :is_scrum => true, :width => 60, :name => l(:scrum_accepted),    :short_name => 'A', :is_closed => true, :color => '#76A03C'},
-          {:scrummer_caption => :succeeded,   :position => 5, :is_scrum => true, :width => 50, :name => l(:scrum_succeeded),   :short_name => 'S', :is_closed => true, :color => '#10BA00'},
-          {:scrummer_caption => :failed,      :position => 6, :is_scrum => true, :width => 40, :name => l(:scrum_failed),      :short_name => 'F', :color => '#FF7066'},
-          {:scrummer_caption => :finished,    :position => 7, :is_scrum => true, :width => 40, :name => l(:scrum_finished),    :short_name => 'F', :is_closed => true, :color => '#B8D050'}]
+          {:scrummer_caption => :defined,     :position => 1, :is_scrum => true, :width => 20, :name => I18n.translate(:scrum_defined),     :short_name => 'D', :is_default => true, :color => '#FFFFFF'},
+          {:scrummer_caption => :in_progress, :position => 2, :is_scrum => true, :width => 30, :name => I18n.translate(:scrum_inProgress),  :short_name => 'P', :color => '#D6E3BC'}, 
+          {:scrummer_caption => :completed,   :position => 3, :is_scrum => true, :width => 50, :name => I18n.translate(:scrum_completed),   :short_name => 'C', :color => '#C2D69B'}, 
+          {:scrummer_caption => :accepted,    :position => 4, :is_scrum => true, :width => 60, :name => I18n.translate(:scrum_accepted),    :short_name => 'A', :is_closed => true, :color => '#76A03C'},
+          {:scrummer_caption => :succeeded,   :position => 5, :is_scrum => true, :width => 50, :name => I18n.translate(:scrum_succeeded),   :short_name => 'S', :is_closed => true, :color => '#10BA00'},
+          {:scrummer_caption => :failed,      :position => 6, :is_scrum => true, :width => 40, :name => I18n.translate(:scrum_failed),      :short_name => 'F', :color => '#FF7066'},
+          {:scrummer_caption => :finished,    :position => 7, :is_scrum => true, :width => 40, :name => I18n.translate(:scrum_finished),    :short_name => 'F', :is_closed => true, :color => '#B8D050'}]
           
           statuses.each do |options|
             caption = options[:scrummer_caption]
@@ -227,7 +227,7 @@ module RedmineScrummer
                                   :view_wiki_pages]
           
           Role.find_all_by_is_scrum(true).each do |role|
-            if(role.name == l(:scrum_projectMember))
+            if(role.name == I18n.translate(:scrum_projectMember))
               project_member_permissions = all_default_permissions - [:add_project,
                                                                       :add_subprojects,
                                                                       :add_issues,                          
@@ -254,10 +254,10 @@ module RedmineScrummer
                                                                       :set_issues_private]
               role.permissions = project_member_permissions
               role.save!
-            elsif(role.name == l(:scrum_scrumMaster))
+            elsif(role.name == I18n.translate(:scrum_scrumMaster))
               role.permissions = all_default_permissions
               role.save!
-            elsif(role.name == l(:scrum_productOwner))
+            elsif(role.name == I18n.translate(:scrum_productOwner))
               product_owner_permissions = all_default_permissions - [:add_project,
                                                                     :add_subprojects,
                                                                     :delete_issue_watchers,
@@ -293,14 +293,14 @@ module RedmineScrummer
           # seed scrum roles scrum perissions
           Role.find_all_by_is_scrum(true).each do |role|
             
-            if(role.name == l(:scrum_projectMember))
+            if(role.name == I18n.translate(:scrum_projectMember))
               project_member_permissions = all_scrum_permissions
               role.permissions += project_member_permissions
               role.save!
-            elsif(role.name == l(:scrum_scrumMaster))
+            elsif(role.name == I18n.translate(:scrum_scrumMaster))
               role.permissions += all_scrum_permissions
               role.save!
-            elsif(role.name == l(:scrum_productOwner))
+            elsif(role.name == I18n.translate(:scrum_productOwner))
               role.permissions += all_scrum_permissions
               role.save!        
             end
@@ -323,84 +323,50 @@ module RedmineScrummer
           # add start_date custom field to versions
           start_date_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :start_date)
           start_date_custom_field.update_attributes(
-                              :name          => l(:start_date),
+                              :name          => I18n.translate(:start_date),
                               :field_format  => 'date')
 
           # add retrospective custom field to versions
           retrospective_url_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :retrospective_url)
           retrospective_url_custom_field.update_attributes(
-                              :name          => l(:retrospective_url),
+                              :name          => I18n.translate(:retrospective_url),
                               :field_format  => 'string',
                               :is_required   => false)
           
-          Issue.all.each{|i| i.update_attribute(:story_size, 0.0) if i.story_size.nil?}
           
           # add story size custom field
           story_size_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :story_size)
           story_size_custom_field.update_attributes(
-                                    :name             => l(:story_size),
+                                    :name             => I18n.translate(:story_size),
                                     :field_format     => 'list',
                                     :possible_values  => Scrummer::Constants::StorySizes.map{|size| size.to_f.to_s},
                                     :is_required      => false,
                                     :default_value    => "0.0")
-          
-          Issue.all.each{|i| i.update_accumulated_fields}
-          
-          # create story-size custom value for current issues that accept story size
-          Issue.all.each do |issue|
-            if issue.accept_story_size?
-              field_value = issue.custom_values.find_or_create_by_custom_field_id(story_size_custom_field.id)
-              field_value.update_attribute('value', issue.story_size.to_s)
-            end
-          end
-
            # add business value custom field
           business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
           business_value_custom_field.update_attributes(
-                                    :name             => l(:business_value),
+                                    :name             => I18n.translate(:business_value),
                                     :field_format     => 'float',
                                     :default_value    => "0")
-          
-          # create business-value custom value for current issues that accept business value
-          Issue.all.each do |issue|
-            if issue.accept_business_value? && issue.business_value
-              field_value = issue.custom_values.find_or_create_by_custom_field_id(business_value_custom_field.id)
-              field_value.update_attribute('value', issue.business_value)
-            end
-          end
-          
+
           # adding release_id value custom field
           release_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :release)
           release_custom_field.update_attributes(
-                                    :name             => l(:release),
+                                    :name             => I18n.translate(:release),
                                     :field_format     => 'list',
                                     :possible_values  => ["0"],
                                     :is_required      => false,
                                     :default_value    => "0")
 
           release_custom_field.update_attribute(:field_format, 'release')
-          
-          Issue.all.each do |issue|
-            field_value = issue.custom_values.find_or_create_by_custom_field_id(release_custom_field.id)
-            field_value.update_attribute('value', issue.release.name) if issue.release
-          end
 
+          
           # add remaining time custom field
           remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
           remaining_hours_custom_field.update_attributes(
-                                    :name             => l(:remaining_hours),
+                                    :name             => I18n.translate(:remaining_hours),
                                     :field_format     => 'float',
                                     :default_value    => "0")
-
-          Issue.all.each do |issue|
-            if issue.accept_remaining_hours? && issue.remaining_hours
-              field_value = issue.custom_values.find_by_custom_field_id(remaining_hours_custom_field.id)
-              field_value = issue.custom_values.build(:custom_field_id => remaining_hours_custom_field.id) unless field_value
-
-              field_value.value = issue.remaining_hours
-              field_value.sneaky_save
-            end
-          end
             
           trackers_custom_fields = {:userstory => [:story_size, :business_value, :release],
                                    :epic      => [:story_size, :business_value, :release],
@@ -418,43 +384,13 @@ module RedmineScrummer
             tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
           end
           
-          # Create points history entry for all the issues as a strat point
-          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.find_by_scrummer_caption(:userstory).id]).each do |issue|
-            issue.build_points_history_entry.save
-          end
-          
-
-          # Create points history entry for all the issues as a strat point
-          Issue.find(:all, :conditions => ['tracker_id = ?', Tracker.find_by_scrummer_caption(:userstory).id]).each do |issue|
-            if issue.points_histories.blank?
-              issue.build_points_history_entry.save
-            end
-          end
-          
           # set the defualt method for calculation done ratio for issues.
           Setting.issue_done_ratio = 'automatic_calculation'
+          TimeEntryActivity.create(:name => 'Scrum')
 
           true
         end
         
-        TimeEntryActivity.create(:name => 'Scrum')
-
-
-        custom_field = CustomField.find_by_scrummer_caption(:story_size)
-
-        Issue.all.each do |i|
-          if i.accept_story_size?
-            if i.story_size.nil?
-              i.update_attribute(:story_size, 0)
-            end
-          end
-
-          # Create history entry for all time trackable issues
-          if i.time_trackable? && i.history.blank?
-            i.build_history_entry.save 
-          end
-        end
-
       end
     end
   end

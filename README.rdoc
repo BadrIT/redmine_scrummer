@@ -10,8 +10,8 @@ More details can be found at in the doc directory or on the official website htt
   3. Clone the scrummer plugin `git clone https://github.com/mahkhaled/redmine_scrummer.git`
   4. cd ..
   5. Run `bundle install`
-  6. Run `rake redmine:plugins:migrate`
-  7. Run `rake redmine_scrummer:load_default_data`
+  6. Run `RAILS_ENV=production rake redmine:plugins:migrate`
+  7. Run `RAILS_ENV=production rake redmine_scrummer:load_default_data`
 
 = New/Existing Projects Setup
 - Include scrummer module in the your redmine projects

@@ -313,12 +313,12 @@ module RedmineScrummer
           #############################################################################################  
           
           if ScrumWeeklyNonWorkingDay.first.nil?
-            ScrumWeeklyNonWorkingDay.create(:sunday => 1,
+            ScrumWeeklyNonWorkingDay.create(:sunday => 0,
               :monday => 0,
               :tuesday => 0,
               :wednesday => 0,
               :thursday => 0,
-              :friday => 0,
+              :friday => 1,
               :saturday => 1)
           end
           

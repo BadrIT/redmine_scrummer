@@ -77,8 +77,8 @@ module RedmineScrummer
           {:scrummer_caption => :completed,   :position => 3, :is_scrum => true, :width => 50, :name => I18n.translate(:scrum_completed),   :short_name => 'C', :color => '#C2D69B'}, 
           {:scrummer_caption => :accepted,    :position => 4, :is_scrum => true, :width => 60, :name => I18n.translate(:scrum_accepted),    :short_name => 'A', :is_closed => true, :color => '#76A03C'},
           {:scrummer_caption => :succeeded,   :position => 5, :is_scrum => true, :width => 50, :name => I18n.translate(:scrum_succeeded),   :short_name => 'S', :is_closed => true, :color => '#10BA00'},
-          {:scrummer_caption => :failed,      :position => 6, :is_scrum => true, :width => 40, :name => I18n.translate(:scrum_failed),      :short_name => 'F', :color => '#FF7066'},
-          {:scrummer_caption => :finished,    :position => 7, :is_scrum => true, :width => 40, :name => I18n.translate(:scrum_finished),    :short_name => 'F', :is_closed => true, :color => '#B8D050'}]
+          {:scrummer_caption => :failed,      :position => 6, :is_scrum => true, :width => 60, :name => I18n.translate(:scrum_failed),      :short_name => 'F', :color => '#FF7066'},
+          {:scrummer_caption => :finished,    :position => 7, :is_scrum => true, :width => 60, :name => I18n.translate(:scrum_finished),    :short_name => 'F', :is_closed => true, :color => '#B8D050'}]
           
           statuses.each do |options|
             caption = options[:scrummer_caption]

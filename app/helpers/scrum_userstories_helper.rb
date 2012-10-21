@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 module ScrumUserstoriesHelper
 			
 	#unloadable # prevent it from being unloaded in development mode
@@ -71,7 +69,7 @@ module ScrumUserstoriesHelper
   		if issue.time_trackable?
   		  content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-actual_hours'>" + output_value + "</div>"
   		else
-  		  output_value = "Σ" + output_value if !issue.direct_children.empty? && value > 0
+  		  output_value = "&Sigma;" + output_value if !issue.direct_children.empty? && value > 0
   		  content = "<div align='center' class='float addition' id='issue-#{issue.id}-actual_hours'>" + output_value + "</div>"
   		end
   		
@@ -95,7 +93,7 @@ module ScrumUserstoriesHelper
           "<div align='center' class='#{css_class} #{format} #{column.name}-container' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
         else
           if column.name == :remaining_hours
-            output_content = "Σ" + value.to_s
+            output_content = "&Sigma;" + value.to_s
           else
             output_content = format_story_size value.to_f
           end
@@ -135,7 +133,7 @@ module ScrumUserstoriesHelper
 				content = value > 0 ? value : ' '*4
 				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
 			else
-				content = (value.to_f > 0) ? "<span align='center' class='accumelated-result'>Σ#{value}</span>" : '&nbsp;';
+				content = (value.to_f > 0) ? "<span align='center' class='accumelated-result'>&Sigma;#{value}</span>" : '&nbsp;';
 			end			  	
   	else
   		column_content(column, issue)

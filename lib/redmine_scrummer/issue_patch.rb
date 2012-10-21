@@ -237,10 +237,6 @@ module RedmineScrummer
         self.custom_field_values.delete_if {|cfv| duplicated_fields.include?(cfv.custom_field.scrummer_caption)}
       end
 
-      def scrummer_caption
-        read_attribute(:scrummer_caption).try(:to_sym)
-      end
-
       def story_size=(value)
         write_attribute(:story_size, value)
         self.custom_field_values = {CustomField.scrum_story_size.id.to_s => value.to_f.to_s}

@@ -78,15 +78,17 @@ class ScrumChartsController < IssuesController
     @issues = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
     
     curves = [l(:actual_hrs), l(:actual_and_remaining_hrs), l(:remaining_hrs)]
-    @axes_sprint = {}
-    curves.each do |curve|
-      @axes_sprint[curve] = []
+
+    @axes_sprint = curves.inject({}) do |memo, curve|
+      memo[curve] = []
+      memo
     end
 
     # building dates map
-    dates_array = (@start_date..@end_date)
-    dates_map = {}
-    dates_array.each{|date| dates_map[date] = (date.to_time + Time.now.utc_offset).to_i * 1000}
+    dates_map = (@start_date..@end_date).inject({}). do |memo, date| 
+      memo[date] = (date.to_time + Time.now.utc_offset).to_i * 1000
+      memo
+    end
 
     gather_information(@axes_sprint, curves, dates_map) do |issue, date|
       # history will selects the issues in date descending order
@@ -95,10 +97,13 @@ class ScrumChartsController < IssuesController
       # before the given date 
       sprint_hrs = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
       
+      actual    = sprint_hrs.try(:actual).to_f
+      remaining = sprint_hrs.try(:remaining).to_f
+
       # filling an array that will contain the value for each curve
-      [sprint_hrs.try(:actual).to_f,
-       sprint_hrs.try(:actual).to_f + sprint_hrs.try(:remaining).to_f,
-       sprint_hrs.try(:remaining).to_f]
+      [actual,
+       actual + remaining,
+       remaining]
     end
 
     # manually add ideal burn down
@@ -181,6 +186,7 @@ class ScrumChartsController < IssuesController
           points[i] += issue_point
         end
       end
+      
       # Checking if the date is a vacation or the start or the end date
       if !@project.non_working_day?(date) || date == start_date || date == end_date
         curves.each_with_index do |curve, i|

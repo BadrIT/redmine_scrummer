@@ -363,3 +363,6 @@ table.releases {
 tr.release.closed, tr.release.closed a {
 	color: #999;
 }
+#chart-actions a{
+  font-size: 16px;
+}

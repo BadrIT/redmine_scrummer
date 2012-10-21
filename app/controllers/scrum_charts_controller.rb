@@ -31,19 +31,9 @@ class ScrumChartsController < IssuesController
     if params[:chart] == 'sprint'
       get_sprint
       gather_sprint_data
-      
-      render :update do |page|
-        page.replace_html 'sprint_container', ''
-        page << "var sprint_chart = set_data('sprint_container', #{map_to_charts_series(@axes_sprint)}, 'Sprint Burn Chart', 'Time (hrs)', 'hrs');"
-      end
     else
       get_release
       gather_release_data
-      
-      render :update do |page|
-        page.replace_html 'release_container', ''
-        page << "set_data('release_container', #{map_to_charts_series(@axes_release)}, 'Release Burnup Chart', 'Points (pts)', 'pts', {categories: #{values_sorted_by_keys(@dates_map)}});"
-      end
     end
   end
 
@@ -73,7 +63,7 @@ class ScrumChartsController < IssuesController
     @end_date   = @sprint.effective_date
 
     # validation for the range
-    return false if @start_date.nil? || @end_date.nil? || @start_date >= @end_date
+    return false if @start_date.blank? || @end_date.blank? || @start_date >= @end_date
 
     @issues = @project.issues.trackable.find :all, :conditions => ['fixed_version_id = ?', @sprint.id]
     
@@ -85,7 +75,7 @@ class ScrumChartsController < IssuesController
     end
 
     # building dates map
-    dates_map = (@start_date..@end_date).inject({}). do |memo, date| 
+    dates_map = (@start_date..@end_date).inject({}) do |memo, date| 
       memo[date] = (date.to_time + Time.now.utc_offset).to_i * 1000
       memo
     end

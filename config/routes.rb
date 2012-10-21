@@ -35,6 +35,7 @@ RedmineApp::Application.routes.draw do
   
   # Scrum Charts
   match '/projects/:project_id/scrum_charts(.:format)' => 'scrum_charts#index', :as => :scrum_charts
+  match '/projects/:project_id/scrum_charts/update_chart' => 'scrum_charts#update_chart', :as => :update_chart
   
   # Vacations
   match '/vacations' => 'vacations#index', :as => :vacations

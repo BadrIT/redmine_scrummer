@@ -19,9 +19,8 @@
 		<% @sprints.each do |sprint|%>
 		<li class='ui-widget-content'>
 			<%= link_to sprint.name,
-			:url => {:action => 'update_chart', :project_id => @project, :chart => 'sprint',  :id => sprint.id},
-			:success => "alterPDFLink(#{sprint.id}, null); eval(data);",
-			:method => 'GET', :remote => true %>
+			update_chart_path(@project, :chart => 'sprint',  :id => sprint.id),
+			:method => :get, :remote => true %>
 		</li>
 		<%end%>
 	</ul>
@@ -34,9 +33,8 @@
 		<% @releases.each do |release|%>
 		<li class='ui-widget-content'>
 			<%= link_to release.name,
-			:url => {:action => 'update_chart', :project_id => @project, :chart => 'release', :id => release.id},
-			:success => "alterPDFLink(null, #{release.id}); eval(data);",
-			:method => 'GET', :remote => true %>
+			update_chart_path(@project, :chart => 'release', :id => release.id),
+			:method => :get, :remote => true %>
 		</li>
 		<%end%>
 	</ul>
@@ -49,7 +47,9 @@
 		set_data("release_container", <%= map_to_charts_series(@axes_release) %>, "Release Burnup Chart", "Points (pt)", "pts", {categories: <%= values_sorted_by_keys(@dates_map) %> });
 	});
 	
-	$('.selectable').selectable().each( function() {
+	$('.selectable').selectable({ selected: function(event, ui){
+			$(ui.selected.children[0]).click();
+		}}).each( function() {
 		$($('li', this)[0]).addClass('ui-selected');
 	});
 	

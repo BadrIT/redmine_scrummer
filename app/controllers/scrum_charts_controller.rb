@@ -76,7 +76,9 @@ class ScrumChartsController < IssuesController
 
     # building dates map
     dates_map = (@start_date..@end_date).inject({}) do |memo, date| 
-      memo[date] = (date.to_time + Time.now.utc_offset).to_i * 1000
+      unless @project.non_working_day?(date) 
+        memo[date] = (date.to_time + Time.now.utc_offset).to_i * 1000
+      end
       memo
     end
 
@@ -102,6 +104,8 @@ class ScrumChartsController < IssuesController
     ar << actual_and_remaining_hrs[0]
     ar << [actual_and_remaining_hrs.last[0],0]
     @axes_sprint[(:ideal_burn)] = ar
+
+    @sprint_x_labels = dates_map.values.sort.map(&:to_s)
     true
   end
 
@@ -114,7 +118,11 @@ class ScrumChartsController < IssuesController
     # building dates array
     @dates_map = {}
     @dates_map[@start_date] = l(:start_date)
-    @release.sprints.each{|sprint| @dates_map[sprint.effective_date] = sprint.name}
+
+    @release.sprints.each do |sprint| 
+      @dates_map[sprint.effective_date] = sprint.name
+    end
+    
     @dates_map[@end_date] = l(:end_date)
 
     @issues  = @release.issues.find :all, :conditions => ['tracker_id = ?', Tracker.scrum_userstory_tracker.id]

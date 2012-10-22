@@ -21,6 +21,11 @@ module ScrumChartsHelper
   		h = {}
   		h['name'] = k
   		h['data'] = hash[k]
+
+      h['data'].each do |i|
+        i[0] = i.first.to_s
+      end
+
   		ar << h
   	end
   	ar.to_json.html_safe

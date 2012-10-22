@@ -42,7 +42,7 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		sprint_chart = set_data("sprint_container", <%= map_to_charts_series(@axes_sprint) %>, "Sprint Burn Chart", "Time (hrs)", "hrs");
+		sprint_chart = set_data("sprint_container", <%= map_to_charts_series(@axes_sprint) %>, "Sprint Burn Chart", "Time (hrs)", "hrs",  {categories: <%= @sprint_x_labels.inspect.html_safe %> });
 		
 		set_data("release_container", <%= map_to_charts_series(@axes_release) %>, "Release Burnup Chart", "Points (pt)", "pts", {categories: <%= values_sorted_by_keys(@dates_map) %> });
 	});
@@ -78,13 +78,19 @@
             		week: '%b-%Y',
 					month: '%b-%Y',
 					year: '%Y'
-        		},
-        	 	labels: {
-            		rotation: -45,
-            		align: 'right',
-		            style: {
-		                font: 'normal 13px Verdana, sans-serif'
-		            }
+        	},
+      	 	labels: {
+      	 			formatter: function() {
+      	 				if(div_id == 'sprint_container')
+                  return Highcharts.dateFormat('%a %d %b', this.value);
+                else
+                	return this.value;
+              },
+          		rotation: -45,
+          		align: 'right',
+	            style: {
+	                font: 'normal 13px Verdana, sans-serif'
+	        		}
          	}
 			},
 			yAxis : {

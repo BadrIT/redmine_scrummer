@@ -221,11 +221,15 @@ module ScrumUserstoriesHelper
   end
   
   def issue_allowed_statuses(issue)
-    statuses = "{"
     # issue.new_statuses_allowed_to(User.current).each do |status|
-    issue.tracker.issue_statuses.each do |status|
-      statuses += "'" + status.short_name + "':'" + status.name + "', "
+    statuses = issue.tracker.issue_statuses.inject("{") do |memo, status|
+      unless status.scrummer_caption.blank?
+        memo += "'" + status.short_name + "':'" + status.name + "', "
+      end
+      
+      memo
     end
+
     statuses += "'selected':'" + issue.status.short_name + "'}"
     statuses
   end

@@ -1,14 +1,33 @@
 GIT
-  remote: git@github.com:mohamagdy/event_calendar.git
+  remote: git://github.com/mohamagdy/event_calendar.git
   revision: ebb9c9442ba3a1d9722be3dbf143282c92c921cc
   specs:
     event-calendar (2.3.3)
 
 GEM
   specs:
+    activemodel (3.2.8)
+      activesupport (= 3.2.8)
+      builder (~> 3.0.0)
+    activerecord (3.2.8)
+      activemodel (= 3.2.8)
+      activesupport (= 3.2.8)
+      arel (~> 3.0.2)
+      tzinfo (~> 0.3.29)
+    activesupport (3.2.8)
+      i18n (~> 0.6)
+      multi_json (~> 1.0)
+    arel (3.0.2)
+    builder (3.0.0)
+    i18n (0.6.1)
+    multi_json (1.3.6)
+    sneaky-save (0.0.3)
+      activerecord (>= 3.2.0)
+    tzinfo (0.3.33)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   event-calendar!
+  sneaky-save

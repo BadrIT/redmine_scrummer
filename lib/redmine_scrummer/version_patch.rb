@@ -73,7 +73,7 @@ module RedmineScrummer
           :column_names => columns, :filters => filters)
         
         @query.user = User.current
-        @query.project = @project
+        @query.project = project
         
         @query.save
       end

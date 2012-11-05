@@ -22,14 +22,7 @@ module RedmineScrummer
           q.update_attributes(options)
           
           columns =  [:subject, :assigned_to, :story_size, :status, :estimated_hours, :business_value] 
-          sprint_query = Query.find_or_create_by_scrummer_caption(:scrummer_caption => "Sprint-Planning", 
-                                                   :sort_criteria    => [],
-                                                   :column_names     => columns,                                                   
-                                                   :name             => I18n.translate(:label_scrum_sprint_planing),
-                                                   :is_public        => true)
-
-          sprint_query.sort_criteria = []
-          sprint_query.save
+          
           
           #############################################################################################
           # Create/Update Trackers

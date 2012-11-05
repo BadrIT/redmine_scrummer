@@ -79,7 +79,7 @@ module RedmineScrummer
       end
 
       def destroy_custom_query
-        query = Query.find_by_name(self.name)
+        query = project.queries.find_by_name(self.name)
         query.try(:destroy)
       end
 

@@ -1,4 +1,6 @@
-= Redmine
+= Redmine Scrummer
+
+Redmine Scrummer is a redmine plugin to let it supports scrum agile process.
 
 Redmine is a flexible project management web application written using Ruby on Rails framework.
 

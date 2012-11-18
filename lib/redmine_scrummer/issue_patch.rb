@@ -139,7 +139,7 @@ module RedmineScrummer
       end
       
       def with_task_children?
-        self.children.map(&:tracker).map(&:id).include?(Tracker.find_by_scrummer_caption(:task).id)
+        self.children.map(&:tracker).map(&:id).include?(Tracker.find_by_scrummer_caption('task').id)
       end
       
       def issue_tasks
@@ -412,7 +412,7 @@ module RedmineScrummer
 
       def set_release_CF_value
         if self.new_record?
-          field = IssueCustomField.find_by_scrummer_caption(:release)
+          field = IssueCustomField.find_by_scrummer_caption('release')
           field_value = self.custom_values.select{|cv| cv.custom_field_id == field.id}.try(:first)
 
           field_value.value = self.release.try(:name) if field_value
@@ -423,7 +423,7 @@ module RedmineScrummer
       def init_custom_fields_values
         ['story_size', 'business_value', 'remaining_hours'].each do |caption|
           if self.send("accept_#{caption}?")
-            next unless (field = IssueCustomField.find_by_scrummer_caption(caption.to_sym))
+            next unless (field = IssueCustomField.find_by_scrummer_caption(caption))
             
             field_value = self.custom_values.select{|cv| cv.custom_field_id == field.id}.try(:first)
             field_value.value = self.send(caption).to_s if (field_value && field_value.value == field.default_value)

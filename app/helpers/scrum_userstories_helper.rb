@@ -48,7 +48,7 @@ module ScrumUserstoriesHelper
 
   	if value.is_a?(IssueStatus) && issue.status.is_scrum
   	  #TODO refactoring cache IssueStatus please :(
-  	  content = IssueStatus.find_by_scrummer_caption(value.scrummer_caption).short_name.upcase
+  	  content = IssueStatus.find_by_scrummer_caption(value.scrummer_caption.to_s).short_name.upcase
   	  
       "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status' data-statuses=\"#{issue_allowed_statuses(issue)}\"><b>" + content.to_s + "</b></div>"
   	elsif column.name == :subject

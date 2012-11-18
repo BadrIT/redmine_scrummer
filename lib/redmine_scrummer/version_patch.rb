@@ -24,35 +24,35 @@ module RedmineScrummer
       def method_missing(m, *args, &block)
         # providing speed access to issues that have specfic tracker e.g. defined_issues will return all defined issues
         if m.to_s =~ /(defined|in_progress|completed|accepted|failed|succeeded|finished)_issues$/
-          self.fixed_issues.find(:all, :conditions => ['status_id = ?', IssueStatus.find_by_scrummer_caption($1.to_sym)])
+          self.fixed_issues.find(:all, :conditions => ['status_id = ?', IssueStatus.find_by_scrummer_caption($1)])
         else
           super
         end
       end
       
       def user_stories
-        fixed_issues.find(:all, :conditions => ['tracker_id = ?', Tracker.find_by_scrummer_caption(:userstory).id]).delete_if do |user_story|
+        fixed_issues.find(:all, :conditions => ['tracker_id = ?', Tracker.find_by_scrummer_caption('userstory').id]).delete_if do |user_story|
           !user_story.with_task_children? && !user_story.childrenless?
         end
       end
       
       # returns the value of the buffer_size custom field or zero if nil
       def buffer_size
-        buffer_size_field = VersionCustomField.find_by_scrummer_caption(:buffer_size)
+        buffer_size_field = VersionCustomField.find_by_scrummer_caption('buffer_size')
         self.custom_value_for(buffer_size_field).try(:value).try(:to_i) || 0
       end
       
       # returns the value of the start_date custom field
       # NOTE: Redmine defines 'start_date' function which return the least date of the all fixed issues
       def start_date_custom_value
-        start_date_field = VersionCustomField.find_by_scrummer_caption(:start_date)
+        start_date_field = VersionCustomField.find_by_scrummer_caption('start_date')
         value = self.custom_value_for(start_date_field).try(:value)
         value = value.try(:to_date) unless value.blank?
         value
       end
 
       def version_custom_value
-        version_field = VersionCustomField.find_by_scrummer_caption(:start_date)
+        version_field = VersionCustomField.find_by_scrummer_caption('start_date')
         self.custom_value_for(version_field).try(:value)
       end
       

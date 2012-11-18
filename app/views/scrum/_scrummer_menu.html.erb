@@ -34,28 +34,28 @@
 <style type="text/css">
 	/* Assigning Colors for issue trackers */
 	.userstory-issue {
-		background-color: <%= Tracker.find_by_scrummer_caption(:userstory).color %>
+		background-color: <%= Tracker.find_by_scrummer_caption('userstory').color %>
 	}
 	.task-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption(:task).color %>
+		background-color:<%= Tracker.find_by_scrummer_caption('task').color %>
 	}
 	.epic-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption(:epic).color %>
+		background-color:<%= Tracker.find_by_scrummer_caption('epic').color %>
 	}
 	.defectsuite-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption(:defectsuite).color %>
+		background-color:<%= Tracker.find_by_scrummer_caption('defectsuite').color %>
 	}
 	.defect-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption(:defect).color %>
+		background-color:<%= Tracker.find_by_scrummer_caption('defect').color %>
 	}
 	.test-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption(:test).color %>
+		background-color:<%= Tracker.find_by_scrummer_caption('test').color %>
 	}
 	.spike-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption(:spike).color %>
+		background-color:<%= Tracker.find_by_scrummer_caption('spike').color %>
 	}
 	.refactor-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption(:refactor).color %>
+		background-color:<%= Tracker.find_by_scrummer_caption('refactor').color %>
 	}
 
 	/* Assigning colors for issues statues */

@@ -121,7 +121,7 @@ class ScrumSprintsPlanningController < IssuesController
     end
 
     if @sprint.save && (wiki_disabled || page.save)
-      field = VersionCustomField.find_by_scrummer_caption(:retrospective_url)
+      field = VersionCustomField.find_by_scrummer_caption('retrospective_url')
       field_value = @sprint.custom_values.find_or_create_by_custom_field_id(field.id)
       
       field_value.value = url_for(:controller => 'wiki', :action => 'show', :project_id => page.project,

@@ -65,10 +65,10 @@ module RedmineScrummer
         if self.new_record?
           Setting.default_projects_modules << "scrummer"
 
-          self.issue_custom_fields << CustomField.find_by_scrummer_caption(:story_size)
-          self.issue_custom_fields << CustomField.find_by_scrummer_caption(:business_value)
-          self.issue_custom_fields << CustomField.find_by_scrummer_caption(:release)
-          self.issue_custom_fields << CustomField.find_by_scrummer_caption(:remaining_hours)
+          self.issue_custom_fields << CustomField.find_by_scrummer_caption('story_size')
+          self.issue_custom_fields << CustomField.find_by_scrummer_caption('business_value')
+          self.issue_custom_fields << CustomField.find_by_scrummer_caption('release')
+          self.issue_custom_fields << CustomField.find_by_scrummer_caption('remaining_hours')
         end
       end
     end

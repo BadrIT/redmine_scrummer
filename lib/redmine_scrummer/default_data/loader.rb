@@ -94,14 +94,14 @@ module RedmineScrummer
           # WorkflowRule.destroy_all
           
           # trackers
-          test_id = Tracker.find_by_scrummer_caption(:test).id
-          task_id = Tracker.find_by_scrummer_caption(:task).id
-          spike_id = Tracker.find_by_scrummer_caption(:spike).id
+          test_id = Tracker.find_by_scrummer_caption('test').id
+          task_id = Tracker.find_by_scrummer_caption('task').id
+          spike_id = Tracker.find_by_scrummer_caption('spike').id
           
           # statuses
-          finished_id = IssueStatus.find_by_scrummer_caption(:finished).id
-          failed_id = IssueStatus.find_by_scrummer_caption(:failed).id
-          succeeded_id = IssueStatus.find_by_scrummer_caption(:succeeded).id
+          finished_id = IssueStatus.find_by_scrummer_caption('finished').id
+          failed_id = IssueStatus.find_by_scrummer_caption('failed').id
+          succeeded_id = IssueStatus.find_by_scrummer_caption('succeeded').id
           
           limited_statuses = [failed_id,finished_id,succeeded_id]
           
@@ -135,8 +135,8 @@ module RedmineScrummer
               [:defined,:succeeded,:failed].each do |new_status|
                 conditions = {:role_id       => role.id, 
                               :tracker_id    => test_id, 
-                              :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
-                              :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                              :old_status_id => IssueStatus.find_by_scrummer_caption(old_status.to_s).id, 
+                              :new_status_id => IssueStatus.find_by_scrummer_caption(new_status.to_s).id}
                 WorkflowTransition.find(:first, :conditions => conditions) || WorkflowTransition.create(conditions)
               end
             end
@@ -148,8 +148,8 @@ module RedmineScrummer
                 [task_id, spike_id].each do |tracker_id|
                   conditions = {:role_id         => role.id, 
                                   :tracker_id    => tracker_id, 
-                                  :old_status_id => IssueStatus.find_by_scrummer_caption(old_status).id, 
-                                  :new_status_id => IssueStatus.find_by_scrummer_caption(new_status).id}
+                                  :old_status_id => IssueStatus.find_by_scrummer_caption(old_status.to_s).id, 
+                                  :new_status_id => IssueStatus.find_by_scrummer_caption(new_status.to_s).id}
                   WorkflowTransition.find(:first, :conditions => conditions) || WorkflowTransition.create(conditions)
                 end
               end
@@ -374,7 +374,7 @@ module RedmineScrummer
                                    
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
-            tracker = Tracker.find_by_scrummer_caption(tracker_caption)
+            tracker = Tracker.find_by_scrummer_caption(tracker_caption.to_s)
             tracker.custom_fields = []
             tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
           end

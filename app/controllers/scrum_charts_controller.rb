@@ -134,7 +134,7 @@ class ScrumChartsController < IssuesController
         @axes_release[curve] = []
     end
     
-    accepted_id =  IssueStatus.find_by_scrummer_caption(:accepted).id  
+    accepted_id =  IssueStatus.find_by_scrummer_caption('accepted').id  
     gather_information(@axes_release, curves, @dates_map) do |issue, date|
       # point histories will selects the issues in date descending order
       # steps: sort descendingly and get the first point history.

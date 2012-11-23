@@ -366,3 +366,6 @@ tr.release.closed, tr.release.closed a {
 #chart-actions a{
   font-size: 16px;
 }
+#cluetip-inner{
+  white-space: pre;
+}

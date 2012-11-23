@@ -116,7 +116,7 @@
                      },
         indicator  : '<%= image_tag 'loading.gif'%>' ,
         data: function(value, settings) {
-          toReturn = "{<%= storysize_possible_values %> " +"'selected':'" + value + "'}";
+          toReturn = "{<%= storysize_possible_values.html_safe %> " +"'selected':'" + value + "'}";
           return toReturn;
         },
         type: 'select',

@@ -17,7 +17,16 @@ module RedmineScrummer
 				# obj can be one of two classes; Issue or Project
 				# obj is issue when comming fom Issue default view
 				# obj is project whtn comming from building filters partial
-				project = obj.is_a?(Issue) ? obj.project : obj
+				project = if obj.is_a?(Issue) 
+				  obj.project
+				elsif obj.is_a?(Project)
+					obj
+				elsif obj.is_a?(Array) && obj.size == 1
+					obj.first
+				else
+					reutrn super
+				end
+					
 				project.releases.map(&:name)
 			else
 				super

@@ -179,7 +179,7 @@ module ScrumUserstoriesHelper
   
   def subject_content(column , issue)
     value = column.value(issue)
-    description = textilizable(issue.description).gsub("'","\'")
+    description = issue.description.gsub("'","\'")
     
     options = {:title=>"#{h(issue.subject)}|#{h(description)}", :class=>'subject-contents'}
     

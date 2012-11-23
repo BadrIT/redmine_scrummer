@@ -367,5 +367,5 @@ tr.release.closed, tr.release.closed a {
   font-size: 16px;
 }
 #cluetip-inner{
-  white-space: pre;
+  white-space: pre-line;
 }

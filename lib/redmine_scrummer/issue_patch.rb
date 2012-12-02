@@ -358,6 +358,7 @@ module RedmineScrummer
       
       def build_history_entry
         IssueHistory.new :issue_id => self.id,
+                         :date => Time.now.to_date,
 			                   :actual => self.actual_hours,
 		                     :remaining => self.remaining_hours
       end
@@ -383,6 +384,7 @@ module RedmineScrummer
       
       def build_points_history_entry
         PointsHistory.new :issue_id => self.id,
+                          :date => Time.now.to_date,
                           :points   => self.story_size || 0.0
       end      
       

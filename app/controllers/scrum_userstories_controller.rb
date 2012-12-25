@@ -437,13 +437,6 @@ class ScrumUserstoriesController < IssuesController
     @current_page = :user_stories
   end
 
-  # By Mohamed Magdy
-  # Finds the parent issue ID from its project_issue_number
-  def parent_issue_setter
-    params[:issue][:parent_issue_id] = @project.issues.find(:first,
-    :conditions => ['project_issue_number = ?', params[:issue][:parent_issue_id]]).try(:id).to_s
-  end
-
   def scrum_issues_list(issues, &block)
     issues = issues.to_a.reverse
 

@@ -18,9 +18,7 @@ module RedmineScrummer
       
       protected
       def update_actual_hours
-        i = self.issue
-        i.actual_hours = i.spent_hours
-        i.save
+        self.issue.update_actual_hours
       end
     end
   end

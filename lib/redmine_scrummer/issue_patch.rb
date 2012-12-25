@@ -268,13 +268,6 @@ module RedmineScrummer
         self.parent.update_accumulated_field(field) if self.parent
       end
       
-      # By Mohamed Magdy
-      # This method sets teh project's issue number independent from other projects
-      # (each project has its own issue numbering starting from 1)
-      def project_issue_number_incrementer
-        self.update_attribute(:project_issue_number, self.project.issues.maximum(:project_issue_number).to_i + 1)
-      end
-      
       def update_parent_status
         # check for id_changed to handle after_create
         if !@cached_changes['status_id'].blank? || !@cached_changes['id'].blank?
@@ -444,6 +437,11 @@ module RedmineScrummer
             ((actual_hours / (actual_hours + remaining_hours.to_f)) * 10).round * 10
           end
         end
+      end
+
+      def update_actual_hours
+        self.actual_hours = self.time_entries.sum(:hours)
+        self.save
       end
     end
   end

@@ -18,18 +18,14 @@ module RedmineScrummer
                                                    :name             => I18n.translate(:label_scrum_user_stories),
                                                    :filters          => filters, 
                                                    :is_public        => true}
-          q = Query.find_or_create_by_scrummer_caption(options)
+          q = Query.find_or_initialize_by_scrummer_caption(options)
           q.update_attributes(options)
           
           columns =  [:subject, :assigned_to, :story_size, :status, :estimated_hours, :business_value] 
           
-          
           #############################################################################################
           # Create/Update Trackers
           #############################################################################################
-          # removing Scrum-Spark as it's now deprecated
-          spark_tracker = Tracker.find_by_name('Scrum-Spark')
-          spark_tracker.update_attributes({:scrummer_caption => :spike}) if spark_tracker
           
           scrum_tracker_options = {:is_scrum => true, :is_in_roadmap => true, :is_in_chlog => true}
           
@@ -45,7 +41,12 @@ module RedmineScrummer
           scrum_trackers.each do |caption, options|
             options = options.merge(scrum_tracker_options)
             
-            tracker = Tracker.find_or_create_by_scrummer_caption(caption)            
+            tracker = Tracker.find_or_initialize_by_scrummer_caption(caption.to_s)            
+            if tracker.new_record?
+              tracker = Tracker.find_by_name(options[:name]) || tracker
+              tracker.scrummer_caption = caption.to_s
+            end
+
             tracker.update_attributes(options)
           end
           
@@ -57,10 +58,10 @@ module RedmineScrummer
                           :product_owner  => I18n.translate(:scrum_productOwner)}
           
           scrum_roles.each do |caption, name|
-            role = Role.find_or_create_by_scrummer_caption(caption);
+            role = Role.find_or_initialize_by_scrummer_caption(caption.to_s)
             role.update_attributes(:is_scrum => true, :scrummer_caption => caption, :name => name)
           end
-          
+
           #############################################################################################
           # Create/Update Statuses
           #############################################################################################
@@ -75,7 +76,7 @@ module RedmineScrummer
           
           statuses.each do |options|
             caption = options[:scrummer_caption]
-            status = IssueStatus.find_or_create_by_scrummer_caption(caption)
+            status = IssueStatus.find_or_initialize_by_scrummer_caption(caption.to_s)
             status.update_attributes(options)
           end
 
@@ -92,7 +93,7 @@ module RedmineScrummer
           # Create/Update WorkflowTransition
           #############################################################################################                    
           # WorkflowRule.destroy_all
-          
+
           # trackers
           test_id = Tracker.find_by_scrummer_caption('test').id
           task_id = Tracker.find_by_scrummer_caption('task').id
@@ -155,7 +156,7 @@ module RedmineScrummer
               end
             end
           end
-          
+
           #############################################################################################  
           # seed scrum roles permissions
           #############################################################################################  
@@ -274,7 +275,7 @@ module RedmineScrummer
               role.save!        
             end
           end 
-          
+
           #############################################################################################  
           # Seed Scrum Permissions
           #############################################################################################        
@@ -316,13 +317,13 @@ module RedmineScrummer
           end
           
           # add start_date custom field to versions
-          start_date_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :start_date)
+          start_date_custom_field = VersionCustomField.find_or_initialize_by_scrummer_caption('start_date')
           start_date_custom_field.update_attributes(
                               :name          => I18n.translate(:start_date),
                               :field_format  => 'date')
 
           # add retrospective custom field to versions
-          retrospective_url_custom_field = VersionCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :retrospective_url)
+          retrospective_url_custom_field = VersionCustomField.find_or_initialize_by_scrummer_caption('retrospective_url')
           retrospective_url_custom_field.update_attributes(
                               :name          => I18n.translate(:retrospective_url),
                               :field_format  => 'string',
@@ -330,7 +331,7 @@ module RedmineScrummer
           
           
           # add story size custom field
-          story_size_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :story_size)
+          story_size_custom_field = IssueCustomField.find_or_initialize_by_scrummer_caption('story_size')
           story_size_custom_field.update_attributes(
                                     :name             => I18n.translate(:story_size),
                                     :field_format     => 'list',
@@ -338,14 +339,14 @@ module RedmineScrummer
                                     :is_required      => false,
                                     :default_value    => "0.0")
            # add business value custom field
-          business_value_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :business_value)
+          business_value_custom_field = IssueCustomField.find_or_initialize_by_scrummer_caption('business_value')
           business_value_custom_field.update_attributes(
                                     :name             => I18n.translate(:business_value),
                                     :field_format     => 'float',
                                     :default_value    => "0")
 
           # adding release_id value custom field
-          release_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :release)
+          release_custom_field = IssueCustomField.find_or_initialize_by_scrummer_caption('release')
           release_custom_field.update_attributes(
                                     :name             => I18n.translate(:release),
                                     :field_format     => 'list',
@@ -355,9 +356,8 @@ module RedmineScrummer
 
           release_custom_field.update_attribute(:field_format, 'release')
 
-          
           # add remaining time custom field
-          remaining_hours_custom_field = IssueCustomField.find_or_create_by_scrummer_caption(:scrummer_caption => :remaining_hours)
+          remaining_hours_custom_field = IssueCustomField.find_or_initialize_by_scrummer_caption('remaining_hours')
           remaining_hours_custom_field.update_attributes(
                                     :name             => I18n.translate(:remaining_hours),
                                     :field_format     => 'float',
@@ -366,7 +366,7 @@ module RedmineScrummer
           trackers_custom_fields = {:userstory => [:story_size, :business_value, :release],
                                    :epic      => [:story_size, :business_value, :release],
                                    :defectsuite => [:story_size, :business_value, :release],
-                                   :task      => [:remaining_hours, :release],
+                                   :test      => [:remaining_hours, :release],
                                    :defect    => [:remaining_hours, :release],
                                    :refactor  => [:remaining_hours, :release],
                                    :spike     => [:remaining_hours, :release]}
@@ -376,9 +376,9 @@ module RedmineScrummer
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption.to_s)
             tracker.custom_fields = []
-            tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions)
+            tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions.to_s)
           end
-          
+
           # set the defualt method for calculation done ratio for issues.
           Setting.issue_done_ratio = 'automatic_calculation'
           TimeEntryActivity.create(:name => 'Scrum')

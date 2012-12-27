@@ -11,7 +11,7 @@ module RedmineScrummer
           set_language_if_valid(lang)
           
           filters = {"status_id"=>{:operator=>"*", :values=>[""]}} #TODO should have empty spaces
-          columns =  [:subject, :fixed_version, :assigned_to, :story_size, :status, :estimated_hours, :actual_hours, :remaining_hours] 
+          columns =  [:subject, :fixed_version, :assigned_to, :story_size, :business_value, :status, :actual_hours, :remaining_hours] 
           options = {:scrummer_caption => "User-Stories", 
                                                    :sort_criteria    => [:id],
                                                    :column_names     => columns,                                                   
@@ -20,8 +20,6 @@ module RedmineScrummer
                                                    :is_public        => true}
           q = Query.find_or_initialize_by_scrummer_caption(options)
           q.update_attributes(options)
-          
-          columns =  [:subject, :assigned_to, :story_size, :status, :estimated_hours, :business_value] 
           
           #############################################################################################
           # Create/Update Trackers
@@ -337,6 +335,8 @@ module RedmineScrummer
                                     :field_format     => 'list',
                                     :possible_values  => Scrummer::Constants::StorySizes.map{|size| size.to_f.to_s},
                                     :is_required      => false,
+                                    :searchable       => true,
+                                    :is_filter        => true,
                                     :default_value    => "0.0")
            # add business value custom field
           business_value_custom_field = IssueCustomField.find_or_initialize_by_scrummer_caption('business_value')
@@ -375,8 +375,11 @@ module RedmineScrummer
           # add connections between fields and trackers          
           trackers_custom_fields.each do |tracker_caption, fields_captions|
             tracker = Tracker.find_by_scrummer_caption(tracker_caption.to_s)
-            tracker.custom_fields = []
-            tracker.custom_fields << IssueCustomField.find_all_by_scrummer_caption(fields_captions.to_s)
+            fields_captions.each do |cf|
+              if tracker.custom_fields.find_by_scrummer_caption(cf.to_s).nil?
+                tracker.custom_fields << IssueCustomField.find_by_scrummer_caption(cf.to_s)
+              end
+            end
           end
 
           # set the defualt method for calculation done ratio for issues.

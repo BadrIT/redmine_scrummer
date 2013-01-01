@@ -381,6 +381,11 @@ module RedmineScrummer
               end
             end
           end
+          
+          # set user story is the first tracker
+          tracker = Tracker.find_by_scrummer_caption('userstory')
+          tracker.move_to_top
+
 
           # set the defualt method for calculation done ratio for issues.
           Setting.issue_done_ratio = 'automatic_calculation'

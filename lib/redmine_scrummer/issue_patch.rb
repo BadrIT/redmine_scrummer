@@ -76,9 +76,8 @@ module RedmineScrummer
         
         scope :backlog, :conditions => {:fixed_version_id => nil}
         
-        scope :active, lambda { |*args| {:conditions => ["status_id = ? OR status_id = ?",
-            IssueStatus.in_progress.id,
-            IssueStatus.defined.id]} }
+        scope :active, lambda { |*args| {:conditions => ["status_id in (?)",
+            IssueStatus.where('is_closed = ?', false)]} }
         
         scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
             Tracker.scrum_task_tracker.id,

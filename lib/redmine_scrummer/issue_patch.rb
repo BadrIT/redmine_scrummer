@@ -226,7 +226,7 @@ module RedmineScrummer
       def update_accumulated_field(field)
         value = self.direct_children.sum(field)
             
-        if self.send(field).to_f != value.to_f
+        if self.send(field).to_f != value.to_f && value > 0.0
           self.update_attribute(field, value)
           self.update_parent_accumulated_field(field) 
         end

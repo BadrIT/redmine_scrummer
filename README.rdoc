@@ -37,6 +37,7 @@ You can use redmine tags plugin to support themes.
 = New/Existing Projects Setup
 - Include scrummer module in the your redmine projects
 - Include Custom Fields (Story-Size, Business Value, Release, Remaining) in your redmine projects
+- Make sure members of the project have some scrum roles (ScrumMaster, ProductOwner, ProjectMember)
 
 = Cucumber Initializtion
 

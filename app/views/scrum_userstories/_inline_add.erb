@@ -70,7 +70,7 @@
 		  <div>
         <%= f.label :story_size, l("short_field_story_size"), :class => "scrum_issue_inline_label" %>
         <div class='scrum_issue_inline_control'> 
-          <%= f.select :story_size, Scrummer::Constants::StorySizes %>
+          <%= f.select :story_size, Scrummer::Constants::StorySizes, :selected => f.object.story_size.to_i %>
         </div> 
       </div>
       

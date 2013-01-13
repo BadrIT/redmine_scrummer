@@ -65,7 +65,7 @@ module RedmineScrummer
         belongs_to :release
         
         # backlog issues
-        scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
+        scope :sprint_planing, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
             Tracker.scrum_userstory_tracker.id,
             Tracker.scrum_defect_tracker.id,
             Tracker.scrum_defectsuite_tracker.id,
@@ -79,7 +79,7 @@ module RedmineScrummer
         scope :active, lambda { |*args| {:conditions => ["status_id in (?)",
             IssueStatus.where('is_closed = ?', false)]} }
         
-        scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
+        scope :trackable, lambda { |*args| {:conditions => ["tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ? OR tracker_id = ?",
             Tracker.scrum_task_tracker.id,
             Tracker.scrum_defect_tracker.id,
             Tracker.scrum_refactor_tracker.id,

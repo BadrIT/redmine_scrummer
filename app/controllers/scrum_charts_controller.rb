@@ -87,7 +87,7 @@ class ScrumChartsController < IssuesController
       # steps: sort descendingly and get the first history.
       # if an issue has no history in this day, then the history will be the nearest history of this issue
       # before the given date 
-      sprint_hrs = issue.history.find(:first, :conditions => ['date >= ? and date <= ?', @start_date, date])
+      sprint_hrs = issue.history.find(:first, :conditions => ['date <= ?', date])
       
       actual    = sprint_hrs.try(:actual).to_f
       remaining = sprint_hrs.try(:remaining).to_f
@@ -98,12 +98,25 @@ class ScrumChartsController < IssuesController
        remaining]
     end
 
-    # manually add ideal burn down
+    # manually add ideal burn down, by interpolation
     actual_and_remaining_hrs = @axes_sprint[l(:actual_and_remaining_hrs)]
-    ar = []
-    ar << actual_and_remaining_hrs[0]
-    ar << [actual_and_remaining_hrs.last[0],0]
-    @axes_sprint[(:ideal_burn)] = ar
+    xa = 0
+    ya = actual_and_remaining_hrs[0][1]
+    xb = actual_and_remaining_hrs.size
+    yb = 0
+
+    if xb > xa
+      ar = []
+      actual_and_remaining_hrs.each_with_index do |entry, index|
+        x = index
+        y = ya + (yb-ya)*(x-xa)/(xb-xa)
+        ar << [x,y]
+      end
+
+      @axes_sprint[(:ideal_burn)] = ar
+    else
+      @axes_sprint[(:ideal_burn)] = actual_and_remaining_hrs.dup
+    end
 
     @sprint_x_labels = dates_map.values.sort.map(&:to_s)
     true
@@ -156,10 +169,23 @@ class ScrumChartsController < IssuesController
     @axes_release[l(:remaining_pts)] = ar
 
     # manually add ideal burn down
-    ar = []
-    ar << total_points[0]
-    ar << [(@dates_map.length - 1), 0]
-    @axes_release[l(:ideal_burn)] = ar
+    xa = 0
+    ya = total_points[0][1]
+    xb = total_points.size
+    yb = 0
+
+    if xb > xa
+      ar = []
+      total_points.each_with_index do |entry, index|
+        x = index
+        y = ya + (yb-ya)*(x-xa)/(xb-xa)
+        ar << [x,y]
+      end
+
+      @axes_release[(:ideal_burn)] = ar
+    else
+      @axes_release[(:ideal_burn)] = total_points.dup
+    end
 
   end
   

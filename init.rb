@@ -4,8 +4,13 @@ require 'scrummer_constants'
 Rails.configuration.to_prepare do
 	require_dependency 'issue'
 	require_dependency 'query'
-	require_dependency 'tracker'
+  require_dependency 'tracker'
+	require_dependency 'mailer'
 	
+  unless Mailer.included_modules.include? RedmineScrummer::MailerPatch
+    Mailer.send :include, RedmineScrummer::MailerPatch
+  end
+
 	unless Issue.included_modules.include? RedmineScrummer::IssuePatch
 		Issue.send :include, RedmineScrummer::IssuePatch
 	end

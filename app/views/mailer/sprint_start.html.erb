@@ -1,0 +1,11 @@
+<p>The project <%= @project.name %> has a sprint <%= @sprint.name %> just started.</p>
+
+<b>Start Date:</b> <%= @sprint.try(:start_date_custom_value) %>
+<b>End Date:</b> <%= @sprint.effective_date %>
+
+<b>Assigned Members:</b>
+<ul>
+<% @project.members.each do |m| %>
+<li><%= m.name %></li>
+<% end %>
+</ul>

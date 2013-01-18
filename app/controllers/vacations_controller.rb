@@ -19,7 +19,7 @@ class VacationsController < ApplicationController
   end
 
   def weekly_vacation
-    @weekly_vacation = WeeklyVacation.find_or_initialize_by_project_id(@project)
+    @weekly_vacation = WeeklyVacation.find_or_initialize_by_project_id(@project.id)
 
     respond_to do |format|
       if @weekly_vacation.update_attributes(params[:weekly_vacation])

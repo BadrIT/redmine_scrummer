@@ -31,7 +31,8 @@ class ScrumUserstoriesController < IssuesController
     protected
     def find_scrum_project
       project_id = (params[:issue] && params[:issue][:project_id]) || params[:project_id]
-      @project = Project.find(project_id)
+      @project = Project.find_by_identifier(project_id)
+      @project ||= Project.find(project_id)
     rescue ActiveRecord::RecordNotFound
       render_404
       end

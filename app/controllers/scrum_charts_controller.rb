@@ -28,6 +28,7 @@ class ScrumChartsController < IssuesController
   
   def update_chart
     @axes = {}
+    
     if params[:chart] == 'sprint'
       get_sprint
       gather_sprint_data
@@ -41,7 +42,7 @@ class ScrumChartsController < IssuesController
 
   def get_sprint
     @sprint = if params[:id]
-      Version.find(params[:id])
+      @project.versions.find(params[:id])
     else
       @project.versions.find(:first, :order => 'effective_date DESC')
     end
@@ -49,7 +50,7 @@ class ScrumChartsController < IssuesController
   
   def get_release
     @release = if params[:id]
-      Release.find params[:id]
+      @project.releases.find(params[:id])
     else
       @project.releases.first
     end

@@ -304,7 +304,7 @@ class ScrumUserstoriesController < IssuesController
 
     if session[:query].nil? || params[:set_filter] == 'clear'
       if sprint = @project.current_or_latest_sprint 
-        query = @project.queries.find_by_name(sprint.name)
+        query = IssueQuery.find_by_project_id_and_name(@project.id, sprint.name)
       end 
       query ||= IssueQuery.find_by_scrummer_caption('User-Stories')
       params[:query_id] = query.id if query

@@ -1,5 +1,5 @@
 module RedmineScrummer
-	module QueryPatch
+	module IssueQueryPatch
 		
 		def self.included(base)
 			base.class_eval do				
@@ -59,7 +59,7 @@ module RedmineScrummer
 			
 			# This method sets the default columns displayed in the scrum views 
 			def default_scrummer_columns
-        self.column_names = Query::SCRUMMER_COLUMNS
+        self.column_names = IssueQuery::SCRUMMER_COLUMNS
 			end
 
 		end

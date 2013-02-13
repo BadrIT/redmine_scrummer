@@ -18,7 +18,7 @@ module RedmineScrummer
                                                    :name             => I18n.translate(:label_scrum_user_stories),
                                                    :filters          => filters, 
                                                    :is_public        => true}
-          q = Query.find_or_initialize_by_scrummer_caption(options)
+          q = IssueQuery.find_or_initialize_by_scrummer_caption(options)
           q.update_attributes(options)
           
           #############################################################################################

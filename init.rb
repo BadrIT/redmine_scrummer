@@ -15,8 +15,8 @@ Rails.configuration.to_prepare do
 		Issue.send :include, RedmineScrummer::IssuePatch
 	end
 	
-	unless Query.included_modules.include? RedmineScrummer::QueryPatch
-		Query.send :include, RedmineScrummer::QueryPatch
+	unless IssueQuery.included_modules.include? RedmineScrummer::IssueQueryPatch
+		IssueQuery.send :include, RedmineScrummer::IssueQueryPatch
 	end
 	
 	unless Tracker.included_modules.include? RedmineScrummer::TrackerPatch

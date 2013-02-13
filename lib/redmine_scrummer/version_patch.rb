@@ -67,9 +67,9 @@ module RedmineScrummer
 
       def add_to_side_bar
         filters = {"fixed_version_id" => {:operator => "=", :values => [self.id.to_s]}, "status_id" => {:values => ["1"], :operator => "*"}}
-        columns =  Query::SCRUMMER_COLUMNS
+        columns =  IssueQuery::SCRUMMER_COLUMNS
 
-        @query = Query.new(:name => self.name, :group_by =>"", :sort_criteria => ['id asc'], :is_public => true, 
+        @query = IssueQuery.new(:name => self.name, :group_by =>"", :sort_criteria => ['id asc'], :is_public => true, 
           :column_names => columns, :filters => filters)
         
         @query.user = User.current
@@ -87,11 +87,11 @@ module RedmineScrummer
       # this retrospective is represented as a wikipage with default content.
       public
       def build_wiki_page
-        wikiPage = self.project.wiki.pages.new(:title => self.name)
-        self.wiki_page_title = wikiPage.title
-        wikiPage.build_content(:text => I18n.translate('retrospective_default_content'),
-                                :author_id => User.current)
-        wikiPage
+        wiki_page = self.project.wiki.pages.new(:title => self.name)
+        self.wiki_page_title = wiki_page.title
+        wiki_page.build_content(:text => I18n.translate('retrospective_default_content'),
+                                :author_id => User.current.id)
+        wiki_page
       end
 
     end

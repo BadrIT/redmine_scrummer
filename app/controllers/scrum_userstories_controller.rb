@@ -311,9 +311,7 @@ class ScrumUserstoriesController < IssuesController
     end
     retrieve_query
 
-    # retrieve_query may return Query object not IssueQuery however we need to use IssueQuery
-    @query = IssueQuery.find(@query.id) unless @query.is_a?(IssueQuery)
-    @query.default_scrummer_columns if @query.new_record?
+    @query.column_names = IssueQuery::SCRUMMER_COLUMNS if @query.new_record?
   end
 
   # Edited by Mohamed Magdy

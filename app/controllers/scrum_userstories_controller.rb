@@ -306,7 +306,7 @@ class ScrumUserstoriesController < IssuesController
       if sprint = @project.current_or_latest_sprint 
         query = @project.queries.find_by_name(sprint.name)
       end 
-      query ||= Query.find_by_scrummer_caption('User-Stories')
+      query ||= IssueQuery.find_by_scrummer_caption('User-Stories')
       params[:query_id] = query.id if query
     end
     retrieve_query
@@ -490,7 +490,7 @@ class ScrumUserstoriesController < IssuesController
 
   def set_issues_and_query_for_list
     # set the query to sprint-planning query
-    @query = Query.find_by_scrummer_caption("Sprint-Planning")
+    @query = IssueQuery.find_by_scrummer_caption("Sprint-Planning")
 
     if params[:from_sprint]
       sprint_id = params[:from_sprint].split("sprint-")[1]
@@ -538,7 +538,7 @@ class ScrumUserstoriesController < IssuesController
       conditions << @project.id
     end
 
-    @sidebar_queries = Query.find(:all,
+    @sidebar_queries = IssueQuery.find(:all,
                             :select => 'id, name, is_public',
                             :order => "id DESC",
                             :conditions => conditions)

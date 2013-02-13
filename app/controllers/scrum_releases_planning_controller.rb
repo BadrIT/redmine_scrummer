@@ -15,7 +15,7 @@ class ScrumReleasesPlanningController < IssuesController
   # GET /releases
   # GET /releases.xml
   def index
-    @query = Query.find_by_scrummer_caption("Release-Planning")
+    @query = IssueQuery.find_by_scrummer_caption("Release-Planning")
     # initialize_sort
     
     @release  = Release.new
@@ -46,7 +46,7 @@ class ScrumReleasesPlanningController < IssuesController
   # POST /releases
   # POST /releases.xml
   def create
-    @query = Query.find_by_scrummer_caption("Release-Planning")
+    @query = IssueQuery.find_by_scrummer_caption("Release-Planning")
     # initialize_sort
     @release = Release.new(params[:release])
     @release.project_id = @project.id

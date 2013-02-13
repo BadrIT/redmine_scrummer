@@ -27,7 +27,7 @@ class ScrumSprintsPlanningController < IssuesController
     end
     
     if @success
-      @query = Query.find_by_scrummer_caption("Sprint-Planning")
+      @query = IssueQuery.find_by_scrummer_caption("Sprint-Planning")
       # initialize_sort
       @sprints = @project.versions.find(:all,:order => 'effective_date DESC')
       @list_id = "backlog"

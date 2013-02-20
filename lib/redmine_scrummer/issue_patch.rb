@@ -26,6 +26,8 @@ module RedmineScrummer
         before_save :set_issue_release
         before_save :set_done_ratio_value
 
+        before_save :update_actual_hours_before_copy
+
         # for unknow reason field_changed? doesn't work in after_save callbacks
         # ONLY when using init_journal
         # so that we can them before save and destroy
@@ -42,6 +44,7 @@ module RedmineScrummer
         
         after_save :check_history_entries
         after_save :check_points_history
+
 
         after_destroy :update_parent_accumulated_fields
         after_destroy :update_parent_status
@@ -442,6 +445,12 @@ module RedmineScrummer
       def update_actual_hours
         self.actual_hours = self.time_entries.sum(:hours)
         self.save
+      end
+
+      def update_actual_hours_before_copy
+        if copy?
+          self.actual_hours = 0
+        end
       end
     end
   end

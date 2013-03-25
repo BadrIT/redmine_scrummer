@@ -369,3 +369,21 @@ tr.release.closed, tr.release.closed a {
 #cluetip-inner{
   white-space: pre-line;
 }
+
+table.list.sprint-issues_list th {
+  background-color: #3E5B76;
+  color: #fff;
+}
+
+table.list.sprint-issues_list {
+  border: 1px solid #3E5B76;
+}
+
+table.list.sprint-issues_list th a { 
+  color: #fff;
+}
+
+.status{
+  border-radius: 4px;
+  padding: 1px;
+}

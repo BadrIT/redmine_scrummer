@@ -48,9 +48,10 @@ module ScrumUserstoriesHelper
 
   	if value.is_a?(IssueStatus) && issue.status.is_scrum
   	  #TODO refactoring cache IssueStatus please :(
-  	  content = IssueStatus.find_by_scrummer_caption(value.scrummer_caption.to_s).short_name.upcase
+  	  status = IssueStatus.find_by_scrummer_caption(value.scrummer_caption.to_s)
+      content = status.short_name.upcase
   	  
-      "<div align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status' data-statuses=\"#{issue_allowed_statuses(issue)}\"><b>" + content.to_s + "</b></div>"
+      "<div title='#{status.name}' align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status' data-statuses=\"#{issue_allowed_statuses(issue)}\"><b>" + content.to_s + "</b></div>"
   	elsif column.name == :subject
   	  prefix = if issue.direct_children.blank? 
   	    "<span>&nbsp;&nbsp;</span>"
@@ -60,7 +61,7 @@ module ScrumUserstoriesHelper
       
       tracker_name = issue.tracker.short_name.empty? ?  issue.tracker.name : issue.tracker.short_name
   		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
-  		"#{tracker_name}</b>:</div>" +
+  		"<span class='tracker'>#{tracker_name}</span></b>:</div>" +
   		"<div >&nbsp;#{subject_content(column, issue)}</div>" 
   	elsif column.name == :actual_hours && issue.scrum_issue?
   		content = column_content(column, issue)

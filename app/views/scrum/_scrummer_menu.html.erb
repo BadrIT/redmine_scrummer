@@ -33,29 +33,29 @@
 </div>
 <style type="text/css">
 	/* Assigning Colors for issue trackers */
-	.userstory-issue {
-		background-color: <%= Tracker.find_by_scrummer_caption('userstory').color %>
+	.userstory-issue .tracker {
+		color: <%= Tracker.find_by_scrummer_caption('userstory').color %>
 	}
-	.task-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption('task').color %>
+	.task-issue .tracker {
+		color:<%= Tracker.find_by_scrummer_caption('task').color %>
 	}
-	.epic-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption('epic').color %>
+	.epic-issue .tracker {
+		color:<%= Tracker.find_by_scrummer_caption('epic').color %>
 	}
-	.defectsuite-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption('defectsuite').color %>
+	.defectsuite-issue .tracker {
+		color:<%= Tracker.find_by_scrummer_caption('defectsuite').color %>
 	}
-	.defect-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption('defect').color %>
+	.defect-issue .tracker {
+		color:<%= Tracker.find_by_scrummer_caption('defect').color %>
 	}
-	.test-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption('test').color %>
+	.test-issue .tracker {
+		color:<%= Tracker.find_by_scrummer_caption('test').color %>
 	}
-	.spike-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption('spike').color %>
+	.spike-issue .tracker {
+		color:<%= Tracker.find_by_scrummer_caption('spike').color %>
 	}
-	.refactor-issue {
-		background-color:<%= Tracker.find_by_scrummer_caption('refactor').color %>
+	.refactor-issue .tracker {
+		color:<%= Tracker.find_by_scrummer_caption('refactor').color %>
 	}
 
 	/* Assigning colors for issues statues */

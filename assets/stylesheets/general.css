@@ -387,3 +387,11 @@ table.list.sprint-issues_list th a {
   border-radius: 4px;
   padding: 1px;
 }
+
+table.sprint-issues_list .context-menu-selection {
+  background-color: #c8e77c !important;
+}
+
+table.sprint-issues_list .context-menu-selection td a{
+  color: #000 !important;
+}

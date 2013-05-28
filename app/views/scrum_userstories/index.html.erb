@@ -17,6 +17,7 @@
     <%= javascript_include_tag 'jquery.hoverIntent.js', :plugin => 'redmine_scrummer' %>
     <%= javascript_include_tag 'jquery.observe_field.js', :plugin => 'redmine_scrummer' %> 
     <%= javascript_tag "select_menu_item('scrum-user-stories');"%>
+    <%= javascript_include_tag 'select_list_move' %>
 <% end %>
 
 <div id="flash-temp">
@@ -57,21 +58,7 @@
         <%= render :partial => 'queries/filters', :locals => {:query => @query} %>
       </div>
     </fieldset>
-    <fieldset class="collapsible collapsed" style="display: none;">
-      <legend onclick="toggleFieldset(this);"><%= l(:label_options) %></legend>
-      <div style="display: none;">
-        <table>
-          <tr>
-            <td><%= l(:field_column_names) %></td>
-            <td><%= render :partial => 'queries/columns', :locals => {:query => @query} %></td>
-          </tr>
-          <tr>
-            <td><%= l(:field_group_by) %></td>
-            <td><%= select_tag('group_by', options_for_select([[]] + @query.groupable_columns.collect {|c| [c.caption, c.name.to_s]}, @query.group_by)) %></td>
-          </tr>
-        </table>
-      </div>
-    </fieldset>
+    
     </div>
     <p class="buttons hide-when-print">
 

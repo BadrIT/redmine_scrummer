@@ -16,10 +16,10 @@ Rails.configuration.to_prepare do
 	end
 	
   # IssueQuery is introduced in redmine 2.2
-  unless defined?(IssueQuery)
-    class IssueQuery < Query
-    end
-  end
+  # unless defined?(IssueQuery)
+  #   class IssueQuery < Query
+  #   end
+  # end
 
 	unless IssueQuery.included_modules.include? RedmineScrummer::IssueQueryPatch
 		IssueQuery.send :include, RedmineScrummer::IssueQueryPatch

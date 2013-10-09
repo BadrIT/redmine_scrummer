@@ -7,6 +7,10 @@ Redmine is a flexible project management web application written using Ruby on R
 More details can be found at in the doc directory or on the official website http://www.redmine.org
 
 = Installation
+
+Redmine Scrummer is recommended to be used with redmine 2.1
+http://rubyforge.org/frs/?group_id=1850
+
   1. Install Redmine if not already installed http://www.redmine.org/projects/redmine/wiki/RedmineInstall
   2. cd to `plugins`
   3. Clone the scrummer plugin `git clone https://github.com/BadrIT/redmine_scrummer.git`

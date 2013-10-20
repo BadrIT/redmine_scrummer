@@ -11,12 +11,7 @@ module RedmineScrummer
 
     module InstanceMethods
       def sprint_start(sprint) 
-        redmine_headers 'Project' => sprint.project.identifier,
-                    'Version-Id' => sprint.id
-        message_id sprint
-        @sprint = sprint
-        @project = @sprint.project
-        @members = @project.members.map{|m| m.user.mail}
+        prepare_sprint_message(sprint)
 
         cc = @project.recipients - @members
         mail :to => @members,
@@ -26,12 +21,7 @@ module RedmineScrummer
       end
 
       def sprint_before_end(sprint, days) 
-        redmine_headers 'Project' => sprint.project.identifier,
-                    'Version-Id' => sprint.id
-        message_id sprint
-        @sprint = sprint
-        @project = @sprint.project
-        @members = @project.members.map{|m| m.user.mail}
+        prepare_sprint_message(sprint)
         @days = days
 
         cc = @project.recipients - @members
@@ -39,6 +29,16 @@ module RedmineScrummer
           :cc => cc,
           :subject => "[#{@project.name}] #{@sprint.name} has #{@days} remaining #{'day'.pluralize(@days)}"
 
+      end
+
+      protected
+      def prepare_sprint_message(sprint)
+        redmine_headers 'Project' => sprint.project.identifier,
+                    'Version-Id' => sprint.id
+        message_id sprint
+        @sprint = sprint
+        @project = @sprint.project
+        @members = @project.members.map{|m| m.user.mail}                
       end
 
     end  

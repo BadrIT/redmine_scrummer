@@ -58,7 +58,13 @@
 		options = {
 			chart : {
 				renderTo : div_id,
-				defaultSeriesType : 'line'
+				defaultSeriesType : 'line',
+				events: {
+            			load: function(event) {
+                				//When is chart ready?
+                				$(window).resize(); 
+            				}
+        		}     
 			},
 			title : {
 				text : chart_title,

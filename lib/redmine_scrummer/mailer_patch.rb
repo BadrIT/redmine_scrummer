@@ -25,6 +25,22 @@ module RedmineScrummer
 
       end
 
+      def sprint_before_end(sprint, days) 
+        redmine_headers 'Project' => sprint.project.identifier,
+                    'Version-Id' => sprint.id
+        message_id sprint
+        @sprint = sprint
+        @project = @sprint.project
+        @members = @project.members.map{|m| m.user.mail}
+        @days = days
+
+        cc = @project.recipients - @members
+        mail :to => @members,
+          :cc => cc,
+          :subject => "[#{@project.name}] #{@sprint.name} has #{@days} remaining #{'day'.pluralize(@days)}"
+
+      end
+
     end  
   end
 end

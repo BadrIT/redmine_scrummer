@@ -55,6 +55,12 @@ module RedmineScrummer
         version_field = VersionCustomField.find_by_scrummer_caption('start_date')
         self.custom_value_for(version_field).try(:value)
       end
+
+      def remaining_working_days(date=Date.today)
+        (date..effective_date).to_a.delete_if do |d|
+          self.project.non_working_day?(d)
+        end
+      end
       
       protected
       # By Mohamed Magdy

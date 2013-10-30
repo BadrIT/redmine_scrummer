@@ -4,10 +4,11 @@ namespace :redmine_scrummer do
 
   task :scheduler => :environment do
     # send daily notification for sprints started tryoday
+    # this task run at early morning 1:00 AM
     versions = Version.all.select do |v| 
       start_date = v.try(:start_date_custom_value)
 
-      start_date && start_date == Date.today
+      start_date && start_date == Date.yesterday
     end
 
     versions.each do |sprint|

@@ -57,7 +57,7 @@ module RedmineScrummer
       end
 
       def remaining_working_days(date=Date.today)
-        (date...effective_date).to_a.delete_if do |d|
+        (date..effective_date).to_a.delete_if do |d|
           self.project.non_working_day?(d)
         end
       end

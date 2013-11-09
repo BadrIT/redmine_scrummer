@@ -27,7 +27,7 @@ module RedmineScrummer
         cc = @project.recipients - @members
         mail :to => @members,
           :cc => cc,
-          :subject => "[#{@project.name}] #{@sprint.name} has #{@days} remaining #{'day'.pluralize(@days)}"
+          :subject => "[#{@project.name}] #{@sprint.name} will end within #{@days}  #{'day'.pluralize(@days)}"
 
       end
 

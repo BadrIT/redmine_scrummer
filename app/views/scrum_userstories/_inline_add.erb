@@ -98,8 +98,8 @@
 		
 		<div class='scrum_issue_inline_field scrum_issue_row'>
 			<%= f.label :description, l("field_description"), :class => "scrum_issue_inline_label" %>
-			<div class='scrum_issue_inline_control'> 
-				<%= f.text_area :description, :rows => 7, :cols => 70 %>
+			<div class='scrum_issue_inline_control'>
+				<%= f.text_area :description, :rows => 7, :cols => 70, :class => 'wiki-edit', :id => 'inline-add-textarea' %><%= wikitoolbar_for 'inline-add-textarea' %>
 			</div>
 		</div>
 		

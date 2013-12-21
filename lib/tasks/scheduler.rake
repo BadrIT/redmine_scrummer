@@ -16,12 +16,18 @@ namespace :redmine_scrummer do
     end
 
     # send email when the version has one or three days to end
+    # send email when the version ends !
     Version.where(["effective_date >= ?", Date.today]).each do |version|
       days = version.remaining_working_days.count
 
       if [1, 3].include?(days)
         Mailer.sprint_before_end(version, days).deliver
       end
+
+      if days.zero?
+        Mailer.sprint_end(version).deliver
+      end
+
     end
 
   end

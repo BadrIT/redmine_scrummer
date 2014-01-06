@@ -339,14 +339,14 @@ class ScrumUserstoriesController < IssuesController
     @issue_count = @query.issue_count
     @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
     @offset ||= @issue_pages.current.offset
-
+         
     # all issues is used for statistics
-    @all_issues = @query.issues(:include => [:assigned_to, :tracker, :priority, :category, :fixed_version, :custom_values, :direct_children, :direct_parent],
-    :order => sort_clause)
+    @all_issues = Issue.find(:all, :include => [:project], :conditions => @query.statement, :order => sort_clause)    
+    
     # clone all issues in a new array
     # but having the same objects in order not to calcluate statistics twice
     @issues = @all_issues.map{|i| i}
-
+    
     session[:set_filter] ||= params[:set_filter]
     unless session[:set_filter] == '1'
       # don't load ancestors if applying filter to avoid some scenarios...
@@ -369,7 +369,7 @@ class ScrumUserstoriesController < IssuesController
     # pagination
     @issues = @issues[(@offst.to_i)..(@offset.to_i+@limit.to_i-1)]
 
-    @issue_count_by_group = @query.issue_count_by_group
+    @issue_count_by_group = @query.issue_count_by_group    
 
   end
 

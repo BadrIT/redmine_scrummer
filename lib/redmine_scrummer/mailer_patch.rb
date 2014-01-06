@@ -31,6 +31,15 @@ module RedmineScrummer
 
       end
 
+      def sprint_end(sprint)
+        prepare_sprint_message(sprint)
+
+        cc = @project.recipients - @members
+        mail :to => @members,
+          :cc => cc,
+          :subject => "[#{@project.name}] #{@sprint.name} has ended"
+      end
+
       protected
       def prepare_sprint_message(sprint)
         redmine_headers 'Project' => sprint.project.identifier,

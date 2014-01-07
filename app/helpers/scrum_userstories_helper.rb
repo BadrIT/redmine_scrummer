@@ -112,8 +112,13 @@ module ScrumUserstoriesHelper
   		
   		content
     elsif column.name == :fixed_version
-      version = issue[:fixed_version]
-      link_to(h(version), {:controller => 'versions', :action => 'show', :id => issue["fixed_version_id"] })	      
+
+      if(issue["fixed_version_id"])
+        version = issue[:fixed_version]
+        link_to(h(version), {:controller => 'versions', :action => 'show', :id => issue["fixed_version_id"] })	     
+      else
+        ""
+      end
     else
       issue[column.name] ? issue[column.name] : ""
     end

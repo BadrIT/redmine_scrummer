@@ -154,6 +154,7 @@ class ScrumUserstoriesController < IssuesController
     
   rescue Exception => e
     puts e.inspect
+    puts e.backtrace.join "\n"
     render :text => "Exception occured"
   end
 
@@ -341,36 +342,18 @@ class ScrumUserstoriesController < IssuesController
     @offset ||= @issue_pages.current.offset
          
     # all issues is used for statistics
-    @all_issues = Issue.find(:all, :include => [:project], :conditions => @query.statement, :order => sort_clause)    
-    
+    @all_issues = Issue.find(:all, :include => [:project, :status, :tracker, :fixed_version, :assigned_to], :conditions => @query.statement)    
+
     # clone all issues in a new array
     # but having the same objects in order not to calcluate statistics twice
     @issues = @all_issues.map{|i| i}
-    
-    session[:set_filter] ||= params[:set_filter]
-    unless session[:set_filter] == '1'
-      # don't load ancestors if applying filter to avoid some scenarios...
-
-      # I want to see bugs only
-      # I want to see tasks of a sprint only
-      # I don't want to see epics
-      # I want to see features only. I don't want to see technical tasks (tasks, bugs, and refactorings)
-      # I want to see tasks which are still 'defined'
-      # I want to see stories which are still 'defined'
-      # I want to see user stories (and their tasks) which has remaining effort more than x hours
-      # I want to filter by workitem (subject) name
-      # I want to see all workitems assigned to one developer
-      load_issues_ancestors
-    end
 
     #build tree heirarachy
     @issues = scrum_issues_list(@issues)
-
+    
     # pagination
     @issues = @issues[(@offst.to_i)..(@offset.to_i+@limit.to_i-1)]
-
     @issue_count_by_group = @query.issue_count_by_group    
-
   end
 
   def set_default_values_from_parent
@@ -439,44 +422,99 @@ class ScrumUserstoriesController < IssuesController
     @current_page = :user_stories
   end
 
-  def scrum_issues_list(issues, &block)
-    issues = issues.to_a.reverse
-
-    last_processed_level = 0
-
-    result = []
-    result_set = {}
-
-    # build the hierarchy
-    while issues.length > 0
-
-      processed_issues = []
-
-      issues.each do |issue|
-        level = issue.level
-
-        # get parent location, and insert right after it
-        if level == last_processed_level
-          parent_index = result.index(issue.direct_parent)
-
-          # if the this issue has no parent, then it's a root element just add it
-          if parent_index and parent_index >= 0
-          result.insert parent_index + 1, issue
-          else
-          result.insert 0, issue
-          end
-
-        processed_issues << issue
-        end
-      end
-
-      issues = issues - processed_issues
-
-      last_processed_level += 1
+  def update_issue_and_parents
+    @issue = issue_to_hash @issue
+    
+    # load parents 
+    height = 0
+    issue = @issue
+    while issue["parent_id"] do
+      parent = Issue.find_by_id(issue["parent_id"], :include => [:project, :status, :tracker, :fixed_version, :assigned_to])
+      issue[:parent] = issue_to_hash parent
+      issue = issue[:parent]
+      height += 1
     end
+    
+    # update levels
+    issue = @issue
+    while issue do
+      issue[:level] = height      
+      issue = issue[:parent]
+      height -= 1
+    end    
+    
+    render :update_issue_and_parents
+  end
+  
+  def issue_to_hash issue
+    issue.attributes.merge({
+      :children => [], 
+      :parent => nil, 
+      :tracker => issue.tracker, 
+      :status => issue.status,
+      :story_size => issue.accept_story_size? ? issue.story_size.to_f : nil ,  
+      :remaining_hours => issue.accept_remaining_hours? ? issue.remaining_hours.to_f : nil, 
+      :business_value => issue.accept_business_value? ? issue.business_value.to_f : nil,
+      :time_trackable => issue.time_trackable?,
+      :fixed_version => issue.fixed_version ? issue.fixed_version.name : "",
+      :assigned_to => issue.assigned_to ? issue.assigned_to.name : ""
+    }) 
+  end
 
+  def scrum_issues_list(issues, &block)
+    t = Time.now
+    # convert to hash to be able to add children
+    issues = issues.map do |issue| 
+      issue_to_hash issue
+    end
+    
+        puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + (t - Time.now).to_s; t = Time.now
+    
+    # convert to map to be able to build tree structure
+    issues_map = Hash[ issues.collect{|issue| [issue["id"], issue] } ]    
+    
+    # tree with root level issues at top
+    issues_tree = []
+    
+    issues.each do |issue|    
+      parent = issue["parent_id"] && issues_map[ issue["parent_id"] ];  
+      if(parent)  #should be added as child
+        issue[:parent] = parent
+        parent[:children] << issue        
+      else # add as root level
+        issues_tree << issue
+      end      
+    end
+    
+        puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + (t - Time.now).to_s; t = Time.now
+        
+    # init levels
+    issues.each do |issue|    
+      level = 0
+      parent = issue[:parent]
+      while parent do
+        level += 1
+        parent = parent[:parent]
+      end
+      issue[:level] = level
+    end     
+        
+    # flatten the list    
+    sorted_flatten_issues = flatten issues_tree
+    
+        puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + (t - Time.now).to_s; t = Time.now
+    
     # return result
-    result
+    sorted_flatten_issues
+  end
+  
+  def flatten issues
+    result = []
+    issues.each do |issue|
+      result << issue
+      result << (flatten issue[:children])
+    end    
+    result.flatten
   end
 
   def set_default_values

@@ -1,9 +1,12 @@
-<% level = params[:hierarchy] == "true" ? @issue.level : 0 %>
-$("#issue-<%= @issue.id.to_s %>").replaceWith("<%= escape_javascript(render('issue_row', :issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint])) %>")
+<% level = params[:hierarchy] == "true" ? @issue[:level] : 0 %>
+$("#issue-<%= @issue["id"].to_s %>").replaceWith("<%= escape_javascript(render('issue_row', :issue => @issue, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint])) %>")
 
-<% @issue.ancestors.each do |parent| %>
-	<% level = params[:hierarchy] == "true" ? parent.level: 0 %>
- 	$("#issue-<%= parent.id.to_s %>").replaceWith("<%= escape_javascript(render('issue_row', :issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint])) %>")
+<% parent = @issue[:parent]%>
+<% while parent do  %>
+	<% level = params[:hierarchy] == "true" ? parent[:level] : 0 %>
+ 	$("#issue-<%= parent["id"].to_s %>").replaceWith("<%= escape_javascript(render('issue_row', :issue => parent, :hierarchy => params[:hierarchy] == "true", :query => @query, :level => level, :list_id => params[:list_id], :from_sprint => params[:from_sprint]))
+%>")
+<%		parent = parent[:parent] %>
 <% end %>
 
 enableInlineEdit();

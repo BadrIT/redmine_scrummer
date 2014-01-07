@@ -49,7 +49,7 @@
 <div class="autoscroll">
 
 <% if issues.length > 0 %>
-	<%= hidden_field_tag("first_index", issues.first.position) %>
+	<%= hidden_field_tag("first_index", issues.first[:position]) %>
 <% else %>
 	<%= hidden_field_tag("first_index", 0) %>
 <%- end %>
@@ -66,6 +66,7 @@
         <% end %>
         
         <% query.columns.each do |column| %>
+		  <% next if(column.name == :id) %>
           <%= column_short_header(column) %>
         <% end %>
         <th>Actions</th>
@@ -75,13 +76,12 @@
 	<tbody sort='<%=@sort_criteria.first_key%>'>
 	<% if issues.length > 0 %>
 		<% issues.each do |issue| -%>
-		  <% level = hierarchy ? issue.level : 0 -%>
-			
+		  	<% level = issue[:level] -%>
 			<%= render :partial => "scrum_userstories/issue_row", :locals => {:issue => issue, :hierarchy => hierarchy, :query => query, :level => level, :list_id => list_id, :from_sprint => from_sprint} %>
 			<% if scrum_user_stories_add_inline || scrum_user_stories_manipulate_inline %>
-  			<tr id='placeholder-<%=issue.id%>' level="<%= (level + 1).to_s %>">
+  			<tr id='placeholder-<%=issue["id"]%>' level="<%= (level + 1).to_s %>">
   				<td colspan="9">
-  					<div id="issue-<%= issue.id%>-inline-child" class='inline_child_container'></div>
+  					<div id="issue-<%= issue["id"]%>-inline-child" class='inline_child_container'></div>
   				</td>	
   			</tr>
 			<% end%>

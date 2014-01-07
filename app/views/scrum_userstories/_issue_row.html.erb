@@ -1,30 +1,32 @@
-<tr id="issue-<%= issue.id %>" level="<%= level.to_s %>" class="<%= issue.tracker.try(:scrummer_caption).to_s.downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= issue.css_classes %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= issue.direct_children.length > 0 ? "group open" : nil%>">
+<% level = issue[:level] %>
+
+<tr id="issue-<%= issue["id"] %>" level="<%= level.to_s %>" class="<%= issue["tracker"].try(:scrummer_caption).to_s.downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= (issue[:children] && issue[:children].length > 0) ? "group open" : nil%>">
 	<% if hierarchy %>	
-	  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue.id, false, :id => nil) %></td>
+	  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue["id"], false, :id => nil) %></td>
 	    <% end %>
 	  
 	  <% query.columns.each do |column| %>
+	    <% next if(column.name == :id) %>
 	  	<td class='<%= column.css_classes%>'>
-	  		<%= scrum_column_content(column, issue).html_safe %>
+	  		<%= scrummy_column_content(column, issue).html_safe %>
 	  	</td>
 	  <% end %>    
 	  
-	<%= hidden_field_tag("position-" + issue.id.to_s, issue.position) %>
+	<%= hidden_field_tag("position-" + issue["id"].to_s, issue[:position]) %>
 	<td class='issue-actions'>
 		
 	  	<!--Remove 'add_child' form task and test trackers -->
-	  	<%if !issue.tracker_in?([:task, :test, :spike]) %>
-	  		<%= link_to image_tag(scrummer_image_path('add_issue.png') ), get_inline_issue_form_path(:list_id => list_id, :project_id => @project.id, :parent_issue_id => issue.id), :remote => true  if scrum_user_stories_add_inline %>
+	  	<%if ! [:task, :test, :spike].include?( issue[:tracker].try(:scrummer_caption) ) %>
+	  		<%= link_to image_tag(scrummer_image_path('add_issue.png') ), get_inline_issue_form_path(:list_id => list_id, :project_id => @project.id, :parent_issue_id => issue["id"]), :remote => true  if scrum_user_stories_add_inline %>
 			<%end%>
-	  	<%= link_to image_tag(scrummer_image_path('edit_issue.png') ), get_inline_issue_form_path(:list_id => list_id, :from_sprint => from_sprint, :project_id => @project.id, :issue_id => issue.id), :remote => true if scrum_user_stories_manipulate_inline %>
+	  	<%= link_to image_tag(scrummer_image_path('edit_issue.png') ), get_inline_issue_form_path(:list_id => list_id, :from_sprint => from_sprint, :project_id => @project.id, :issue_id => issue["id"]), :remote => true if scrum_user_stories_manipulate_inline %>
 	
 	  	<% if scrum_user_stories_manipulate_inline %>	
 		  	<% issues_list_url = url_for(:controller => :scrum_userstories, :action => :issues_list, :project_id => @project, :list_id => 'issues_list', :update => list_id) %>
 		  	<%= link_to image_tag( scrummer_image_path('remove_issue.png') ), 
-		  										 issue_path(issue.id, :back_url => URI.encode(issues_list_url), :query_id => query.id, :project_id => @project, :list_id => list_id, :todo => :destroy),
+		  										 issue_path(issue["id"], :back_url => URI.encode(issues_list_url), :query_id => query.id, :project_id => @project, :list_id => list_id, :todo => :destroy),
 		  										 :method => :delete, :confirm => "Are you sure?", :remote => true %>
 	  	<% end%>
 	  </td>	    
 	<!-- The following Tr is sued as a place holder for inline-add-child -->
 </tr>
-

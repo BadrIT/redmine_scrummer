@@ -43,55 +43,43 @@ module ScrumUserstoriesHelper
  	
  	
   
-  def scrum_column_content(column, issue)
-  	value = column.value(issue)
-
-  	if value.is_a?(IssueStatus) && issue.status.is_scrum
-  	  #TODO refactoring cache IssueStatus please :(
-  	  status = IssueStatus.find_by_scrummer_caption(value.scrummer_caption.to_s)
-      content = status.short_name.upcase
+  def scrummy_column_content(column, issue)
+  	
+    if !issue[:status].is_scrum
+      return ""
+    end
+      
+    if column.name == :status
+      content = issue[:status] ? issue[:status].short_name.upcase : ""
   	  
-      "<div title='#{status.name}' align='center' class='status #{value.scrummer_caption}' id='issue-#{issue.id}-status' data-statuses=\"#{issue_allowed_statuses(issue)}\"><b>" + content.to_s + "</b></div>"
-  	elsif column.name == :subject
-  	  prefix = if issue.direct_children.blank? 
+      "<div title='#{issue[:status].name}' align='center' class='status #{issue[:status].scrummer_caption}' id='issue-#{issue["id"]}-status' data-statuses=\"#{issue_allowed_statuses(issue)}\"><b>" + content.to_s + "</b></div>"  	
+    elsif (column.name == :subject)
+  	  prefix = if issue[:children].empty?
   	    "<span>&nbsp;&nbsp;</span>"
       else
         "<span class=\"expander\" onclick=\"toggleScrumRowGroup(this); return false;\" onmouseover=\"$(this).addClass('hover')\" onmouseout=\"$(this).removeClass('hover')\">&nbsp;&nbsp;</span>"    
       end
       
-      tracker_name = issue.tracker.short_name.empty? ?  issue.tracker.name : issue.tracker.short_name
-  		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue.id.to_s}</span>" +
-  		"<span class='tracker'>#{tracker_name}</span></b>:</div>" +
-  		"<div >&nbsp;#{subject_content(column, issue)}</div>" 
-  	elsif column.name == :actual_hours && issue.scrum_issue?
-  		content = column_content(column, issue)
-        		
-  		output_value = value > 0 ? value.round(2).to_s : "&nbsp;"*4
-  		if issue.time_trackable?
-  		  content = "<div align='center' class='edit float addition' id='issue-#{issue.id}-actual_hours'>" + output_value + "</div>"
-  		else
-  		  output_value = "&Sigma;" + output_value if !issue.direct_children.empty? && value > 0
-  		  content = "<div align='center' class='float addition' id='issue-#{issue.id}-actual_hours'>" + output_value + "</div>"
-  		end
-  		
-  		unless issue.direct_children.empty?
-  			content = value > 0 ? "<span align='center' class='accumelated-result'>#{content}</span>" : content
-  		end
-  		
-  		content
-  		
-    elsif [:story_size, :remaining_hours, :business_value].include?(column.name) && issue.scrum_issue?
-      issue_has_children = issue.direct_children.any?  
+      tracker = issue[:tracker]
       
-      if (accept_field = issue.send("accept_#{column.name}?")) || issue_has_children
-        value = issue.send(column.name)
+      tracker_name = tracker.short_name.empty? ?  tracker.name : tracker.short_name
+  		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue["id"].to_s}</span>" +
+  		"<span class='tracker'>#{tracker_name}</span></b>:</div>" +
+  		"<div >&nbsp;#{subject_content(issue)}</div>" 
+    elsif [:story_size, :remaining_hours, :business_value].include?(column.name) 
+      issue_has_children = issue[:children].any?  
+      
+      
+      
+      if (accept_field = issue[column.name] || issue_has_children )
+        value = issue[column.name]
         
-        if accept_field && (column.name == :business_value || !issue_has_children || value.to_f == 0.0)
+        if accept_field && (column.name == :business_value || !issue_has_children || (value != nil && value.to_f == 0.0) )
           content = value.to_f > 0 ? value : ' '*3
           content = format_story_size(content) if column.name == :story_size && content.is_a?(Float)
           css_class = 'edit' unless column.name == :story_size
           format = 'float'  unless column.name == :story_size
-          "<div align='center' class='#{css_class} #{format} #{column.name}-container' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
+          content = "<div align='center' class='#{css_class} #{format} #{column.name}-container' id='issue-#{issue["id"]}-field-#{column.name}'>" + content.to_s + "</div>"
         else
           if column.name == :remaining_hours
             output_content = "&Sigma;" + value.to_s
@@ -100,53 +88,49 @@ module ScrumUserstoriesHelper
           end
           content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{output_content}</span>" : '&nbsp;';
         end
-        # content = ''
       else
         # tasks, defects etc shouldn't display story size
         content = ''
       end
       
-  	elsif column.respond_to?(:custom_field) && issue.scrum_issue?
-			field_format = column.custom_field.field_format
-			
-			content = '' 
-			if ["int", "float", "list"].include?(field_format)
-			  value = issue_accumelated_custom_values(issue, column.custom_field)
-				
-				field_caption = column.custom_field.scrummer_caption
-				
-				# can be editable if doesn't have children
-				# OR having children but all children custom field aren't set then value will equal zero
-				# ex: US1 has children (US2, US3) and they don't have story size set then I can edit US1 story size
-				if (issue.direct_children.blank? || value.to_f == 0.0) && issue.has_custom_field?(field_caption)
-					content = value.to_f > 0 ? value : '&nbsp;'*4
-					"<div align='center' class='edit #{field_format}' id='issue-#{issue.id}-custom-field-#{column.name}'>" + content.to_s + "</div>"
-			  else
-					content = value.to_f > 0 ? "<span align='center' class='accumelated-result'>#{value}</span>" : '&nbsp;';
-				end
-			else
-				content = column_content(column, issue)
-			end					
-  	elsif column.name == :estimated_hours  		
-  		if (issue.direct_children.blank? || value.to_f == 0.0) && issue.time_trackable?
-				value ||= 0.0
-				
-				content = value > 0 ? value : ' '*4
-				"<div align='center' class='edit float' id='issue-#{issue.id}-field-#{column.name}'>" + content.to_s + "</div>"
-			else
-				content = (value.to_f > 0) ? "<span align='center' class='accumelated-result'>&Sigma;#{value}</span>" : '&nbsp;';
-			end			  	
-  	else
-  		column_content(column, issue)
-  	end
+      content.to_s
+      
+    elsif column.name == :actual_hours 
+      value = issue["actual_hours"]
+        		
+  		output_value = value > 0 ? value.round(2).to_s : "&nbsp;"*4
+  		if issue[:time_trackable]
+  		  content = "<div align='center' class='edit float addition' id='issue-#{issue["id"]}-actual_hours'>" + output_value + "</div>"
+  		else
+  		  output_value = "&Sigma;" + output_value if !issue[:children].empty? && value > 0
+  		  content = "<div align='center' class='float addition' id='issue-#{issue["id"]}-actual_hours'>" + output_value + "</div>"
+  		end
+  		
+  		unless issue[:children].empty?
+  			content = value > 0 ? "<span align='center' class='accumelated-result'>#{content}</span>" : content
+  		end
+  		
+  		content
+    elsif column.name == :fixed_version
+
+      if(issue["fixed_version_id"])
+        version = issue[:fixed_version]
+        link_to(h(version), {:controller => 'versions', :action => 'show', :id => issue["fixed_version_id"] })	     
+      else
+        ""
+      end
+    else
+      issue[column.name] ? issue[column.name] : ""
+    end
+    
   end
   
   def issue_accumelated_custom_values issue, custom_field
   	format = custom_field.field_format
     result = 0.0
   	
-  	if issue.direct_children.any? #&& issue.children.any?{|c| c.tracker.custom_fields.include?(custom_field)}  
-  		issue.direct_children.each do |child|
+  	if issue[:children].any? #&& issue.children.any?{|c| c.tracker.custom_fields.include?(custom_field)}  
+  		issue[:children].each do |child|
   			result += issue_accumelated_custom_values(child, custom_field)
   		end
     end
@@ -174,17 +158,18 @@ module ScrumUserstoriesHelper
   end
   
   def get_inline_issue_div_id
-    inline_issue_div_id = @issue.new_record? ? "inline_edit_for_#{@issue.id}" : "new_issue_inline_div"
-    inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue.id}" : inline_issue_div_id
+    inline_issue_div_id = @issue.new_record? ? "inline_edit_for_#{@issue["id"]}" : "new_issue_inline_div"
+    inline_issue_div_id = @parent_issue ? "inline_add_child_for_#{@parent_issue["id"]}" : inline_issue_div_id
   end
   
-  def subject_content(column , issue)
-    value = column.value(issue)
-    description = issue.description.gsub("'","\'")
+  def subject_content(issue)
+    subject = issue["subject"]
     
-    options = {:title=>"#{h(issue.subject)}|#{h(description)}", :class=>'subject-contents'}
+    description = issue["description"].gsub("'","\'")
     
-    link_to(h(value), {:controller => 'issues', :action => 'show', :id => issue }, options)
+    options = {:title=>"#{h(subject)}|#{h(description)}", :class=>'subject-contents'}
+    
+    link_to(h(subject), {:controller => 'issues', :action => 'show', :id => issue["id"] }, options)
   end
   
   def build_params_for_context_menu
@@ -200,9 +185,9 @@ module ScrumUserstoriesHelper
       value = issue.remaining_hours
     end
     
-    "<li class='issue' id='#{issue.id}'> 
-      <a target='_blank' class='issue #{issue.tracker.try(:scrummer_caption).to_s.downcase}-issue' href='issues/#{issue.id}'> 
-      <h2>##{issue.id}: #{issue.tracker.short_name}</h2>
+    "<li class='issue' id='#{issue["id"]}'> 
+      <a target='_blank' class='issue #{issue.tracker.try(:scrummer_caption).to_s.downcase}-issue' href='issues/#{issue["id"]}'> 
+      <h2>##{issue["id"]}: #{issue.tracker.short_name}</h2>
       <p>#{truncate(issue.subject, :length => 30)}</p> 
       <p><span style='color: #444; float: right;'>#{pluralize(value, unit)}</span></p> 
       </a> 
@@ -216,14 +201,9 @@ module ScrumUserstoriesHelper
   def scrum_user_stories_add_inline
     @scrum_user_stories_add_inline ||= User.current.allowed_to?(:scrum_user_stories_add_inline, @project)
   end
-
-  def update_issue_and_parents
-    render :update_issue_and_parents
-  end
   
   def issue_allowed_statuses(issue)
-    # issue.new_statuses_allowed_to(User.current).each do |status|
-    statuses = issue.tracker.issue_statuses.inject("{") do |memo, status|
+    statuses = issue[:tracker].issue_statuses.inject("{") do |memo, status|
       unless status.scrummer_caption.blank?
         memo += "'" + status.short_name + "':'" + status.name + "', "
       end
@@ -231,7 +211,7 @@ module ScrumUserstoriesHelper
       memo
     end
 
-    statuses += "'selected':'" + issue.status.short_name + "'}"
+    statuses += "'selected':'" + issue[:status].short_name + "'}"
     statuses
   end
   

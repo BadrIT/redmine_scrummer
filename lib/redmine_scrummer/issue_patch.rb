@@ -13,18 +13,18 @@ module RedmineScrummer
         ActiveRecord::Base.lock_optimistically = false
         safe_attributes 'story_size', 'remaining_hours', 'business_value'
         before_create :init_custom_fields_values
-        before_create :set_release_CF_value
+        before_create :set_release_CF_value        
 
-        before_save :update_remaining_by_estimate
-        before_save :update_remaining_hours_by_status
+        before_update :update_remaining_by_estimate
+        before_update :update_remaining_hours_by_status
 
-        before_save :update_children_target_versions
-        before_save :update_children_release
+        before_update :update_children_target_versions
+        before_update :update_children_release
           
         # set issue release by sprint release
         # set issue sprint to nil if release changed
-        before_save :set_issue_release
-        before_save :set_done_ratio_value
+        before_update :set_issue_release
+        before_update :set_done_ratio_value
 
         before_save :update_actual_hours_before_copy
 
@@ -39,15 +39,14 @@ module RedmineScrummer
           @cached_changes = self.changes
         end
 
-        after_save :update_parent_status
-        after_save :update_accumulated_fields
+        after_update :update_children_status
         
         after_save :check_history_entries
         after_save :check_points_history
 
 
         after_destroy :update_parent_accumulated_fields
-        after_destroy :update_parent_status
+        after_destroy :update_children_status
 
         has_many :history,
 				         :class_name => 'IssueHistory',
@@ -210,31 +209,7 @@ module RedmineScrummer
         
         self.save
       end
-      
-      def update_accumulated_fields
-        # if the issue has children having the story size custom field
-        # then sum children
-        # else take issue story size custom field value
-        [:story_size, :remaining_hours, :actual_hours].each do |field|
-          if !@cached_changes["#{field}"].blank?
-            if self.direct_children.any?
-              update_accumulated_field(field)
-            else
-              update_parent_accumulated_field(field)
-            end
-          end
-        end
-      end
-      
-      def update_accumulated_field(field)
-        value = self.direct_children.sum(field)
-            
-        if self.send(field).to_f != value.to_f && value > 0.0
-          self.update_attribute(field, value)
-          self.update_parent_accumulated_field(field) 
-        end
-      end
-
+     
       def unduplicated_custom_values
         duplicated_fields = [:story_size, :remaining_hours, :business_value, :release]
         self.custom_field_values.delete_if {|cfv| duplicated_fields.include?(cfv.custom_field.scrummer_caption)}
@@ -271,7 +246,7 @@ module RedmineScrummer
         self.parent.update_accumulated_field(field) if self.parent
       end
       
-      def update_parent_status
+      def update_children_status
         # check for id_changed to handle after_create
         if !@cached_changes['status_id'].blank? || !@cached_changes['id'].blank?
           # when a story goes to completed OR accepted, all its children should be completed
@@ -397,7 +372,7 @@ module RedmineScrummer
             self.release = self.fixed_version.release
           end
           
-          if self.release
+          if self.release_id
             # The case that the release ID is changed
             # and the issue sprint is not included in the release
             # set the release ID to nill

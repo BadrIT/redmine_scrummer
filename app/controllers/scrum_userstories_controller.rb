@@ -240,29 +240,28 @@ class ScrumUserstoriesController < IssuesController
   end
 
   # inline add action
-  def inline_add
+  def inline_add    
     initialize_sort
     @div_name = get_inline_issue_div_id
-    
     saved = if @issue.new_record?
       inline_add_issue
     else
       inline_edit_issue
     end
-
-    if @query.valid? && saved
+     
+    if saved
       load_issues_for_query
       flash[:notice] = l(:notice_successful_create)
-      call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})
-
+     
       if @issues.length > 0
         set_issues_and_query_for_list unless params[:list_id] == 'issues_list'
         @partial_list ||= "list"
-      end
+      end      
+           
     else
       render_error_html_for_inline_add(error_messages_for 'issue')
     end
-
+     
   rescue ActiveRecord::RecordNotFound
     render_404
   end
@@ -271,10 +270,8 @@ class ScrumUserstoriesController < IssuesController
 
   def inline_add_issue
     call_hook(:controller_issues_new_before_save, { :params => params, :issue => @issue })
-
     @issue.release_id = params[:issue][:release_id] if params[:issue] && !params[:issue][:release_id].blank?
-    
-    @issue.save
+    @issue.save(:validate => false)      
   end
 
   def inline_edit_issue
@@ -462,13 +459,10 @@ class ScrumUserstoriesController < IssuesController
   end
 
   def scrum_issues_list(issues, &block)
-    t = Time.now
     # convert to hash to be able to add children
     issues = issues.map do |issue| 
       issue_to_hash issue
     end
-    
-        puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + (t - Time.now).to_s; t = Time.now
     
     # convert to map to be able to build tree structure
     issues_map = Hash[ issues.collect{|issue| [issue["id"], issue] } ]    
@@ -486,8 +480,6 @@ class ScrumUserstoriesController < IssuesController
       end      
     end
     
-        puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + (t - Time.now).to_s; t = Time.now
-        
     # init levels
     issues.each do |issue|    
       level = 0
@@ -501,8 +493,6 @@ class ScrumUserstoriesController < IssuesController
         
     # flatten the list    
     sorted_flatten_issues = flatten issues_tree
-    
-        puts "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ " + (t - Time.now).to_s; t = Time.now
     
     # return result
     sorted_flatten_issues
@@ -585,7 +575,9 @@ class ScrumUserstoriesController < IssuesController
 
   def build_new_issue_or_find_from_params
     if params[:id].blank?
-      build_new_issue_from_params
+      @issue = Issue.new
+      @issue.assign_attributes(params[:issue])
+      @issue.author_id = User.current.id
     else
       find_issue
     end

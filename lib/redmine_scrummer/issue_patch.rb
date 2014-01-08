@@ -38,13 +38,16 @@ module RedmineScrummer
         def cache_changes
           @cached_changes = self.changes
         end
-
+        
         after_update :update_children_status
         
+        after_save :update_accumulated_fields
         after_save :check_history_entries
         after_save :check_points_history
 
+
         after_destroy :update_children_status
+        after_destroy :update_parent_accumulated_fields
 
         has_many :history,
 				         :class_name => 'IssueHistory',
@@ -208,6 +211,30 @@ module RedmineScrummer
         self.save
       end
      
+      def update_accumulated_fields
+        # if the issue has children having the story size custom field
+        # then sum children
+        # else take issue story size custom field value
+        [:story_size, :remaining_hours, :actual_hours].each do |field|
+          if !@cached_changes["#{field}"].blank?
+            if self.direct_children.any?
+              update_accumulated_field(field)
+            else
+              update_parent_accumulated_field(field)
+            end
+          end
+        end
+      end
+      
+      def update_accumulated_field(field)
+        value = self.direct_children.sum(field)
+            
+        if self.send(field).to_f != value.to_f && value > 0.0
+          self.update_attribute(field, value)
+          self.update_parent_accumulated_field(field) 
+        end
+      end
+      
       def unduplicated_custom_values
         duplicated_fields = [:story_size, :remaining_hours, :business_value, :release]
         self.custom_field_values.delete_if {|cfv| duplicated_fields.include?(cfv.custom_field.scrummer_caption)}
@@ -234,6 +261,16 @@ module RedmineScrummer
       end
       
       protected
+      def update_parent_accumulated_fields
+        [:story_size, :remaining_hours, :actual_hours].each do |field|
+          update_parent_accumulated_field(field)
+        end
+      end
+      
+      def update_parent_accumulated_field(field)
+        self.parent.update_accumulated_field(field) if self.parent
+      end
+            
       def update_children_status
         # check for id_changed to handle after_create
         if !@cached_changes['status_id'].blank? || !@cached_changes['id'].blank?

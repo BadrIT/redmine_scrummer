@@ -63,13 +63,13 @@ module ScrumUserstoriesHelper
   		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue["id"].to_s}</span>" +
   		"<span class='tracker'>#{tracker_name}</span></b>:</div>" +
   		"<div >&nbsp;#{subject_content(issue)}</div>" 
-    elsif [:story_size, :remaining_hours, :business_value].include?(column.name) 
+    elsif [:story_size, :business_value].include?(column.name) 
       issue_has_children = issue[:children].any?  
       
       
       
-      if (accept_field = issue[column.name] || issue_has_children )
-        value = issue[column.name]
+      if (accept_field = issue[column.name.to_s] || issue_has_children )
+        value = issue[column.name.to_s]
         
         if accept_field && (column.name == :business_value || !issue_has_children || (value != nil && value.to_f == 0.0) )
           content = value.to_f > 0 ? value : ' '*3
@@ -92,21 +92,26 @@ module ScrumUserstoriesHelper
       
       content.to_s
       
-    elsif column.name == :actual_hours 
-      value = issue["actual_hours"]
-        		
-  		output_value = value > 0 ? value.round(2).to_s : "&nbsp;"*4
-  		if issue[:time_trackable]
-  		  content = "<div align='center' class='edit float addition' id='issue-#{issue["id"]}-actual_hours'>" + output_value + "</div>"
-  		else
-  		  output_value = "&Sigma;" + output_value if !issue[:children].empty? && value > 0
-  		  content = "<div align='center' class='float addition' id='issue-#{issue["id"]}-actual_hours'>" + output_value + "</div>"
-  		end
-  		
-  		unless issue[:children].empty?
-  			content = value > 0 ? "<span align='center' class='accumelated-result'>#{content}</span>" : content
-  		end
-  		
+    elsif [:actual_hours, :remaining_hours].include?(column.name)
+      value = issue[column.name.to_s]
+      value ||= 0
+      
+      elem_id = if column.name == :actual_hours
+        issue["id"].to_s+"-"+column.name.to_s
+      else
+        "issue-" + issue["id"].to_s + "-field-" + column.name.to_s
+      end      
+      
+      edit_method = column.name == :actual_hours ? "addition" : ""
+                     
+      output_value = value > 0 ? value.round(2).to_s : ""
+      if issue[:time_trackable]
+        content = "<div align='center' class='edit float #{edit_method}' id='issue-#{elem_id}'>" + output_value + "</div>"
+      else
+  		  output_value = "&Sigma;" + output_value if value > 0
+        content = "<div align='center' class='accumelated-result' id='issue-#{elem_id}'>" + output_value + "</div>"
+      end
+      
   		content
     elsif column.name == :fixed_version
 

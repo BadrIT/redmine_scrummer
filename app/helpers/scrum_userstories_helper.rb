@@ -42,8 +42,9 @@ module ScrumUserstoriesHelper
   
   def scrummy_column_content(column, issue)
   	
-    if !issue[:status].is_scrum
-      return ""
+    if !issue[:tracker].is_scrum
+      # fail back to old redmine logic
+      return column_content(column, Issue.find(issue["id"]))
     end
       
     if column.name == :status

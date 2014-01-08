@@ -19,10 +19,7 @@ module ScrumUserstoriesHelper
              l("short_field_estimated_hours") => l("estimated_hours")}
 	                   
     caption = short_headers[caption] || caption
-    
-    column.sortable ? sort_header_tag(column.name.to_s, :caption => caption,
-                                                        :default_order => column.default_order) : 
-                      content_tag('th', caption, :title => title[caption])
+    content_tag('th', caption, :title => title[caption])
   end
   
 	def custom_field_tag_with_add_class_to_float_inputs(name, custom_value)	
@@ -203,7 +200,7 @@ module ScrumUserstoriesHelper
   end
   
   def issue_allowed_statuses(issue)
-    statuses = issue[:tracker].issue_statuses.inject("{") do |memo, status|
+    statuses = issue[:tracker_issues_statuses].inject("{") do |memo, status|
       unless status.scrummer_caption.blank?
         memo += "'" + status.short_name + "':'" + status.name + "', "
       end

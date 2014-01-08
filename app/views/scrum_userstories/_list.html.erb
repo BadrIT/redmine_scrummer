@@ -73,7 +73,7 @@
 			</tr>
 		</thead>
 	<% previous_group = false %>
-	<tbody sort='<%=@sort_criteria.first_key%>'>
+	<tbody>
 	<% if issues.length > 0 %>
 		<% issues.each do |issue| -%>
 		  	<% level = issue[:level] -%>

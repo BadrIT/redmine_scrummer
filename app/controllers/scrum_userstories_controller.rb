@@ -3,19 +3,13 @@ class ScrumUserstoriesController < IssuesController
 
   include ScrumUserstoriesHelper
   include ERB::Util
-  
-  prepend_before_filter :check_for_default_scrum_issue_status_for_inline, :only => [:inline_add]
-  prepend_before_filter :check_for_default_scrum_issue_priority_for_inline, :only => [:inline_add]
-
-  prepend_before_filter :check_for_default_issue_status, :only => [:index]
-  prepend_before_filter :check_for_default_issue_priority, :only => [:index]
 
   prepend_before_filter :find_query, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :calculate_statistics]						# must be called after find_scrum_project
   prepend_before_filter :find_scrum_project, :only => [:index, :refresh_inline_add_form, :inline_add, :update_single_field, :get_inline_issue_form, :issues_list, :sprint_planing, :inline_add_version, :calculate_statistics]
 
   before_filter :build_new_issue_from_params, :only => [:index, :refresh_inline_add_form, :get_inline_issue_form]
   before_filter :build_new_issue_or_find_from_params, :only => [:inline_add]
-  before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form, :inline_add ]
+  before_filter :find_parent_issue, :only => [:get_inline_issue_form, :refresh_inline_add_form ]
   before_filter :set_default_values_from_parent, :only => [:get_inline_issue_form, :refresh_inline_add_form]
   before_filter :set_default_values, :only => [:refresh_inline_add_form, :index]
 
@@ -35,20 +29,13 @@ class ScrumUserstoriesController < IssuesController
       @project ||= Project.find(project_id)
     rescue ActiveRecord::RecordNotFound
       render_404
-      end
-
-    def initialize_sort
-      sort_init(@query.sort_criteria.empty? ? ['id desc'] : @query.sort_criteria)
-      sort_update(@query.sortable_columns)
     end
-
   end
 
   include SharedScrumConstrollers
 
   def update_single_field
     new_value = params[:value]
-    initialize_sort
 
     # custom field for todo
     if params[:id] =~ /custom/
@@ -158,6 +145,14 @@ class ScrumUserstoriesController < IssuesController
     render :text => "Exception occured"
   end
 
+  def authorize(ctrl = params[:controller], action = params[:action], global = false)
+    if params[:action] == "inline_add"
+      true
+    else
+      super
+    end
+  end
+  
   def get_inline_issue_form
     issue_id = params[:issue_id] if params[:issue_id]
     @issue = Issue.find(issue_id) if issue_id
@@ -175,7 +170,6 @@ class ScrumUserstoriesController < IssuesController
       :total_actual => 0.0,
       :total_remaining => 0.0 }
 
-    initialize_sort
     load_issues_for_query
 
     @all_issues.each do |issue|
@@ -200,7 +194,6 @@ class ScrumUserstoriesController < IssuesController
   end
 
   def index
-    initialize_sort
     
     if @query.valid?
       load_sidebar_query
@@ -222,7 +215,6 @@ class ScrumUserstoriesController < IssuesController
     end
 
   def issues_list
-    initialize_sort
 
     if params[:list_id] == 'issues_list'
       load_issues_for_query
@@ -240,8 +232,7 @@ class ScrumUserstoriesController < IssuesController
   end
 
   # inline add action
-  def inline_add    
-    initialize_sort
+  def inline_add   
     @div_name = get_inline_issue_div_id
     saved = if @issue.new_record?
       inline_add_issue
@@ -334,10 +325,6 @@ class ScrumUserstoriesController < IssuesController
     @limit = per_page_option
     end
 
-    @issue_count = @query.issue_count
-    @issue_pages = Paginator.new self, @issue_count, @limit, params['page']
-    @offset ||= @issue_pages.current.offset
-         
     # all issues is used for statistics
     @all_issues = Issue.find(:all, :include => [:project, :status, :tracker, :fixed_version, :assigned_to], :conditions => @query.statement)    
 
@@ -346,11 +333,12 @@ class ScrumUserstoriesController < IssuesController
     @issues = @all_issues.map{|i| i}
 
     #build tree heirarachy
-    @issues = scrum_issues_list(@issues)
+    @issues = scrum_issues_list(@issues)  
     
-    # pagination
+    @issue_count = @issues.length
+    @issue_pages = Paginator.new self, @issue_count, @limit, params['page']  
+    
     @issues = @issues[(@offst.to_i)..(@offset.to_i+@limit.to_i-1)]
-    @issue_count_by_group = @query.issue_count_by_group    
   end
 
   def set_default_values_from_parent
@@ -374,39 +362,6 @@ class ScrumUserstoriesController < IssuesController
         Tracker.scrum_userstory_tracker
         end
       end
-    end
-  end
-
-  def check_for_default_scrum_issue_priority_for_inline
-    if IssueStatus.default.nil?
-      render_error_html_for_inline_add content_tag('p', l(:error_no_default_scrum_issue_priority))
-    return false
-    end
-  end
-
-  def check_for_default_scrum_issue_status_for_inline
-    if IssuePriority.default.nil?
-      render_error_html_for_inline_add content_tag('p', l(:error_no_default_scrum_issue_status))
-    return false
-    end
-  end
-
-  def render_error_html_for_inline_add(error_html)
-    @error_html = error_html
-    render :render_error_html_for_inline_add
-  end
-
-  def check_for_default_issue_status
-    if IssueStatus.default.nil?
-      render_error l(:error_no_default_scrum_issue_status)
-    return false
-    end
-  end
-
-  def check_for_default_issue_priority
-    if IssuePriority.default.nil?
-      render_error l(:error_no_default_scrum_issue_priority)
-    return false
     end
   end
 
@@ -443,11 +398,20 @@ class ScrumUserstoriesController < IssuesController
     render :update_issue_and_parents
   end
   
+  def tracker_statuses tracker
+    @tracker_statuses_hash ||= {}
+    
+    @tracker_statuses_hash[tracker.id] = tracker.issue_statuses unless @tracker_statuses_hash[tracker.id]
+    
+    @tracker_statuses_hash[tracker.id]
+  end  
+  
   def issue_to_hash issue
     issue.attributes.merge({
       :children => [], 
       :parent => nil, 
       :tracker => issue.tracker, 
+      :tracker_issues_statuses => tracker_statuses(issue.tracker),
       :status => issue.status,
       :story_size => issue.accept_story_size? ? issue.story_size.to_f : nil ,  
       :remaining_hours => issue.accept_remaining_hours? ? issue.remaining_hours.to_f : nil, 
@@ -576,7 +540,10 @@ class ScrumUserstoriesController < IssuesController
   def build_new_issue_or_find_from_params
     if params[:id].blank?
       @issue = Issue.new
-      @issue.assign_attributes(params[:issue])
+      # optimization : not using assign_attributes because of slowness in aliased method in issue.rb
+      params[:issue].each do |k, v|
+          @issue[k] = v
+      end
       @issue.author_id = User.current.id
     else
       find_issue

@@ -44,8 +44,6 @@ module RedmineScrummer
         after_save :check_history_entries
         after_save :check_points_history
 
-
-        after_destroy :update_parent_accumulated_fields
         after_destroy :update_children_status
 
         has_many :history,
@@ -236,16 +234,6 @@ module RedmineScrummer
       end
       
       protected
-      def update_parent_accumulated_fields
-        [:story_size, :remaining_hours, :actual_hours].each do |field|
-          update_parent_accumulated_field(field)
-        end
-      end
-      
-      def update_parent_accumulated_field(field)
-        self.parent.update_accumulated_field(field) if self.parent
-      end
-      
       def update_children_status
         # check for id_changed to handle after_create
         if !@cached_changes['status_id'].blank? || !@cached_changes['id'].blank?

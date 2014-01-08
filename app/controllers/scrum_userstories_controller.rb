@@ -406,13 +406,29 @@ class ScrumUserstoriesController < IssuesController
     @tracker_statuses_hash[tracker.id]
   end  
   
+  def tracker_to_hash tracker
+    {
+      :is_scrum => tracker.is_scrum,
+      :name => tracker.short_name.empty? ?  tracker.name : tracker.short_name,
+      :issue_statuses => tracker_statuses(tracker),
+      :scrummer_caption => tracker.try(:scrummer_caption)
+    }
+  end
+  
+  def status_to_hash status
+    {
+      :short_name => status.short_name,
+      :name => status.name,
+      :scrummer_caption => status.scrummer_caption
+    }
+  end
+  
   def issue_to_hash issue
     issue.attributes.merge({
       :children => [], 
       :parent => nil, 
-      :tracker => issue.tracker, 
-      :tracker_issues_statuses => tracker_statuses(issue.tracker),
-      :status => issue.status,
+      :tracker => tracker_to_hash(issue.tracker), 
+      :status => status_to_hash(issue.status),
       :story_size => issue.accept_story_size? ? issue.story_size.to_f : nil ,  
       :remaining_hours => issue.accept_remaining_hours? ? issue.remaining_hours.to_f : nil, 
       :business_value => issue.accept_business_value? ? issue.business_value.to_f : nil,
@@ -460,6 +476,8 @@ class ScrumUserstoriesController < IssuesController
     
     # return result
     sorted_flatten_issues
+    
+    #issues_tree
   end
   
   def flatten issues

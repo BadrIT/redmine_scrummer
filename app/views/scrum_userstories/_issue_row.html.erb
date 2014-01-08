@@ -1,6 +1,6 @@
 <% level = issue[:level] %>
 
-<tr id="issue-<%= issue["id"] %>" level="<%= level.to_s %>" class="<%= issue[:tracker].try(:scrummer_caption).to_s.downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= (issue[:children] && issue[:children].length > 0) ? "group open" : nil%>">
+<tr id="issue-<%= issue["id"] %>" level="<%= level.to_s %>" class="<%= issue[:tracker][:scrummer_caption].to_s.downcase %>-issue hascontextmenu <%= cycle('odd', 'even') %> <%= level > 0 ? "idnt idnt-#{level}" : nil %> <%= (issue[:children] && issue[:children].length > 0) ? "group open" : nil%>">
 	<% if hierarchy %>	
 	  <td class="select-issue-td checkbox hide-when-print"><%= check_box_tag("ids[]", issue["id"], false, :id => nil) %></td>
 	    <% end %>
@@ -16,7 +16,7 @@
 	<td class='issue-actions'>
 		
 	  	<!--Remove 'add_child' form task and test trackers -->
-	  	<%if ! [:task, :test, :spike].include?( issue[:tracker].try(:scrummer_caption) ) %>
+	  	<%if ! [:task, :test, :spike].include?( issue[:tracker][:scrummer_caption]) %>
 	  		<%= link_to image_tag(scrummer_image_path('add_issue.png') ), get_inline_issue_form_path(:list_id => list_id, :project_id => @project.id, :parent_issue_id => issue["id"]), :remote => true  if scrum_user_stories_add_inline %>
 			<%end%>
 	  	<%= link_to image_tag(scrummer_image_path('edit_issue.png') ), get_inline_issue_form_path(:list_id => list_id, :from_sprint => from_sprint, :project_id => @project.id, :issue_id => issue["id"]), :remote => true if scrum_user_stories_manipulate_inline %>

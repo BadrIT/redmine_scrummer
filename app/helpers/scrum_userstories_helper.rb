@@ -42,15 +42,15 @@ module ScrumUserstoriesHelper
   
   def scrummy_column_content(column, issue)
   	
-    if !issue[:tracker].is_scrum
+    if !issue[:tracker][:is_scrum]
       # fail back to old redmine logic
       return column_content(column, Issue.find(issue["id"]))
     end
       
     if column.name == :status
-      content = issue[:status] ? issue[:status].short_name.upcase : ""
+      content = issue[:status][:short_name].upcase 
   	  
-      "<div title='#{issue[:status].name}' align='center' class='status #{issue[:status].scrummer_caption}' id='issue-#{issue["id"]}-status' data-statuses=\"#{issue_allowed_statuses(issue)}\"><b>" + content.to_s + "</b></div>"  	
+      "<div title='#{issue[:status][:name]}' align='center' class='status #{issue[:status][:scrummer_caption]}' id='issue-#{issue["id"]}-status' data-statuses=\"#{issue_allowed_statuses(issue)}\"><b>" + content.to_s + "</b></div>"  	
     elsif (column.name == :subject)
   	  prefix = if issue[:children].empty?
   	    "<span>&nbsp;&nbsp;</span>"
@@ -60,9 +60,8 @@ module ScrumUserstoriesHelper
       
       tracker = issue[:tracker]
       
-      tracker_name = tracker.short_name.empty? ?  tracker.name : tracker.short_name
   		"<div class='prefix'>#{prefix}<b><span class='issues-list-issue-id'>##{issue["id"].to_s}</span>" +
-  		"<span class='tracker'>#{tracker_name}</span></b>:</div>" +
+  		"<span class='tracker'>#{tracker[:name]}</span></b>:</div>" +
   		"<div >&nbsp;#{subject_content(issue)}</div>" 
     elsif [:story_size, :business_value].include?(column.name) 
       issue_has_children = issue[:children].any?  
@@ -206,7 +205,7 @@ module ScrumUserstoriesHelper
   end
   
   def issue_allowed_statuses(issue)
-    statuses = issue[:tracker_issues_statuses].inject("{") do |memo, status|
+    statuses = issue[:tracker][:issue_statuses].inject("{") do |memo, status|
       unless status.scrummer_caption.blank?
         memo += "'" + status.short_name + "':'" + status.name + "', "
       end
@@ -214,7 +213,7 @@ module ScrumUserstoriesHelper
       memo
     end
 
-    statuses += "'selected':'" + issue[:status].short_name + "'}"
+    statuses += "'selected':'" + issue[:status][:short_name] + "'}"
     statuses
   end
   

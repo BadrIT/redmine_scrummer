@@ -542,7 +542,11 @@ class ScrumUserstoriesController < IssuesController
       @issue = Issue.new
       # optimization : not using assign_attributes because of slowness in aliased method in issue.rb
       params[:issue].each do |k, v|
+        if k.to_s == "parent_issue_id"
+          @issue.parent_issue_id = v
+        else
           @issue[k] = v
+        end
       end
       @issue.author_id = User.current.id
     else

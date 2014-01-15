@@ -24,7 +24,7 @@ div.sidebar-container-right {
     position:fixed;
     top:50%;
     right:0px;
-    background-color:#507AAA;
+    background-color:#507AAA !important;
     filter: alpha(opacity=87);
     -moz-opacity:0.95;
     opacity:0.87;
@@ -124,4 +124,8 @@ ul.sidebar-menu li{
 }
 .sidebar-body #sidebar a {
 	color: ThreeDFace;
+}
+#sidebar{
+    background: none !important;
+    background-color: #507AAA !important;
 }

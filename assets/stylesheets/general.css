@@ -64,9 +64,29 @@
 /********* ISSUE-LIST **********/
 
 table.list tbody tr.group td {
-	padding: 2px;
+	padding: 2px 0px 2px 0px;
 	font-weight: normal;
 	border-bottom: none;
+}
+table.list tbody td, table.list tbody tr td {
+	border-bottom: none !important;
+	font-size: 12px !important;
+	padding: 4px 0px 4px 3px;
+}
+table.list tbody td,table.list tbody tr:hover td{
+	/*border: none !important;*/
+}
+table.list td.checkbox{
+	padding: 5px 0px 0 0px !important;
+}
+#header > h1{
+	padding:5px 75px !important;
+}
+.defect-issue{
+	background-color: #FFCFCF !important;
+}
+td.status{
+	width: 60px;
 }
 tr.idnt-1 td.subject {
 	padding-left: 2em !important;
@@ -173,7 +193,14 @@ table#issue-table td.subject div.subject-contents {
 }
 #content {
 	width: 98%;
-	padding: 4px 4px 0 6px;
+	padding: 4px 10px 0 6px;
+}
+table#issue-table td[colspan="9"] {
+	display: none ;
+} 
+table.list tr.issue a{
+	line-height: 16px !important;
+	padding-right: 4px;
 }
 #right-side-panel {
 	float: right;
@@ -371,18 +398,24 @@ tr.release.closed, tr.release.closed a {
 }
 
 table.list.sprint-issues_list th {
-  background-color: #3E5B76;
-  color: #fff;
+	/*background: none !important;*/
+  /*background-color: #3E5B76 ;*/
+  /*color: #fff;*/
 }
 
 table.list.sprint-issues_list {
-  border: 1px solid #3E5B76;
+  /*border: 0 !important;*/
 }
 
 table.list.sprint-issues_list th a { 
-  color: #fff;
+  /*color: #fff;*/
+  font-size: 15px !important;
+  font-weight: bold italic !important;
+  padding: 0px 8px !important;
 }
-
+table.list.sprint-issues_list th a:hover{
+	/*color: #fff !important;*/
+}
 .status{
   border-radius: 4px;
   padding: 1px;
@@ -394,4 +427,15 @@ table.sprint-issues_list .context-menu-selection {
 
 table.sprint-issues_list .context-menu-selection td a{
   color: #000 !important;
+}
+div#content{
+	width: 97% !important;
+}
+div#content > h2{
+	display: none;
+}
+#main{
+	background: none;
+	border: none;
+	box-shadow: none;
 }

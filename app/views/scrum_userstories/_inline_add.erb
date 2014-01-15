@@ -12,6 +12,8 @@
 <% list_id ||= 'issues_list' %>
 <% from_sprint ||= 'issues_list' %>
 
+<% editor_id = SecureRandom.uuid %>
+
 <div id='<%= inline_issue_div_id%>' class='inline-issue-add'>
 	<div id= <%="errors_for_#{inline_issue_div_id}"%> ></div>
 	<%= form_for @issue, :url => {:controller => :scrum_userstories, :action => :inline_add, :list_id => list_id, :from_sprint => from_sprint},
@@ -98,8 +100,9 @@
 		
 		<div class='scrum_issue_inline_field scrum_issue_row'>
 			<%= f.label :description, l("field_description"), :class => "scrum_issue_inline_label" %>
-			<div class='scrum_issue_inline_control'> 
-				<%= f.text_area :description, :rows => 7, :cols => 70 %>
+			<div class='scrum_issue_inline_control'>
+                <% text_area_id = editor_id %>
+				<%= f.text_area :description, :rows => 7, :cols => 70, :class => 'wiki-edit', :id => "#{text_area_id}-inline-add-textarea"  %><%= wikitoolbar_for "#{text_area_id}-inline-add-textarea" %>
 			</div>
 		</div>
 		
@@ -114,6 +117,7 @@
 	<%end%>
 </div>
 <script>
+
   $("#<%= tracker_field_id %>").observe_field(0, function() {
     $.get("<%= refresh_inline_add_form_path(:project_id => @project, :id => @issue, :list_id => list_id, :from_sprint => from_sprint, :hide_cancel => hide_cancel, :div => inline_issue_div_id) %>", $(this).closest("form").serialize());
   });
@@ -130,7 +134,19 @@
 		$(this).parent().parent().parent().append(hiddenField);
 	});
 	
-	$(document).ready(function () {
+    
+    CKEDITOR.on( 'instanceLoaded', function( evt ) {
+        // The chameleon feature is not for IE quirks.
+        if ( CKEDITOR.env.ie && CKEDITOR.env.quirks )
+            return;
+        var editor = evt.editor;
+        var width = 1000,
+            height = 250;
+
+        editor.resize(width,height);
+    });
+
+    $(document).ready(function () {
 		if($("#backlog").length > 0){
 			$("#<%= inline_form_id %>").append('<input type="hidden" id= "selected_sprint" name="selected_sprint" value="backlog" />')
 		}

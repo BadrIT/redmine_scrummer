@@ -1,0 +1,11 @@
+<p>The project <%= link_to @project.name, project_url(@project) %> has a sprint <%= link_to @sprint.name, version_url(@sprint) %> just ended.</p>
+
+<b>Start Date:</b> <%= @sprint.try(:start_date_custom_value) %><br>
+<b>End Date:</b> <%= @sprint.effective_date %><br>
+<br>
+<b>Assigned Members:</b><br>
+<ul>
+<% @project.members.each do |m| %>
+<li><%= m.name %></li>
+<% end %>
+</ul>

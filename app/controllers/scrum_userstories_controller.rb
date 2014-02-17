@@ -55,6 +55,7 @@ class ScrumUserstoriesController < IssuesController
       end
 
     elsif params[:id] =~ /actual_hours/ 
+      debugger
       if params[:value] =~ /^\+(.*)/
         # virtual fields like actual
         matched_groups = params[:id].match(/issue-(\d+)-actual_hours/)
@@ -76,7 +77,7 @@ class ScrumUserstoriesController < IssuesController
           render :text => 'Errors in saving'
         end
       else
-        render :text => ''
+        render :text => 'Error: Add the \'+\' explicitly'
       end
 
     elsif params[:id] =~ /-field-/

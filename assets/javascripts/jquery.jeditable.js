@@ -352,7 +352,7 @@
                                   dataType: 'html',
                                   url     : settings.target,
                                   success : function(result, status) {
-                                      if (ajaxoptions.dataType == 'html' && (!settings.ignoreResponse || result == "Errors in saving" || result == "Exception occured" || result == "Status Not Allowed" || result == "Status invalid" || result == "")) {
+                                      if (ajaxoptions.dataType == 'html' && (!settings.ignoreResponse || result == "Errors in saving" || result == "Exception occured" || result == "Status Not Allowed" || result == "Status invalid" || result == "Error: Add the \'+\' explicitly" || result == "")) {
                                         $(self).html(result);
                                       } else {
                                       	eval(result);

@@ -1,1 +1,5 @@
 $("#issue-<%= @issue_id %>-inline-child").html("<%= escape_javascript(render('inline_add', :list_id => params[:list_id], :from_sprint => params[:from_sprint])) %>");
+$("#placeholder-<%=@issue_id%> td[colspan='9']").css("display", "table-cell");
+$("#placeholder-8328 form  .scrum_issue_inline_fields .scrum_issue_inline_submit input").on('click',function (e) {
+    $("#placeholder-<%=@issue_id%> td[colspan='9']").css("display", "none");
+});

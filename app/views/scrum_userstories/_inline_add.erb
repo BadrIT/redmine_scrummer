@@ -146,6 +146,8 @@
         editor.resize(width,height);
     });
 
+    $("#placeholder-<%=issue_id%> td[colspan='9']").css('style="display: table-cell !important;"');
+
     $(document).ready(function () {
 		if($("#backlog").length > 0){
 			$("#<%= inline_form_id %>").append('<input type="hidden" id= "selected_sprint" name="selected_sprint" value="backlog" />')
